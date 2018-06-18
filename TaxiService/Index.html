@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="Content/IndexStyleSheet.css" />
+    <script src="Scripts/jquery-1.10.2.js"></script>
+    <script src="Scripts/logIn.js"></script>
+    <title></title>
+</head>
+<body>
+    <div class="main">
+        <div class="container">
+            <h1>Prijavi se</h1>
+            <input type="text" name="username" placeholder="Username" id="username">
+            <br />
+            <input type="password" name="password" placeholder="Password" id="password">
+            <button name="buttonPrijava" id="buttonLogIn">Prijava</button>
+            <br />
+            <label class="greska" id="greskaLogovanja" hidden style="color:red">Greska prilikom logovanja</label>
+            <br />
+        </div>
+        <div class="container">
+            <h1>Registruj se</h1>
+
+            <label for="korisnickoIme"><b>Korisnicko ime</b></label>
+            <br />
+            <input type="text" placeholder="Unesite korisnicko ime" name="korisnickoIme" required>
+            <br />
+            <label for="ime"><b>Ime</b></label>
+            <br />
+            <input type="text" placeholder="Unesite ime" name="ime" required>
+            <br />
+            <label for="prezime"><b>Prezime</b></label>
+            <br />
+            <input type="text" placeholder="Unesite prezime" name="prezime" required>
+            <br />
+            <label for="pol"><b>Pol</b></label>
+            <br />
+            <select><option name="m">Muski</option><option name="z">Zenski</option></select>
+            <br />
+            <label for="jmbg"><b>JMBG</b></label>
+            <br />
+            <input type="text" placeholder="Unesite jmbg" name="jmbg" required>
+            <br />
+            <label for="telefon"><b>Kontakt telefon</b></label>
+            <br />
+            <input type="text" placeholder="Unesite broj telefona" name="telefon" required>
+            <br />
+            <label for="uloga"><b>Uloga</b></label>
+            <br />
+            <select>
+                <option name="korisnik">Musterija</option>
+                <option name="dispecer">Dispecer</option>
+                <option name="vozac">Vozac</option>
+            </select>
+            <br />
+            <label for="email"><b>Email</b></label>
+            <br />
+            <input type="text" placeholder="Unesite Email" name="email" required>
+            <br />
+            <label for="psw"><b>Password</b></label>
+            <br />
+            <input type="password" placeholder="Unesite sifru" name="psw" required>
+            <br />
+            <label for="psw-repeat"><b>Repeat Password</b></label>
+            <br />
+            <input type="password" placeholder="Ponovite sifru" name="psw-repeat" required>
+            <br />
+            <button name="buttonRegistruj" id="buttonRegistracija">Registruj se</button>
+        </div>
+    </div>
+</body>
+</html>
