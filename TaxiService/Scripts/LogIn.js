@@ -1,4 +1,16 @@
-﻿$(document).ready(function () {
+﻿function loadMusterije() {
+    $("#registracija").hide();
+    $("#login").load("~/Musterija.html");
+}
+
+function loadDispecere() {
+}
+
+function loadVozace() {
+
+}
+
+$(document).ready(function () {
     $('#buttonLogIn').click(function () {
         var korisnik = {
             username: `${$('#username').val()}`,
@@ -18,15 +30,15 @@
                 sessionStorage.setItem('korisnik', JSON.stringify(data));
                 if (data.Uloga == 0)
                 {
-                    
+                    loadMusterije();
                 }
                 else if (data.Uloga == 1)
                 {
-
+                    loadDispecere();
                 }
                 else if (data.Uloga == 2)
                 {
-
+                    loadVozace();
                 }
             } else {
                 $('#greskaLogovanja').show();

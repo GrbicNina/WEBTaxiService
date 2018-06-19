@@ -1,6 +1,22 @@
-﻿.container {
-    text-align: justify;
-    width: 50%;
+﻿.container1 {
+    width: 60%;
+    float: left;
+    padding: 0.07px;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+.container2 {
+    float: left;
+    padding: 0.07px;
+    margin: 5% 10% 10% 10%;
+    border: 3px solid black;
+    width: 60%;
+    position: absolute;
+    background-color: azure;
+    border-radius: 22px 22px 22px 22px;
+    padding-bottom: 3%;
+    display: none;
 }
 
 button {
@@ -15,15 +31,16 @@ button {
 
 button:hover {
         opacity: 0.8;
-    }
+}
 
 .main {
     width: 100%;
     display: grid;
-    grid-template-columns: 50% 50%;
+    /*grid-template-columns: 50% 50%;*/
     margin: 10%;
 }
 
 .greska {
     display: none;
+    color: red;
 }

@@ -12,16 +12,27 @@ namespace TaxiService.Models
         public List<Musterija> Musterije { get; set; }
         public List<Dispecer> Dispeceri { get; set; }
         public List<Vozac> Vozaci { get; set; }
-
+        private static ListeKorisnika instance;
         public ListeKorisnika()
         {
             Musterije = new List<Musterija>();
             Dispeceri = new List<Dispecer>();
             Vozaci = new List<Vozac>();
         }
-        public void LoadDispecere()
+        public static ListeKorisnika Instanca
         {
-            using (TextReader tr = new StreamReader(@"D:\TaxiService\TaxiService\App_Data\dispeceri.txt"))
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new ListeKorisnika();
+                }
+                return instance;
+            }
+        }
+        private void LoadDispecere()
+        {
+            using (TextReader tr = new StreamReader(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\dispeceri.txt"))
             {
                 Dispecer dispecer = null;
                 string podaci = "";
@@ -44,9 +55,9 @@ namespace TaxiService.Models
             }
         }
 
-        public void LoadMusterije()
+        private void LoadMusterije()
         {
-            using (TextReader tr = new StreamReader(@"D:\TaxiService\TaxiService\App_Data\musterije.txt"))
+            using (TextReader tr = new StreamReader(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\musterije.txt"))
             {
                 Musterija musterija = null;
                 string podaci = "";
@@ -69,9 +80,9 @@ namespace TaxiService.Models
             }
         }
 
-        public void LoadVozaci()
+        private void LoadVozaci()
         {
-            using (TextReader tr = new StreamReader(@"D:\TaxiService\TaxiService\App_Data\vozaci.txt"))
+            using (TextReader tr = new StreamReader(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\vozaci.txt"))
             {
                 Vozac vozac = null;
                 string podaci = "";
@@ -99,6 +110,59 @@ namespace TaxiService.Models
             LoadDispecere();
             LoadMusterije();
             LoadVozaci();
+        }
+
+        public Korisnik NadjiKorisnika(string username)
+        {
+            Korisnik k = null;
+            foreach (var item in Dispeceri)
+            {
+                if(item.Username.Equals(username))
+                {
+                    k = item;
+                }
+            }
+            foreach (var item in Vozaci)
+            {
+                if (item.Username.Equals(username))
+                {
+                    k = item;
+                }
+            }
+            foreach (var item in Musterije)
+            {
+                if (item.Username.Equals(username))
+                {
+                    k = item;
+                }
+            }
+
+            return k;
+        }
+
+        public void RegistracijaKorisnika(Korisnik k)
+        {
+            Musterije.Add((Musterija)k);
+            using(TextWriter tw = new StreamWriter(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\musterije.txt", append:true))
+            {
+
+                    tw.Write(k.Username);
+                    tw.Write(";");
+                    tw.Write(k.Password);
+                    tw.Write(";");
+                    tw.Write(k.Ime);
+                    tw.Write(";");
+                    tw.Write(k.Prezime);
+                    tw.Write(";");
+                    tw.Write(k.Pol);
+                    tw.Write(";");
+                    tw.Write(k.Jmbg);
+                    tw.Write(";");
+                    tw.Write(k.Telefon);
+                    tw.Write(";");
+                    tw.Write(k.Email);
+                    tw.Write(";\n");
+            }
         }
     }
 }

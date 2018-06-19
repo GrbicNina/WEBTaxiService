@@ -1,0 +1,93 @@
+﻿.container1 {
+    width: 60%;
+    float: left;
+    padding: 0.07px;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+.container2 {
+    text-align:left;
+    padding: 0.07px;
+    margin: 5% 10% 10% 10%;
+    border: 3px solid black;
+    width: 40%;
+    position: absolute;
+    background-color: paleturquoise;
+    border-radius: 15px 50px;
+    padding-bottom: 3%;
+    display: none;
+}
+
+
+#buttonLogIn {
+    background-color: #00BFFF;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+    button:hover {
+        opacity: 0.8;
+    }
+
+.main {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    margin: 5%;
+}
+
+.greska {
+    display: none;
+    color: red;
+}
+
+.okButton {
+    display: block;
+    width: 100%;
+    border: none;
+    background-color: #FAEBD7;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+.labeleGresaka {
+    color: red;
+    border-color: red;
+    font-size: small;
+    font-weight: bold;
+}
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial;
+}
+/* Style tab links */
+.tablink {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 25%;
+}
+
+    .tablink:hover {
+        background-color: #777;
+    }
+/* Style the tab content (and add height:100% for full page content) */
+.tabcontent {
+    color: black;
+    display: none;
+    padding: 100px 20px;
+    height: 100%;
+}

@@ -19,29 +19,33 @@ namespace TaxiService.Controllers
             var username = jToken.Value<string>("username");
             var password = jToken.Value<string>("password");
 
-            foreach (var item in listeKorisnika.Dispeceri)
+            Korisnik kor = listeKorisnika.NadjiKorisnika(username);
+
+            return kor;
+        }
+
+        [Route("RegistrujSe")]
+        public string KreirajNalog([FromBody]Musterija musterija)
+        {
+            string retVal = "ADDED";
+
+            if (musterija.Username == "" || musterija.Username == null)
             {
-                if(item.Username.Equals(username) && item.Password.Equals(password))
-                {
-                    return item;
-                }
-            }
-            foreach (var item in listeKorisnika.Vozaci)
-            {
-                if (item.Username.Equals(username) && item.Password.Equals(password))
-                {
-                    return item;
-                }
+                return "ERROR";
             }
 
-            foreach (var item in listeKorisnika.Musterije)
+            Korisnik k = listeKorisnika.NadjiKorisnika(musterija.Username);
+
+            if (k == null)
             {
-                if (item.Username.Equals(username) && item.Password.Equals(password))
-                {
-                    return item;
-                }
+                listeKorisnika.RegistracijaKorisnika(musterija);
             }
-            return null;
+            else
+            {
+                retVal = "DUPLIKAT";
+            }
+
+            return retVal;
         }
     }
 }

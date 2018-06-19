@@ -20,8 +20,7 @@ namespace TaxiService
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            ListeKorisnika listeKorisnika = new ListeKorisnika();
-            listeKorisnika.UcitajSveListe();
+            ListeKorisnika.Instanca.UcitajSveListe();
         }
     }
 }
