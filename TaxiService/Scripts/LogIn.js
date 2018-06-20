@@ -1,13 +1,23 @@
-﻿function loadMusterije() {
+﻿if (sessionStorage.getItem('korisnik') === null) {
+    var korisnik = null;
+} else {
+    var korisnikJSON = sessionStorage.getItem('korisnik');
+    korisnik = $.parseJSON(korisnikJSON);
+}
+
+function loadMusterije() {
     $("#registracija").hide();
-    $("#login").load("~/Musterija.html");
+    $(".main").load("MusterijaUI.html");
 }
 
 function loadDispecere() {
+    $("#registracija").hide();
+    $(".main").load("Dispeceri.html");
 }
 
 function loadVozace() {
-
+    $("#registracija").hide();
+    $(".main").load("Vozaci.html");
 }
 
 $(document).ready(function () {

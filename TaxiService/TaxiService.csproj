@@ -178,6 +178,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\KorisnikController.cs" />
+    <Compile Include="Controllers\MusterijaController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -203,11 +204,12 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\index.css" />
     <Content Include="Content\IndexStyleSheet.css" />
+    <Content Include="Dispeceri.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Index.html" />
-    <Content Include="Musterija.html" />
+    <Content Include="MusterijaUI.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -237,9 +239,11 @@
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\logIn.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\musterija.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\signUp.js" />
+    <Content Include="Vozaci.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -289,7 +293,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>56098</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:56098/</IISUrl>
+          <IISUrl>http://localhost:56099/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

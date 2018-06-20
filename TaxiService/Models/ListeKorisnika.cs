@@ -13,7 +13,7 @@ namespace TaxiService.Models
         public List<Dispecer> Dispeceri { get; set; }
         public List<Vozac> Vozaci { get; set; }
         private static ListeKorisnika instance;
-        public ListeKorisnika()
+        private ListeKorisnika()
         {
             Musterije = new List<Musterija>();
             Dispeceri = new List<Dispecer>();
@@ -162,6 +162,104 @@ namespace TaxiService.Models
                     tw.Write(";");
                     tw.Write(k.Email);
                     tw.Write(";\n");
+            }
+        }
+        public void UpisiUBazuMusterije()
+        {
+            try
+            {
+                using (TextWriter tw = new StreamWriter(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\musterije.txt"))
+                {
+                    foreach (var item in Musterije)
+                    {
+                        tw.Write(item.Username);
+                        tw.Write(";");
+                        tw.Write(item.Password);
+                        tw.Write(";");
+                        tw.Write(item.Ime);
+                        tw.Write(";");
+                        tw.Write(item.Prezime);
+                        tw.Write(";");
+                        tw.Write(item.Pol);
+                        tw.Write(";");
+                        tw.Write(item.Jmbg);
+                        tw.Write(";");
+                        tw.Write(item.Telefon);
+                        tw.Write(";");
+                        tw.Write(item.Email);
+                        tw.Write("\n");
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public void UpisiUBazuDispecere()
+        {
+            try
+            {
+                using (TextWriter tw = new StreamWriter(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\dispeceri.txt"))
+                {
+                    foreach (var item in Dispeceri)
+                    {
+                        tw.Write(item.Username);
+                        tw.Write(";");
+                        tw.Write(item.Password);
+                        tw.Write(";");
+                        tw.Write(item.Ime);
+                        tw.Write(";");
+                        tw.Write(item.Prezime);
+                        tw.Write(";");
+                        tw.Write(item.Pol);
+                        tw.Write(";");
+                        tw.Write(item.Jmbg);
+                        tw.Write(";");
+                        tw.Write(item.Telefon);
+                        tw.Write(";");
+                        tw.Write(item.Email);
+                        tw.Write("\n");
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public void UpisiUBazuVozace()
+        {
+            try
+            {
+                using (TextWriter tw = new StreamWriter(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\vozaci.txt"))
+                {
+                    foreach (var item in Vozaci)
+                    {
+                        tw.Write(item.Username);
+                        tw.Write(";");
+                        tw.Write(item.Password);
+                        tw.Write(";");
+                        tw.Write(item.Ime);
+                        tw.Write(";");
+                        tw.Write(item.Prezime);
+                        tw.Write(";");
+                        tw.Write(item.Pol);
+                        tw.Write(";");
+                        tw.Write(item.Jmbg);
+                        tw.Write(";");
+                        tw.Write(item.Telefon);
+                        tw.Write(";");
+                        tw.Write(item.Email);
+                        tw.Write("\n");
+                    }
+                }
+            }
+            catch
+            {
+
             }
         }
     }

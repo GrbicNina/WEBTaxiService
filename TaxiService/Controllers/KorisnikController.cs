@@ -12,16 +12,20 @@ namespace TaxiService.Controllers
     [RoutePrefix("api/Korisnik")]
     public class KorisnikController : ApiController
     {
-        public static ListeKorisnika listeKorisnika = new ListeKorisnika();
         [Route("LogIn")]
         public Korisnik LogIn([FromBody]JToken jToken)
         {
             var username = jToken.Value<string>("username");
             var password = jToken.Value<string>("password");
 
-            Korisnik kor = listeKorisnika.NadjiKorisnika(username);
-
-            return kor;
+            Korisnik kor = ListeKorisnika.Instanca.NadjiKorisnika(username);
+            if(kor.Password.Equals(password))
+            {
+                return kor;
+            }else
+            {
+                return null;
+            }
         }
 
         [Route("RegistrujSe")]
@@ -34,11 +38,11 @@ namespace TaxiService.Controllers
                 return "ERROR";
             }
 
-            Korisnik k = listeKorisnika.NadjiKorisnika(musterija.Username);
+            Korisnik k = ListeKorisnika.Instanca.NadjiKorisnika(musterija.Username);
 
             if (k == null)
             {
-                listeKorisnika.RegistracijaKorisnika(musterija);
+                ListeKorisnika.Instanca.RegistracijaKorisnika(musterija);
             }
             else
             {

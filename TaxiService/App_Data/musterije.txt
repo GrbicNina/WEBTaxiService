@@ -1,6 +1,4 @@
-nemanjica;2703;Neca;Pereca;Muski;789456123;456789;necacone@gmail.com;
-najna;123;Nina;Mandarina;Zenski;2308996805095;777888;ninica@gmail.com;
-pjevaljka;01234;Maja;MalaMarijana;Zenski;1234568779;3211123;majamalamarijana@gmail.com;
-bojke;1234;Milos;Bojanic;Muski;4355435342;3211123;bojkeludak@gmail.com;
-nebitno;123;blz;blz;Muski;454343;4543543543;nininfs;
-najna;123;kjhjh;jhjkhjk;Muski;2308996805095;45645436;ninna@gmail.com;
+pjevaljka;01234;Maja;MalaMarijana;Zenski;1234568779;3211123;majamalamarijana@gmail.com
+nemanjica;2703;Neca;Pereca;Muski;7894561231111;45678911;necacone@gmail.com
+bojke;1234;Milos;Bojanic;Zenski;4355435342255;3211123252;bojkeludak@gmail.com
+najna;777;Nina;Avokado;Zenski;2308996805095;777888777;ninica@gmail.com
