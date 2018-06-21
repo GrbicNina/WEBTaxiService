@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="Content/index.css" />
+    <script src="Scripts/jquery-1.10.2.js" async="async"></script>
+    <script src="Scripts/vozac.js"></script>
+</head>
+<body>
+    <h1>VOZAC</h1>
+    <button class="tablink" onclick="openPage('pocetna', this)" id="pocetnaStranica">Pocetna</button>
+    <button class="tablink" onclick="openPage('viewProfile', this)" id="Myprofile">Pogledaj profil</button>
+    <button class="tablink" onclick="openPage('izmenaPodataka', this)" id="izmena">Izmeni podatke</button>
+    <button class="tablink" onclick="openPage('promenaSifre', this)" id="menjajSifru">Promeni sifru</button>
+    <button class="tablink" onclick="openPage('zahtevVoznje', this)" id="zahtevForma">Kreiraj voznju</button>
+
+    <div id="pocetna" class="tabcontent">
+        Vase voznje: <input type="text" name="voznje">
+    </div>
+    <div id="izmenaPodataka" class="tabcontent">
+        <h3>EditProfile</h3>
+
+        <table>
+            <tr>
+                <th colspan="2" align="center">Izmena podataka</th>
+            </tr>
+            <tr>
+                <th>Username: </th>
+                <td><input type="text" id="usernameEdit" name="korisnickoIme"><label id="korisnickoimeGreska" class="labeleGresaka" hidden>Korisnicko ime vec postoji!</label></td>
+            </tr>
+            <tr>
+                <th>Ime: </th>
+                <td><input type="text" id="imeEdit" name="ime"><label id="imeGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za ime!</label></td>
+            </tr>
+            <tr>
+                <th>Prezime: </th>
+                <td><input type="text" id="prezimeEdit" name="prezime"><label id="prezimeGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za prezime!</label></td>
+            </tr>
+            <tr>
+
+                <th>Pol: </th>
+                <td>
+                    <select id="polEdit" name="pol">
+                        <option value="Muski" id="MuskiEdit">Muski</option>
+                        <option value="Zenski" id="ZenskiEdit">Zenski</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>JMBG: </th>
+                <td><input type="text" id="jmbgEdit" name="jmbg"><label id="jmbgGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za jmbg!</label></td>
+            </tr>
+            <tr>
+                <th>Telefon: </th>
+                <td><input type="text" id="telefonEdit" name="kontaktTelefon"><label id="telefonGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za telefon!</label></td>
+            </tr>
+            <tr>
+                <th>Email: </th>
+                <td><input type="text" id="emailEdit" name="email"><label id="emailGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za email!</label></td>
+            </tr>
+        </table>
+        <br />
+        <button id="izmenaButton">Sacuvaj izmene</button>
+
+    </div>
+
+    <div id="viewProfile" class="tabcontent">
+        <h3>ViewProfile</h3><button id="prikaz">Prikazi</button>
+        <table>
+            <tr>
+                <th colspan="2" align="center">Vaši podaci</th>
+            </tr>
+            <tr>
+                <th>Username: </th>
+                <td><input type="text" id="username" name="korisnickoIme" readonly></td>
+            </tr>
+            <tr>
+                <th>Ime: </th>
+                <td><input type="text" id="ime" name="ime" readonly></td>
+            </tr>
+            <tr>
+                <th>Prezime: </th>
+                <td><input type="text" id="prezime" name="prezime" readonly></td>
+            </tr>
+            <tr>
+
+                <th>Pol: </th>
+                <td>
+                    <input type="text" id="pol" name="pol" readonly />
+                </td>
+            </tr>
+            <tr>
+                <th>JMBG: </th>
+                <td><input type="text" id="jmbg" name="jmbg" readonly></td>
+            </tr>
+            <tr>
+                <th>Telefon: </th>
+                <td><input type="text" id="telefon" name="kontaktTelefon" readonly></td>
+            </tr>
+            <tr>
+                <th>Email: </th>
+                <td><input type="text" id="email" name="email" readonly></td>
+            </tr>
+        </table>
+        <br />
+    </div>
+
+    <div id="zahtevVoznje" class="tabcontent">
+        <table>
+            <tr>
+                <th>Unesite ulicu: </th>
+                <td><input type="text" id="ulica" name="Lokacija.Adresa.ulica"></td>
+            </tr>
+            <tr>
+                <th>Unesite broj: </th>
+                <td><input type="text" id="broj" name="Lokacija.Adresa.broj"></td>
+            </tr>
+            <tr>
+                <th>Unesite mesto: </th>
+                <td><input type="text" id="naseljenoMesto" name="Lokacija.Adresa.naseljenoMesto"></td>
+            </tr>
+            <tr>
+                <th>Unesite pozivni broj mesta: </th>
+                <td><input type="text" id="pozivniBroj" name="Lokacija.Adresa.pozivniBrojMesta"></td>
+            </tr>
+            <tr>
+                <th>Izaberite tip vozila: </th>
+                <td>
+                    <select id="tipAutomobila" name="Automobil.tipAutomobila">
+                        <option id="putnickiAutomobil">Putnicki Automobil</option>
+                        <option id="kombiVozilo">Kombi Vozilo</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <button id="zahtevVoznjeButton">Posalji</button>
+    </div>
+    <div id="promenaSifre" class="tabcontent">
+        <h3>Promena sifre</h3>
+        <table>
+            <tr>
+                <th>Unesite staru sifru:</th>
+                <td><input type="password" id="staraSifra" /><label id="greskaSifra" class="labeleGresaka" hidden>Niste uneli dobru sifru!</label></td>
+            </tr>
+            <tr>
+                <th>Unesite novu sifru:</th>
+                <td><input type="password" id="novaSifra" /><label id="greskaNovaSifra" class="labeleGresaka" hidden>Unesite novu sifru!</label></td>
+            </tr>
+        </table>
+        <button id="menjajSifruButton">Promeni</button><label id="uspesnaSifra" hidden>Uspesno ste promenili sifru!</label>
+    </div>
+</body>
+</html>

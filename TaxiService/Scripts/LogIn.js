@@ -12,12 +12,12 @@ function loadMusterije() {
 
 function loadDispecere() {
     $("#registracija").hide();
-    $(".main").load("Dispeceri.html");
+    $(".main").load("DispecerUI.html");
 }
 
 function loadVozace() {
     $("#registracija").hide();
-    $(".main").load("Vozaci.html");
+    $(".main").load("VozacUI.html");
 }
 
 $(document).ready(function () {

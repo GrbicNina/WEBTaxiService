@@ -45,99 +45,44 @@ namespace TaxiService.Controllers
             }
 
             Musterija tempM = null;
-            Vozac tempV = null;
-            Dispecer tempD = null;
+            Korisnik k = null;
+            k = ListeKorisnika.Instanca.NadjiKorisnika(musterija.Username);
             bool istoKorIme = musterija.Username.Equals(musterija.Password);
 
-            foreach (var item in ListeKorisnika.Instanca.Musterije)
+            if (!istoKorIme)
             {
-                if (istoKorIme && musterija.Username.Equals(item.Username))
+                if (k == null)
                 {
-                    tempM = item;
-                }
-                else if (!istoKorIme && musterija.Username.Equals(item.Username))
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest);
-                }
-                else if (!istoKorIme && musterija.Password.Equals(item.Username))
-                {
-                    tempM = item;
-                }
-            }
-
-            if (tempM == null)
-            {
-                foreach (var item in ListeKorisnika.Instanca.Dispeceri)
-                {
-                    if (istoKorIme && musterija.Username.Equals(item.Username))
-                    {
-                        tempD = item;
-                    }
-                    else if (!istoKorIme && musterija.Username.Equals(item.Username))
-                    {
-                        return Request.CreateResponse(HttpStatusCode.BadRequest);
-                    }
-                    else if (!istoKorIme && musterija.Password.Equals(item.Username))
-                    {
-                        tempD = item;
-                    }
-                }
-                if (tempD == null)
-                {
-                    foreach (var item in ListeKorisnika.Instanca.Vozaci)
-                    {
-                        if (istoKorIme && musterija.Username.Equals(item.Username))
-                        {
-                            tempV = item;
-                        }
-                        else if (!istoKorIme && musterija.Username.Equals(item.Username))
-                        {
-                            return Request.CreateResponse(HttpStatusCode.BadRequest);
-                        }
-                        else if (!istoKorIme && musterija.Password.Equals(item.Username))
-                        {
-                            tempV = item;
-                        }
-                    }
-                    if (tempV == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.BadRequest);
-                    }
-                    else
-                    {
-                        ListeKorisnika.Instanca.Vozaci.Remove(tempV);
-                        tempV.Username = musterija.Username;
-                        tempV.Ime = musterija.Ime;
-                        tempV.Prezime = musterija.Prezime;
-                        tempV.Jmbg = musterija.Jmbg;
-                        tempV.Email = musterija.Email;
-                        tempV.Telefon = musterija.Telefon;
-                        ListeKorisnika.Instanca.Vozaci.Add(tempV);
-                        ListeKorisnika.Instanca.UpisiUBazuVozace();
-                        return Request.CreateResponse(HttpStatusCode.OK, tempV);
-                    }
+                    tempM = (Musterija)(k);
+                    ListeKorisnika.Instanca.Musterije.Remove(tempM);
+                    tempM.Username = musterija.Username;
+                    tempM.Ime = musterija.Ime;
+                    tempM.Prezime = musterija.Prezime;
+                    tempM.Jmbg = musterija.Jmbg;
+                    tempM.Telefon = musterija.Telefon;
+                    tempM.Email = musterija.Email;
+                    ListeKorisnika.Instanca.Musterije.Add(tempM);
+                    ListeKorisnika.Instanca.UpisiUBazuMusterije();
+                    return Request.CreateResponse(HttpStatusCode.OK, tempM);
                 }
                 else
                 {
-                    ListeKorisnika.Instanca.Dispeceri.Remove(tempD);
-                    tempD.Username = musterija.Username;
-                    tempD.Ime = musterija.Ime;
-                    tempD.Prezime = musterija.Prezime;
-                    tempD.Jmbg = musterija.Jmbg;
-                    tempD.Email = musterija.Email;
-                    tempD.Telefon = musterija.Telefon;
-                    ListeKorisnika.Instanca.Dispeceri.Add(tempD);
-                    ListeKorisnika.Instanca.UpisiUBazuDispecere();
-                    return Request.CreateResponse(HttpStatusCode.OK, tempD);
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
                 }
             }
             else
             {
+                tempM = (Musterija)(k);
                 ListeKorisnika.Instanca.Musterije.Remove(tempM);
-                musterija.Password = tempM.Password;
-                ListeKorisnika.Instanca.Musterije.Add(musterija);
+                tempM.Username = musterija.Username;
+                tempM.Ime = musterija.Ime;
+                tempM.Prezime = musterija.Prezime;
+                tempM.Jmbg = musterija.Jmbg;
+                tempM.Telefon = musterija.Telefon;
+                tempM.Email = musterija.Email;
+                ListeKorisnika.Instanca.Musterije.Add(tempM);
                 ListeKorisnika.Instanca.UpisiUBazuMusterije();
-                return Request.CreateResponse(HttpStatusCode.OK, musterija);
+                return Request.CreateResponse(HttpStatusCode.OK, tempM);
             }
         }
         [Route("IzmeniSifru")]
