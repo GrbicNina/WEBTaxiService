@@ -12,12 +12,14 @@ namespace TaxiService.Models
         public List<Musterija> Musterije { get; set; }
         public List<Dispecer> Dispeceri { get; set; }
         public List<Vozac> Vozaci { get; set; }
+        public List<Voznja> Voznje { get; set; }
         private static ListeKorisnika instance;
         private ListeKorisnika()
         {
             Musterije = new List<Musterija>();
             Dispeceri = new List<Dispecer>();
             Vozaci = new List<Vozac>();
+            Voznje = new List<Voznja>();
         }
         public static ListeKorisnika Instanca
         {

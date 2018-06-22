@@ -103,5 +103,37 @@ namespace TaxiService.Controllers
             ListeKorisnika.Instanca.UpisiUBazuMusterije();
             return Request.CreateResponse(HttpStatusCode.OK);
         }
+        [Route("PosaljiZahtev")]
+        public HttpResponseMessage PosaljiZahtev([FromBody]JToken jToken)
+        {
+            var vreme = jToken.Value<double>("VremeZahteva");
+            var lokacijastart = jToken.Value<string>("StartnaLokacija");
+            var broj = jToken.Value<double>("");
+            var autoTip = jToken.Value<string>("ZeljeniAuto");
+            var musterija = jToken.Value<string>("Musterija");
+
+            if (lokacijastart == "" || autoTip == "" || musterija == "")
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            if (lokacijastart == null || autoTip == null || musterija == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            Voznja v = new Voznja();
+            v.Musterija = musterija;
+            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
+            epoch.AddMilliseconds(vreme);
+            v.VremePorudzbine = epoch;
+            v.ZeljeniTipAutomobila = (autoTip.Equals("Putnicki Automobil") ? Enums.TipAutomobila.PutnickiAutomobil : Enums.TipAutomobila.KombiVozilo);
+            v.StartLokacija = lokacijastart + " " + broj.ToString() ;
+            v.IDVoznje = (ListeKorisnika.Instanca.Voznje.Count + 1).ToString();
+            v.Status = Enums.StatusVoznje.Kreirana;
+            ListeKorisnika.Instanca.Voznje.Add(v);
+            return Request.CreateResponse(HttpStatusCode.OK,v);
+        }
+
     }
 }

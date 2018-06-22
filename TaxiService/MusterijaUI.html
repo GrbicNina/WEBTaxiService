@@ -108,19 +108,19 @@
             <table>
                 <tr>
                     <th>Unesite ulicu: </th>
-                    <td><input type="text" id="ulica" name="Lokacija.Adresa.ulica"></td>
+                    <td><input type="text" id="ulica" name="Lokacija.Adresa.ulica" /><label id="greskaUlica" class="labeleGresaka" hidden>Niste uneli dobru vrednost za ulicu!</label></td>
                 </tr>
                 <tr>
                     <th>Unesite broj: </th>
-                    <td><input type="text" id="broj" name="Lokacija.Adresa.broj"></td>
+                    <td><input type="number" id="broj" min="1" max="1000" name="Lokacija.Adresa.broj"></td>
                 </tr>
                 <tr>
                     <th>Unesite mesto: </th>
-                    <td><input type="text" id="naseljenoMesto" name="Lokacija.Adresa.naseljenoMesto"></td>
+                    <td><input type="text" id="naseljenoMesto" name="Lokacija.Adresa.naseljenoMesto"><label id="greskaMesto" class="labeleGresaka" hidden>Niste uneli dobru vrednost za mesto!</label></td>
                 </tr>
                 <tr>
                     <th>Unesite pozivni broj mesta: </th>
-                    <td><input type="text" id="pozivniBroj" name="Lokacija.Adresa.pozivniBrojMesta"></td>
+                    <td><input type="number" id="pozivniBroj" name="Lokacija.Adresa.pozivniBrojMesta" min="10000" max="39000"></td>
                 </tr>
                 <tr>
                     <th>Izaberite tip vozila: </th>
@@ -132,7 +132,9 @@
                     </td>
                 </tr>
             </table>
-            <button id="zahtevVoznjeButton">Posalji</button>
+            <button id="zahtevVoznjeButton">Posalji</button><label id="neuspesanZahtev" class="labeleGresaka" hidden>Niste dobro popunili podatke. Molimo Vas pokusajte opet.</label>
+        <br /><label id="uspesanZahtevKreiran" hidden>Uspesno ste poslali zahtev za voznju! Molimo Vas, sacekajte...</label>
+
     </div>
     <div id="promenaSifre" class="tabcontent">
         <h3>Promena sifre</h3>

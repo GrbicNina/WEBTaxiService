@@ -213,4 +213,66 @@ $(document).ready(function () {
             });
         }
     });
+
+    $("#zahtevVoznjeButton").click(function () {
+        var userinput = $('#ulica').val();
+        var pattern = /^[a-zA-Z]+( [a-zA-Z]+)*$/i;
+        if (userinput != "") {
+            if (!pattern.test(userinput)) {
+                $('#greskaUlica').show();
+                retVal = false;
+            } else {
+                $('#greskaUlica').hide();
+                retVal = true;
+            }
+        } else {
+            $('#greskaUlica').show();
+            retVal = false;
+        }
+        userinput = $('#naseljenoMesto').val();
+        pattern = /^[a-zA-Z]+( [a-zA-Z]+)*$/i;
+        if (userinput != "") {
+            if (!pattern.test(userinput)) {
+                $('#greskaMesto').show();
+                retVal = false;
+            } else {
+                $('#greskaMesto').hide();
+                retVal = true;
+            }
+        } else {
+            $('#greskaMesto').show();
+            retVal = false;
+        }
+
+        if (retVal) {
+            $('#greskaUlica').hide();
+            $('#greskaMesto').hide();
+
+            var voznja = {
+                VremeZahteva: Date.now(),
+                StartnaLokacija: `${$('#ulica').val()}`,
+                Broj: `${$('#broj').val()}`,
+                ZeljeniAuto: `${$('#tipAutomobila').val()}`,
+                Musterija: `${korisnik.Username}`
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/Musterija/PosaljiZahtev',
+                data: JSON.stringify(voznja),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                    $('#neuspesanZahtev').hide();
+                    $('#uspesanZahtevKreiran').show();
+                },
+                error: function (data) {
+                    if (data.status === 409) {
+                        $('#neuspesanZahtev').show();
+                    }
+                }
+            });
+        }
+
+    });
 });
