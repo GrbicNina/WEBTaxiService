@@ -88,26 +88,6 @@
             $('#telefonGreska').show();
             retVal = false;
         }
-  
-
-    //if (this.id == "korisnickoIme") {
-    //    userinput = $(this).val();
-    //    pattern = /^\b[A-Za-z]+[0-9]*[A-Za-z]*\b$/i;
-    //    pattern2 = /^\b^[A-Za-z]+.*$/i
-
-    //    if (userinput != "") {
-    //        if (!pattern2.test(userinput)) {
-    //            SignUpNaznaci($(this), 'Mora poceti slovom');
-    //        } else if (!pattern.test(userinput)) {
-    //            SignUpNaznaci($(this), 'Samo slova i cifre su dozvoljeni');
-    //        }
-    //    } else {
-    //        SignUpNaznaci($(this), 'Polje ne sme biti prazno');
-    //    }
-    //}
-
-
-
 
 
         //#endregion

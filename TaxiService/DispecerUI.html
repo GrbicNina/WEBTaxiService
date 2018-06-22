@@ -12,6 +12,7 @@
     <button class="tablink" onclick="openPage('izmenaPodataka', this)" id="izmena">Izmeni podatke</button>
     <button class="tablink" onclick="openPage('promenaSifre', this)" id="menjajSifru">Promeni sifru</button>
     <button class="tablink" onclick="openPage('zahtevVoznje', this)" id="zahtevForma">Kreiraj voznju</button>
+    <button class="tablink" onclick="openPage('dodajVozaca', this)" id="dodavanjeVozaca">Dodaj vozaca</button>
 
     <div id="pocetna" class="tabcontent">
         Vase voznje: <input type="text" name="voznje">
@@ -147,6 +148,99 @@
             </tr>
         </table>
         <button id="menjajSifruButton">Promeni</button><label id="uspesnaSifra" hidden>Uspesno ste promenili sifru!</label>
+    </div>
+    <div id="dodajVozaca" class="tabcontent">
+        <h3>Kreiraj vozaca</h3>
+
+        <table>
+            <tr>
+                <th colspan="2" align="center">Podaci o vozacu</th>
+            </tr>
+            <tr>
+                <th>Username: </th>
+                <td><input type="text" id="usernameVozac" name="korisnickoIme"><label id="korisnickoimeGreskaVozac" class="labeleGresaka" hidden>Korisnicko ime vec postoji!</label></td>
+            </tr>
+            <tr>
+                <th>Password: </th>
+                <td><input type="password" id="passwordVozac" name="password"></td>
+            </tr>
+            <tr>
+                <th>Ime: </th>
+                <td><input type="text" id="imeVozac" name="ime"><label id="imeGreskaVozac" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za ime!</label></td>
+            </tr>
+            <tr>
+                <th>Prezime: </th>
+                <td><input type="text" id="prezimeVozac" name="prezime"><label id="prezimeGreskaVozac" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za prezime!</label></td>
+            </tr>
+            <tr>
+
+                <th>Pol: </th>
+                <td>
+                    <select id="polVozac" name="pol">
+                        <option value="Muski" id="MuskiVozac">Muski</option>
+                        <option value="Zenski" id="ZenskiVozac">Zenski</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>JMBG: </th>
+                <td><input type="text" id="jmbgVozac" name="jmbg"><label id="jmbgGreskaVozac" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za jmbg!</label></td>
+            </tr>
+            <tr>
+                <th>Telefon: </th>
+                <td><input type="text" id="telefonVozac" name="kontaktTelefon"><label id="telefonGreskaVozac" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za telefon!</label></td>
+            </tr>
+            <tr>
+                <th>Email: </th>
+                <td><input type="text" id="emailVozac" name="email"><label id="emailGreskaVozac" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za email!</label></td>
+            </tr>
+        </table>
+        <br />
+        <table>
+            <tr>
+                <th colspan="2" align="center">Podaci o lokaciji:</th>
+            </tr>
+            <tr>
+                <th>Unesite ulicu i broj:</th>
+                <td><input type="text" id="ulicaVozac" /> <input id="brojUliceVozac" type="number" min="1" max="1000" /><label id="greskaUlicaVozac" class="labeleGresaka" hidden>Uneli ste pogresne vrednosti za ulicu!</label></td>
+            </tr>
+            <tr>
+                <th>Naseljeno mesto:</th>
+                <td><input type="text" id="mestoVozac"/><label id="greskaMestoVozac" class="labeleGresaka" hidden>Uneli ste pogresne vrednosti za mesto!</label></td>
+            </tr>
+            <tr>
+                <th>Pozivni broj mesta:</th>
+                <td><input type="number" id="pozivniBrojVozac" min="10000" max="39000"/></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <th colspan="2" align="center">Podaci o automobilu:</th>
+            </tr>
+            <tr>
+                <th>Godiste automobila:</th>
+                <td><input id="godisteAutomobila" type="number" min="1980" max="2018" /></td>
+            </tr>
+            <tr>
+                <th>Broj registarske oznake:</th>
+                <td><input type="text" id="registarskaOznaka" /></td>
+            </tr>
+            <tr>
+                <th>ID Vozila:</th>
+                <td><input type="text" id="idVozila"/></td>
+            </tr>
+            <tr>
+                <th>Odaberite tip automobila:</th>
+                <td>
+                    <select id="tipVozila">
+                        <option id="putnicki">Putnicki Automobil</option>
+                        <option id="kombi">Kombi Vozilo</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+          <button id="dodajVozacaButton">Dodaj</button><label id="uspesnoVozac" hidden>Uspesno ste dodali vozaca!</label>
+        <label id="greskaVozacForma" class="labeleGresaka" hidden>Niste uneli sve neophodne podatke!</label>
     </div>
 </body>
 </html>

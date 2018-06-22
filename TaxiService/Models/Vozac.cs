@@ -11,6 +11,8 @@ namespace TaxiService.Models
         {
             Uloga = Enums.Uloga.Vozac;
             Voznje = new List<Voznja>();
+            Lokacija = new Lokacija();
+            Automobil = new Automobil();
         }
         public Lokacija Lokacija { get; set; }
         public Automobil Automobil { get; set; }

@@ -7,17 +7,17 @@
 
 function loadMusterije() {
     $("#registracija").hide();
-    $(".main").load("MusterijaUI.html");
+    window.location.href = "MusterijaUI.html";
 }
 
 function loadDispecere() {
     $("#registracija").hide();
-    $(".main").load("DispecerUI.html");
+    window.location.href = "DispecerUI.html";
 }
 
 function loadVozace() {
     $("#registracija").hide();
-    $(".main").load("VozacUI.html");
+    window.location.href = "VozacUI.html";
 }
 
 $(document).ready(function () {

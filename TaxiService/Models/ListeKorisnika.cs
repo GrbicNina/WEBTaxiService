@@ -89,17 +89,25 @@ namespace TaxiService.Models
                 while ((podaci = tr.ReadLine()) != null)
                 {
                     string[] parsirani = podaci.Split(';');
-                    vozac = new Vozac()
-                    {
-                        Username = parsirani[0],
-                        Password = parsirani[1],
-                        Ime = parsirani[2],
-                        Prezime = parsirani[3],
-                        Pol = (parsirani[4].Equals("Zenski") ? Pol.Zenski : Pol.Muski),
-                        Jmbg = parsirani[5],
-                        Telefon = parsirani[6],
-                        Email = parsirani[7]
-                    };
+                    vozac = new Vozac();
+                    vozac.Username = parsirani[0];
+                    vozac.Password = parsirani[1];
+                    vozac.Ime = parsirani[2];
+                    vozac.Prezime = parsirani[3];
+                    vozac.Pol = (parsirani[4].Equals("Zenski") ? Pol.Zenski : Pol.Muski);
+                    vozac.Jmbg = parsirani[5];
+                    vozac.Telefon = parsirani[6];
+                    vozac.Email = parsirani[7];
+                    vozac.Lokacija.Adresa.UlicaBroj = parsirani[8];
+                    vozac.Lokacija.Adresa.NaseljenoMesto = parsirani[9];
+                    vozac.Lokacija.Adresa.PozivniBrojMesta = parsirani[10];
+                    vozac.Automobil.Vozac = parsirani[11];
+                    vozac.Automobil.IdVozila = parsirani[12];
+                    vozac.Automobil.BrojRegistarskeOznake = parsirani[13];
+                    vozac.Automobil.GodisteAutomobila = parsirani[14];
+                    vozac.Automobil.TipAutomobila = (parsirani[15].Equals("KombiVozilo") ? TipAutomobila.KombiVozilo : TipAutomobila.PutnickiAutomobil);
+
+
                     Vozaci.Add(vozac);
                 }
             }
@@ -187,7 +195,10 @@ namespace TaxiService.Models
                         tw.Write(item.Telefon);
                         tw.Write(";");
                         tw.Write(item.Email);
-                        tw.Write("\n");
+                        if (Musterije.IndexOf(item) != Musterije.Count - 1)
+                        {
+                            tw.Write("\n");
+                        }
                     }
                 }
             }
@@ -220,7 +231,10 @@ namespace TaxiService.Models
                         tw.Write(item.Telefon);
                         tw.Write(";");
                         tw.Write(item.Email);
-                        tw.Write("\n");
+                        if (Dispeceri.IndexOf(item) != Dispeceri.Count - 1)
+                        {
+                            tw.Write("\n");
+                        }
                     }
                 }
             }
@@ -253,7 +267,26 @@ namespace TaxiService.Models
                         tw.Write(item.Telefon);
                         tw.Write(";");
                         tw.Write(item.Email);
-                        tw.Write("\n");
+                        tw.Write(";");
+                        tw.Write(item.Lokacija.Adresa.UlicaBroj);
+                        tw.Write(";");
+                        tw.Write(item.Lokacija.Adresa.NaseljenoMesto);
+                        tw.Write(";");
+                        tw.Write(item.Lokacija.Adresa.PozivniBrojMesta);
+                        tw.Write(";");
+                        tw.Write(item.Automobil.Vozac);
+                        tw.Write(";");
+                        tw.Write(item.Automobil.IdVozila);
+                        tw.Write(";");
+                        tw.Write(item.Automobil.BrojRegistarskeOznake);
+                        tw.Write(";");
+                        tw.Write(item.Automobil.GodisteAutomobila);
+                        tw.Write(";");
+                        tw.Write(item.Automobil.TipAutomobila);
+                        if (Vozaci.IndexOf(item) != Vozaci.Count - 1)
+                        {
+                            tw.Write("\n");
+                        }
                     }
                 }
             }

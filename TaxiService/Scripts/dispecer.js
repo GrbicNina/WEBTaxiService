@@ -26,7 +26,7 @@ function openPage(pageName, elmnt, color) {
 
 $(document).ready(function () {
 
-    $("#prikaz").click(function () {
+    $("#viewProfile").click(function () {
         korisnikJSON = sessionStorage.getItem('korisnik');
         korisnik = $.parseJSON(korisnikJSON);
         $("#username").val(`${korisnik.Username}`);
@@ -208,6 +208,163 @@ $(document).ready(function () {
                 error: function (data) {
                     if (data.status === 409) {
                         $('#greskaSifra').show();
+                    }
+                }
+            });
+        }
+    });
+
+    $("#dodajVozacaButton").click(function () {
+        var retVal = true;
+
+        let userinput = $('#imeVozac').val();
+        let pattern = /^\b^[A-Za-z]+$/i;
+        if (userinput != "") {
+            if (!pattern.test(userinput)) {
+                $('#imeGreskaVozac').show();
+                retVal = false;
+            } else {
+                $('#imeGreskaVozac').hide();
+                retVal = true;
+            }
+        } else {
+            $('#imeGreskaVozac').show();
+            retVal = false;
+        }
+
+        userinput = $('#prezimeVozac').val();
+        pattern = /^\b^[A-Za-z]+$/i;
+        if (userinput != "") {
+            if (!pattern.test(userinput)) {
+                $('#prezimeGreskaVozac').show();
+                retVal = false;
+            } else {
+                $('#prezimeGreskaVozac').hide();
+                retVal = true;
+            }
+        } else {
+            $('#prezimeGreskaVozac').show();
+            retVal = false;
+        }
+
+        userinput = $('#emailVozac').val();
+        pattern = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
+        if (userinput != "") {
+            if (!pattern.test(userinput)) {
+                $('#emailGreskaVozac').show();
+                retVal = false;
+            }
+            else {
+                $('#emailGreskaVozac').hide();
+                retVal = true;
+            }
+        } else {
+            $('#emailGreskaVozac').show();
+            retVal = false;
+        }
+
+        userinput = $('#jmbgVozac').val();
+        pattern = /^\b\d{13}\b$/i;
+        if (userinput != "") {
+            if (!pattern.test(userinput)) {
+                $('#jmbgGreskaVozac').show();
+                retVal = false;
+            } else {
+                $('#jmbgGreskaVozac').hide();
+                retVal = true;
+            }
+        } else {
+            $('#jmbgGreskaVozac').show();
+            retVal = false;
+        }
+
+        userinput = $('#telefonVozac').val();
+        pattern = /^\b\d{8,10}\b$/i;
+        if (userinput != "") {
+            if (!pattern.test(userinput)) {
+                $('#telefonGreskaVozac').show();
+                retVal = false;
+            } else {
+                $('#telefonGreskaVozac').hide();
+                retVal = true;
+            }
+        } else {
+            $('#telefonGreskaVozac').show();
+            retVal = false;
+        }
+
+        userinput = $('#ulicaVozac').val();
+        pattern = /^[a-zA-Z]+( [a-zA-Z]+)*$/i;
+        if (userinput != "") {
+            if (!pattern.test(userinput)) {
+                $('#greskaUlicaVozac').show();
+                retVal = false;
+            } else {
+                $('#greskaUlicaVozac').hide();
+                retVal = true;
+            }
+        } else {
+            $('#greskaUlicaVozac').show();
+            retVal = false;
+        }
+
+        userinput = $('#mestoVozac').val();
+        pattern = /^[a-zA-Z]+( [a-zA-Z]+)*$/i;
+        if (userinput != "") {
+            if (!pattern.test(userinput)) {
+                $('#greskaMestoVozac').show();
+                retVal = false;
+            } else {
+                $('#greskaMestoVozac').hide();
+                retVal = true;
+            }
+        } else {
+            $('#greskaMestoVozac').show();
+            retVal = false;
+        }
+
+        if (retVal) {
+            let vozac = {
+                Username: `${$('#usernameVozac').val()}`,
+                Password: `${$('#passwordVozac').val()}`,
+                Ime: `${$('#imeVozac').val()}`,
+                Prezime: `${$('#prezimeVozac').val()}`,
+                Pol: `${$('#polVozac').val()}`,
+                JMBG: `${$('#jmbgVozac').val()}`,
+                Telefon: `${$('#telefonVozac').val()}`,
+                Email: `${$('#emailVozac').val()}`,
+                Ulica: `${$('#ulicaVozac').val()}`,
+                Broj: `${$('#brojUliceVozac').val()}`,
+                NaseljenoMesto: `${$('#mestoVozac').val()}`,
+                PozivniBroj: `${$('#pozivniBrojVozac').val()}`,
+                GodisteAutomobila: `${$('#godisteAutomobila').val()}`,
+                RegistarskaOznaka: `${$('#registarskaOznaka').val()}`,
+                IdVozila: `${$('#idVozila').val()}`,
+                TipVozila: `${$('#tipVozila').val()}` 
+            };
+
+            $('#imeGreskaVozac').hide();
+            $('#prezimeGreskaVozac').hide();
+            $('#emailGreskaVozac').hide();
+            $('#jmbgGreskaVozac').hide();
+            $('#telefonGreskaVozac').hide();
+            $('#greskaUlicaVozac').hide();
+            $('#greskaMestoVozac').hide();
+            
+            $.ajax({
+                type: 'POST',
+                url: '/api/Dispecer/DodajVozaca',
+                data: JSON.stringify(vozac),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                    $('#uspesnoVozac').show();
+                },
+                error: function (data) {
+                    if (data.status === 409) {
+                        $('#korisnickoimeGreskaVozac').show();
+                    } else if (data.status == 400) {
+                        $('#greskaVozacForma').show();
                     }
                 }
             });
