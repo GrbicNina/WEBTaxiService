@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using TaxiService.Models;
 
@@ -21,6 +22,12 @@ namespace TaxiService.Controllers
             Korisnik kor = ListeKorisnika.Instanca.NadjiKorisnika(username);
             if(kor.Password.Equals(password))
             {
+                if(HttpContext.Current.Application["ulogovani"] == null)
+                {
+                    HttpContext.Current.Application["ulogovani"] = username;
+                }
+                var ulogovan = HttpContext.Current.Application["ulogovani"];
+
                 return kor;
             }else
             {

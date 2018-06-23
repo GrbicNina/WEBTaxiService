@@ -44,6 +44,37 @@ function getStatusVoznje(id) {
     return status;
 }
 
+function izmeni(no) {
+    $("#prikazVoznji").css('display', 'none');
+    $("#prikazVoznji").hide();
+    $("#izmenaVoznje").css('display','block');
+    $("#izmenaVoznje").show();
+
+    idVoznje = no+1;
+    $.ajax({
+        method: "GET",
+        url: "/api/Musterija/GetVoznja",
+        data: { id: idVoznje },
+        dataType: "json",
+        success: function (data, status) {
+
+            $("#ulicaIzmenaV").val(`${data.StartLokacija.Adresa.Ulica}`);
+            $("#brojIzmenaV").val(`${ data.StartLokacija.Adresa.Broj}`);
+            $("#gradIzmenaV").val(`${data.StartLokacija.Adresa.NaseljenoMesto }`);
+            $("#pozivniBrV").val(`${data.StartLokacija.Adresa.PozivniBrojMesta}`);
+            if (`${data.ZeljeniTipAutomobila}` == 0) {
+                $("#au").attr("selected", "true");
+            } else {
+                $("#kom").attr("selected", "true");
+            }
+           
+            
+        }
+    });
+}
+
+
+
 $(document).ready(function () {
 
     $("#prikaz").click(function () {
@@ -297,6 +328,11 @@ $(document).ready(function () {
 
     });
 
+    $('#buttonLogOff').click(function () {
+        sessionStorage.removeItem('korisnik');
+        window.location.href = "Index.html";
+    });
+
     $("#zahtevVoznjeButton").click(function () {
         $('#zahtevVoznje').hide(); 
         $('#prikazVoznji').show(); 
@@ -305,12 +341,15 @@ $(document).ready(function () {
     $("#pocetnaStranica").click(function () {
         $("#tabelaVoznji").empty();
         var s1 = $("<th></th>").text("Datum i vreme zahteva");
-        var s2 = $("<th></th>").text("Ulica i broj");
-        var s3 = $("<th></th>").text("Grad");
-        var s4 = $("<th></th>").text("Iznos");
-        var s5 = $("<th></th>").text("Status voznje");
-        var s6 = $("<th colspan=\"2\"></th>").text("Opcije");
-        $("#tabelaVoznji").append("<tr>", s1, s2, s3, s4, s5, s6, "</tr>");
+        var s2 = $("<th></th>").text("Ulica");
+        var s3 = $("<th></th>").text("Broj");
+        var s4 = $("<th></th>").text("Grad");
+        var s5 = $("<th></th>").text("Pozivni Broj");
+        var s6 = $("<th></th>").text("Tip vozila");
+        var s7 = $("<th></th>").text("Iznos");
+        var s8 = $("<th></th>").text("Status voznje");
+        var s9 = $("<th colspan=\"2\"></th>").text("Opcije");
+        $("#tabelaVoznji").append("<tr>", s1, s2, s3, s4, s5, s6, s7, s8, s9,"</tr>");
 
         korisnikJSON = sessionStorage.getItem('korisnik');
         korisnik = $.parseJSON(korisnikJSON);
@@ -323,18 +362,63 @@ $(document).ready(function () {
             dataType: "json",
             success: function(data, status) {
                 var i;
+                var tip;
                 for (i = 0; i < data.length; i++) {
                     var txt1 = $("<td></td>").text(data[i].VremePorudzbine);
-                    var txt2 = $("<td></td>").text(data[i].StartLokacija.Adresa.UlicaBroj);
-                    var txt3 = $("<td></td>").text(data[i].StartLokacija.Adresa.NaseljenoMesto);
-                    var txt4 = $("<td></td>").text(data[i].Iznos);
-                    var txt5 = $("<td></td>").text(getStatusVoznje(data[i].Status));
-                    var txt6 = $("<input type=\"submit\" value=\"izmeni\" onclick=\"izmeni(" + i + ")\">").attr("id", "izmeni_" + i);
-                    var txt7 = $("<input type=\"submit\" value=\"odustani\" onclick=\"odustani(" + i + ")\">").attr("id", "odystani_" + i);
-                    $("#tabelaVoznji").append("<tr>", txt1, txt2, txt3, txt4, txt5, txt6, txt7, "</tr>");
+                    var txt2 = $("<td></td>").text(data[i].StartLokacija.Adresa.Ulica);
+                    var txt3 = $("<td></td>").text(data[i].StartLokacija.Adresa.Broj);
+                    var txt4 = $("<td></td>").text(data[i].StartLokacija.Adresa.NaseljenoMesto);
+                    var txt5 = $("<td></td>").text(data[i].StartLokacija.Adresa.PozivniBrojMesta);
+                    if (data[i].ZeljeniTipAutomobila == 0) {
+                        tip = "Putnicki Automobil";
+                    } else {
+                        tip = "Kombi Vozilo";
+                    }
+                    var txt6 = $("<td></td>").text(tip);
+                    var txt7 = $("<td></td>").text(data[i].Iznos);
+                    var txt8 = $("<td></td>").text(getStatusVoznje(data[i].Status));
+                    var txt9 = "";
+                    var txt10 = ""
+                    if (getStatusVoznje(data[i].Status) === "Kreirana") {
+                        txt9 = $("<input type=\"submit\" value=\"izmeni\" onclick=\"izmeni(" + i + ")\">").attr("id", "izmeni_button" + i);
+                        txt10 = $("<input type=\"submit\" value=\"odustani\" onclick=\"odustani(" + i + ")\">").attr("id", "odustani_button" + i);
+                    }
+                    $("#tabelaVoznji").append("<tr>", txt1, txt2, txt3, txt4, txt5, txt6, txt7, txt8, txt9, txt10, "</tr>");
+                    $("#prikazVoznji").append("<label id = \"greskaIzmenaVoznje\" class=\"labeleGresaka\" hidden>Ne mozete da menjate izabranu voznju!</label>");
+                    $("#prikazVoznji").append("<label id = \"uspesnaIzmenaVoznje\" hidden>Uspesno ste izmenili lokaciju svoje voznje!</label>");
+
                 }
             }
         });
        
     });
+
+    $("#izmeniVoznjuButton").click(function () {
+        $('#uspesnoIzmenjenaVoznja').hide();
+        var voznja = {
+            Ulica: `${$("#ulicaIzmenaV").val()}`,
+            Broj: `${$("#brojIzmenaV").val()}`,
+            Grad: `${$("#gradIzmenaV").val()}`,
+            PozivBr: `${$("#pozivniBrV").val()}`,
+            TipVozila: `${$("#selectVoziloV").val()}`,
+            IndeksVoznje: idVoznje
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/Musterija/IzmeniVoznju',
+            data: JSON.stringify(voznja),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (data) {
+                $('#uspesnoIzmenjenaVoznja').show();
+            },
+            error: function (data) {
+                if (data.status === 409) {
+                   // $('#neuspesanZahtev').show();
+                }
+            }
+        });
+    });
+    
 });

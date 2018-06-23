@@ -13,6 +13,7 @@
     <button class="tablink" onclick="openPage('promenaSifre', this)" id="menjajSifru">Promeni sifru</button>
     <button class="tablink" onclick="openPage('zahtevVoznje', this)" id="zahtevForma">Kreiraj voznju</button>
     <button class="tablink" onclick="openPage('dodajVozaca', this)" id="dodavanjeVozaca">Dodaj vozaca</button>
+    <button class="tablink" id="buttonLogOff">Odjavi se</button>
 
     <div id="pocetna" class="tabcontent">
         Vase voznje: <input type="text" name="voznje">
@@ -206,11 +207,11 @@
             </tr>
             <tr>
                 <th>Naseljeno mesto:</th>
-                <td><input type="text" id="mestoVozac"/><label id="greskaMestoVozac" class="labeleGresaka" hidden>Uneli ste pogresne vrednosti za mesto!</label></td>
+                <td><input type="text" id="mestoVozac" /><label id="greskaMestoVozac" class="labeleGresaka" hidden>Uneli ste pogresne vrednosti za mesto!</label></td>
             </tr>
             <tr>
                 <th>Pozivni broj mesta:</th>
-                <td><input type="number" id="pozivniBrojVozac" min="10000" max="39000"/></td>
+                <td><input type="number" id="pozivniBrojVozac" min="10000" max="39000" /></td>
             </tr>
         </table>
         <table>
@@ -227,7 +228,7 @@
             </tr>
             <tr>
                 <th>ID Vozila:</th>
-                <td><input type="text" id="idVozila"/></td>
+                <td><input type="text" id="idVozila" /></td>
             </tr>
             <tr>
                 <th>Odaberite tip automobila:</th>
@@ -239,7 +240,7 @@
                 </td>
             </tr>
         </table>
-          <button id="dodajVozacaButton">Dodaj</button><label id="uspesnoVozac" hidden>Uspesno ste dodali vozaca!</label>
+        <button id="dodajVozacaButton">Dodaj</button><label id="uspesnoVozac" hidden>Uspesno ste dodali vozaca!</label>
         <label id="greskaVozacForma" class="labeleGresaka" hidden>Niste uneli sve neophodne podatke!</label>
     </div>
 </body>

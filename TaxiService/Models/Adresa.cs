@@ -8,8 +8,9 @@ namespace TaxiService.Models
     public class Adresa
     {
         public Adresa() { }
-        public string UlicaBroj { get; set; }
+        public string Ulica { get; set; }
+        public int Broj { get; set; }
         public string NaseljenoMesto { get; set; }
-        public string PozivniBrojMesta { get; set; }
+        public int PozivniBrojMesta { get; set; }
     }
 }

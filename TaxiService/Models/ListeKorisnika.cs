@@ -100,14 +100,15 @@ namespace TaxiService.Models
                     vozac.Jmbg = parsirani[5];
                     vozac.Telefon = parsirani[6];
                     vozac.Email = parsirani[7];
-                    vozac.Lokacija.Adresa.UlicaBroj = parsirani[8];
-                    vozac.Lokacija.Adresa.NaseljenoMesto = parsirani[9];
-                    vozac.Lokacija.Adresa.PozivniBrojMesta = parsirani[10];
-                    vozac.Automobil.Vozac = parsirani[11];
-                    vozac.Automobil.IdVozila = parsirani[12];
-                    vozac.Automobil.BrojRegistarskeOznake = parsirani[13];
-                    vozac.Automobil.GodisteAutomobila = parsirani[14];
-                    vozac.Automobil.TipAutomobila = (parsirani[15].Equals("KombiVozilo") ? TipAutomobila.KombiVozilo : TipAutomobila.PutnickiAutomobil);
+                    vozac.Lokacija.Adresa.Ulica = parsirani[8];
+                    vozac.Lokacija.Adresa.Broj = Int32.Parse(parsirani[9]);
+                    vozac.Lokacija.Adresa.NaseljenoMesto = parsirani[10];
+                    vozac.Lokacija.Adresa.PozivniBrojMesta = Int32.Parse(parsirani[11]);
+                    vozac.Automobil.Vozac = parsirani[12];
+                    vozac.Automobil.IdVozila = parsirani[13];
+                    vozac.Automobil.BrojRegistarskeOznake = parsirani[14];
+                    vozac.Automobil.GodisteAutomobila = parsirani[15];
+                    vozac.Automobil.TipAutomobila = (parsirani[16].Equals("KombiVozilo") ? TipAutomobila.KombiVozilo : TipAutomobila.PutnickiAutomobil);
 
 
                     Vozaci.Add(vozac);
@@ -270,8 +271,10 @@ namespace TaxiService.Models
                         tw.Write(";");
                         tw.Write(item.Email);
                         tw.Write(";");
-                        tw.Write(item.Lokacija.Adresa.UlicaBroj);
+                        tw.Write(item.Lokacija.Adresa.Ulica);
                         tw.Write(";");
+                        tw.Write(item.Lokacija.Adresa.Broj);
+                        tw.Write(";");                   
                         tw.Write(item.Lokacija.Adresa.NaseljenoMesto);
                         tw.Write(";");
                         tw.Write(item.Lokacija.Adresa.PozivniBrojMesta);

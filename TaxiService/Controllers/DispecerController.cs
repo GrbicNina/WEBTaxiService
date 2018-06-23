@@ -171,8 +171,9 @@ namespace TaxiService.Controllers
                 tempV.Telefon = telefon;
                 tempV.Email = email;
                 tempV.Lokacija.Adresa.NaseljenoMesto = naseljenoMesto;
-                tempV.Lokacija.Adresa.UlicaBroj = ulica + " " + broj;
-                tempV.Lokacija.Adresa.PozivniBrojMesta = pozivniBroj;
+                tempV.Lokacija.Adresa.Ulica = ulica;
+                tempV.Lokacija.Adresa.Broj = Int32.Parse(broj);
+                tempV.Lokacija.Adresa.PozivniBrojMesta = Int32.Parse(pozivniBroj);
                 tempV.Automobil.GodisteAutomobila = godisteAutomobila;
                 tempV.Automobil.Vozac = username;
                 tempV.Automobil.TipAutomobila = tip;

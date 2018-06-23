@@ -26,6 +26,11 @@ function openPage(pageName, elmnt, color) {
 
 $(document).ready(function () {
 
+    $('#buttonLogOff').click(function () {
+        sessionStorage.removeItem('korisnik');
+        window.location.href = "Index.html";
+    });
+
     $("#prikaz").click(function () {
         korisnikJSON = sessionStorage.getItem('korisnik');
         korisnik = $.parseJSON(korisnikJSON);

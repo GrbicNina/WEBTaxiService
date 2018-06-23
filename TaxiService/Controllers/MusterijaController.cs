@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Http;
 using TaxiService.Models;
 
@@ -129,9 +130,10 @@ namespace TaxiService.Controllers
             v.Musterija = musterija;         
             v.VremePorudzbine = DateTime.Now.ToString("R");
             v.ZeljeniTipAutomobila = (autoTip.Equals("Putnicki Automobil") ? Enums.TipAutomobila.PutnickiAutomobil : Enums.TipAutomobila.KombiVozilo);
-            v.StartLokacija.Adresa.UlicaBroj = lokacijastart + " " + broj.ToString();
+            v.StartLokacija.Adresa.Ulica = lokacijastart;
+            v.StartLokacija.Adresa.Broj = (int)broj;
             v.StartLokacija.Adresa.NaseljenoMesto = mesto;
-            v.StartLokacija.Adresa.PozivniBrojMesta = pozivniBroj.ToString();
+            v.StartLokacija.Adresa.PozivniBrojMesta = (int)pozivniBroj;
             v.IDVoznje = (ListeKorisnika.Instanca.Voznje.Count + 1).ToString();
             v.Status = Enums.StatusVoznje.Kreirana;
             ListeKorisnika.Instanca.Voznje.Add(v);
@@ -149,6 +151,74 @@ namespace TaxiService.Controllers
             if (ulogovan != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, ulogovan.Voznje);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetVoznja")]
+        public HttpResponseMessage GetVoznja(int id)
+        {
+            var usernameUlogovanog = HttpContext.Current.Application["ulogovani"].ToString();
+            Korisnik ulogovan = ListeKorisnika.Instanca.NadjiKorisnika(usernameUlogovanog);
+            ulogovan = (Musterija)ulogovan;
+            if (ulogovan != null)
+            {
+                Voznja v = ulogovan.Voznje.Find(x => x.IDVoznje.Equals(id.ToString()));
+                if(v != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, v);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+        }
+
+        [Route("IzmeniVoznju")]
+        public HttpResponseMessage IzmeniVoznju([FromBody]JToken jToken)
+        {
+            var ulica = jToken.Value<string>("Ulica");
+            var broj = jToken.Value<double>("Broj");
+            var mesto = jToken.Value<string>("Grad");
+            var pozivniBroj = jToken.Value<double>("PozivBr");
+            var tipVozila = jToken.Value<string>("TipVozila");
+            var idVoznje = jToken.Value<double>("IndeksVoznje");
+            var usernameUlogovanog = HttpContext.Current.Application["ulogovani"].ToString();
+
+            Korisnik ulogovan = ListeKorisnika.Instanca.NadjiKorisnika(usernameUlogovanog);
+            ulogovan = (Musterija)ulogovan;
+            if (ulogovan != null)
+            {
+                Voznja v = ulogovan.Voznje.Find(x => x.IDVoznje.Equals(idVoznje.ToString()));
+                if (v != null)
+                {
+                    ulogovan.Voznje.Remove(v);
+                    Voznja izmenjeno = new Voznja();
+                    izmenjeno.Musterija = usernameUlogovanog;
+                    izmenjeno.StartLokacija.Adresa.Ulica = ulica;
+                    izmenjeno.StartLokacija.Adresa.Broj = (int)broj;
+                    izmenjeno.StartLokacija.Adresa.NaseljenoMesto = mesto;
+                    izmenjeno.StartLokacija.Adresa.PozivniBrojMesta = (int)pozivniBroj;
+                    izmenjeno.IDVoznje = idVoznje.ToString();
+                    izmenjeno.VremePorudzbine = DateTime.Now.ToString("R");
+                    izmenjeno.Status = Enums.StatusVoznje.Kreirana;
+                    izmenjeno.ZeljeniTipAutomobila = (tipVozila.Equals("Kombi Vozilo") ? Enums.TipAutomobila.KombiVozilo : Enums.TipAutomobila.PutnickiAutomobil);
+                    ulogovan.Voznje.Add(izmenjeno);
+                    return Request.CreateResponse(HttpStatusCode.OK, izmenjeno);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
             }
             else
             {

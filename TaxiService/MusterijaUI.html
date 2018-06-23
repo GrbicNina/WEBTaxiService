@@ -12,6 +12,7 @@
     <button class="tablink" onclick="openPage('izmenaPodataka', this)" id="izmena">Izmeni podatke</button>
     <button class="tablink" onclick="openPage('promenaSifre', this)" id="menjajSifru">Promeni sifru</button>
     <button class="tablink" onclick="openPage('zahtevVoznje', this)" id="zahtevForma">Zahtev za voznju</button>
+    <button class="tablink" id="buttonLogOff">Odjavi se</button>
 
     <div id="prikazVoznji" class="tabcontent">
         <h3>Vase voznje:</h3>
@@ -19,13 +20,45 @@
             <table border="1" id="tabelaVoznji">
                 <tr>
                     <th>Datum i vreme narudzbe</th>
-                    <th>Ulica i broj</th>
+                    <th>Ulica</th>
+                    <th>Broj</th>
                     <th>Grad</th>
+                    <th>Pozivni broj</th>
+                    <th>Zeljeni tip vozila</th>
                     <th>Iznos</th>
                     <th>Status voznje</th>
                 </tr>
             </table>
         </p>
+    </div>
+    <div id="izmenaVoznje" hidden align="center">
+        <table id="izmenaVoznjeK">
+            <tr>
+                <th>Ulica</th>
+                <td><input type="text" id="ulicaIzmenaV"/></td>
+            </tr>
+            <tr><th>Broj</th>
+                <td><input type="number" id="brojIzmenaV" min="1" max="1000" /></td>
+            </tr>
+            <tr>
+                <th>Grad</th>
+                <td><input type="text" id="gradIzmenaV" /></td>
+            </tr>
+            <tr>
+                <th>Pozivni broj mesta</th>
+                <td><input type="number" id="pozivniBrV" min="10000" max="39000" /></td>
+            </tr>
+            <tr>
+                <th>Zeljeni tip vozila</th>
+                <td>
+                    <select id="selectVoziloV">
+                        <option id="kom">Kombi vozilo</option>
+                        <option id="au">Putnicki automobil</option>
+                   </select>
+               </td>
+            </tr>
+        </table>
+        <button id="izmeniVoznjuButton">Sacuvaj izmene</button><label id="uspesnoIzmenjenaVoznja" hidden>Uspesno ste izmenili voznju!</label>
     </div>
     <div id="izmenaPodataka" class="tabcontent">
         <h3>EditProfile</h3>
