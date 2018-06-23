@@ -13,6 +13,8 @@
     <button class="tablink" onclick="openPage('promenaSifre', this)" id="menjajSifru">Promeni sifru</button>
     <button class="tablink" onclick="openPage('zahtevVoznje', this)" id="zahtevForma">Kreiraj voznju</button>
     <button class="tablink" onclick="openPage('dodajVozaca', this)" id="dodavanjeVozaca">Dodaj vozaca</button>
+    <button class="tablink" onclick="openPage('formirajVoznju', this)" id="formiranjeVoznje">Formiraj voznju</button>
+    <button class="tablink" onclick="openPage('obradiVoznju', this)" id="obradaVoznje">Obradi voznju</button>
     <button class="tablink" id="buttonLogOff">Odjavi se</button>
 
     <div id="pocetna" class="tabcontent">
@@ -104,37 +106,6 @@
             </tr>
         </table>
         <br />
-    </div>
-
-    <div id="zahtevVoznje" class="tabcontent">
-        <table>
-            <tr>
-                <th>Unesite ulicu: </th>
-                <td><input type="text" id="ulica" name="Lokacija.Adresa.ulica"></td>
-            </tr>
-            <tr>
-                <th>Unesite broj: </th>
-                <td><input type="text" id="broj" name="Lokacija.Adresa.broj"></td>
-            </tr>
-            <tr>
-                <th>Unesite mesto: </th>
-                <td><input type="text" id="naseljenoMesto" name="Lokacija.Adresa.naseljenoMesto"></td>
-            </tr>
-            <tr>
-                <th>Unesite pozivni broj mesta: </th>
-                <td><input type="text" id="pozivniBroj" name="Lokacija.Adresa.pozivniBrojMesta"></td>
-            </tr>
-            <tr>
-                <th>Izaberite tip vozila: </th>
-                <td>
-                    <select id="tipAutomobila" name="Automobil.tipAutomobila">
-                        <option id="putnickiAutomobil">Putnicki Automobil</option>
-                        <option id="kombiVozilo">Kombi Vozilo</option>
-                    </select>
-                </td>
-            </tr>
-        </table>
-        <button id="zahtevVoznjeButton">Posalji</button>
     </div>
     <div id="promenaSifre" class="tabcontent">
         <h3>Promena sifre</h3>
@@ -236,12 +207,45 @@
                     <select id="tipVozila">
                         <option id="putnicki">Putnicki Automobil</option>
                         <option id="kombi">Kombi Vozilo</option>
+                        <option id="praznoVozac" style="display:none">
                     </select>
                 </td>
             </tr>
         </table>
         <button id="dodajVozacaButton">Dodaj</button><label id="uspesnoVozac" hidden>Uspesno ste dodali vozaca!</label>
         <label id="greskaVozacForma" class="labeleGresaka" hidden>Niste uneli sve neophodne podatke!</label>
+    </div>
+    <div id="formirajVoznju" class="tabcontent">
+        <table>
+            <tr>
+                <th>Unesite ulicu: </th>
+                <td><input type="text" id="ulica" name="Lokacija.Adresa.ulica" /><label id="greskaUlica" class="labeleGresaka" hidden>Niste uneli dobru vrednost za ulicu!</label></td>
+            </tr>
+            <tr>
+                <th>Unesite broj: </th>
+                <td><input type="number" id="broj" min="1" max="1000" name="Lokacija.Adresa.broj"></td>
+            </tr>
+            <tr>
+                <th>Unesite mesto: </th>
+                <td><input type="text" id="naseljenoMesto" name="Lokacija.Adresa.naseljenoMesto"><label id="greskaMesto" class="labeleGresaka" hidden>Niste uneli dobru vrednost za mesto!</label></td>
+            </tr>
+            <tr>
+                <th>Unesite pozivni broj mesta: </th>
+                <td><input type="number" id="pozivniBroj" name="Lokacija.Adresa.pozivniBrojMesta" min="10000" max="39000"></td>
+            </tr>
+            <tr>
+                <th>Izaberite tip vozila: </th>
+                <td>
+                    <select id="tipAutomobila" name="Automobil.tipAutomobila">
+                        <option id="putnickiAutomobil">Putnicki Automobil</option>
+                        <option id="kombiVozilo">Kombi Vozilo</option>
+                        <option id="prazno" style="display:none">
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <button id="formirajVoznjuButton">Formiraj</button><label id="neuspesnoFormiranjeVoznje" class="labeleGresaka" hidden>Niste dobro popunili podatke. Molimo Vas pokusajte opet.</label>
+        <br /><label id="uspesnoFormiranjeVoznje" hidden >Uspesno ste formirali voznju!</label>
     </div>
 </body>
 </html>

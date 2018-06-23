@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Http;
 using TaxiService.Models;
 
@@ -188,6 +189,66 @@ namespace TaxiService.Controllers
                 return Request.CreateResponse(HttpStatusCode.Conflict);
             }
            
+        }
+
+        [Route("FormirajVoznju")]
+        public HttpResponseMessage FormirajVoznju([FromBody]JToken jToken)
+        {
+            var lokacijastart = jToken.Value<string>("Ulica");
+            var broj = jToken.Value<double>("Broj");
+            var mesto = jToken.Value<string>("NaseljenoMesto");
+            var pozivniBroj = jToken.Value<double>("PozivniBroj");
+            var autoTip = jToken.Value<string>("TipVozila");
+            var usernameUlogovanog = HttpContext.Current.Application["ulogovani"].ToString();
+
+            if (lokacijastart == "" || mesto  == "")
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            if (lokacijastart == null || mesto == null )
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            Voznja v = new Voznja();
+            v.VremePorudzbine = DateTime.Now.ToString("R");
+            if(autoTip.Equals("Putnicki Automobil"))
+            {
+                v.ZeljeniTipAutomobila = Enums.TipAutomobila.PutnickiAutomobil;
+            }
+            else if(autoTip.Equals("Kombi Vozilo"))
+            {
+                v.ZeljeniTipAutomobila = Enums.TipAutomobila.KombiVozilo;
+            }
+            else
+            {
+            }
+            v.Dispecer = usernameUlogovanog;
+            v.StartLokacija.Adresa.Ulica = lokacijastart;
+            v.StartLokacija.Adresa.Broj = (int)broj;
+            v.StartLokacija.Adresa.NaseljenoMesto = mesto;
+            v.StartLokacija.Adresa.PozivniBrojMesta = (int)pozivniBroj;
+            v.IDVoznje = (ListeKorisnika.Instanca.Voznje.Count + 1).ToString();
+            v.Status = Enums.StatusVoznje.Formirana;
+            foreach (var item in ListeKorisnika.Instanca.Vozaci)
+            {
+                if(!item.Zauzet)
+                {
+                    v.Vozac = item;
+                    break;
+                }
+            }
+            if(v.Vozac != null)
+            {
+                 ListeKorisnika.Instanca.Voznje.Add(v);
+                 return Request.CreateResponse(HttpStatusCode.OK, v);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.Conflict);
+            }
+            
         }
     }
 }

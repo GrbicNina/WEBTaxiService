@@ -375,4 +375,34 @@ $(document).ready(function () {
             });
         }
     });
+
+    $("#formirajVoznjuButton").click(function () {
+        var voznja = {
+            Ulica: `${$('#ulica').val()}`,
+            Broj: `${$('#broj').val()}`,
+            NaseljenoMesto: `${$('#naseljenoMesto').val()}`,
+            PozivniBroj: `${$('#pozivniBroj').val()}`,
+            TipVozila: `${$('#tipAutomobila').val()}`
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/api/Dispecer/FormirajVoznju',
+            data: JSON.stringify(voznja),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (data) {
+                $('#neuspesnoFormiranjeVoznje').hide();
+                $('#uspesnoFormiranjeVoznje').show();
+            },
+            error: function (data) {
+                if (data.status == 400) {
+                    $('#neuspesnoFormiranjeVoznje').show();
+                } else if (data.status == 409) {
+                    $('#formirajVoznju').hide();
+                    $('#formirajVoznju').append("<label id=\"nemaSlobodnihVozaca\">Trenutno nema slobodnih vozaca. Molimo Vas pokusajte malo kasnije... Hvala na poverenju!</label>");
+                }
+            }
+        });
+    });  
+
 });
