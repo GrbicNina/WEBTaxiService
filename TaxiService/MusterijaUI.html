@@ -7,14 +7,25 @@
 </head>
 <body>
     <h1>MUSTERIJA</h1>
-    <button class="tablink" onclick="openPage('pocetna', this)" id="pocetnaStranica">Pocetna</button>
+    <button class="tablink" onclick="openPage('prikazVoznji', this)" id="pocetnaStranica">Pocetna</button>
     <button class="tablink" onclick="openPage('viewProfile', this)" id="Myprofile">Pogledaj profil</button>
     <button class="tablink" onclick="openPage('izmenaPodataka', this)" id="izmena">Izmeni podatke</button>
     <button class="tablink" onclick="openPage('promenaSifre', this)" id="menjajSifru">Promeni sifru</button>
     <button class="tablink" onclick="openPage('zahtevVoznje', this)" id="zahtevForma">Zahtev za voznju</button>
 
-    <div id="pocetna" class="tabcontent">
-        Vase voznje: <input type="text" name="voznje">
+    <div id="prikazVoznji" class="tabcontent">
+        <h3>Vase voznje:</h3>
+        <p>
+            <table border="1" id="tabelaVoznji">
+                <tr>
+                    <th>Datum i vreme narudzbe</th>
+                    <th>Ulica i broj</th>
+                    <th>Grad</th>
+                    <th>Iznos</th>
+                    <th>Status voznje</th>
+                </tr>
+            </table>
+        </p>
     </div>
     <div id="izmenaPodataka" class="tabcontent">
         <h3>EditProfile</h3>
@@ -133,8 +144,7 @@
                 </tr>
             </table>
             <button id="zahtevVoznjeButton">Posalji</button><label id="neuspesanZahtev" class="labeleGresaka" hidden>Niste dobro popunili podatke. Molimo Vas pokusajte opet.</label>
-        <br /><label id="uspesanZahtevKreiran" hidden>Uspesno ste poslali zahtev za voznju! Molimo Vas, sacekajte...</label>
-
+        <br />
     </div>
     <div id="promenaSifre" class="tabcontent">
         <h3>Promena sifre</h3>

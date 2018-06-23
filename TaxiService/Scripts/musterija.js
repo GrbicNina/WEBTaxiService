@@ -23,6 +23,26 @@ function openPage(pageName, elmnt, color) {
     elmnt.style.backgroundColor = color;
 }
 
+function getStatusVoznje(id) {
+    var status = "undefined";
+    if (id == 0) {
+        status = "Kreirana";
+    } else if (id == 1) {
+        status = "Formirana";
+    } else if (id == 2) {
+        status = "Obradjena";
+    } else if (id == 3) {
+        status = "Prihvacena";
+    } else if (id == 4) {
+        status = "Otkazana";
+    } else if (id == 5) {
+        status = "Neuspesna";
+    } else if (id == 6) {
+        status = "Uspesna";
+    }
+
+    return status;
+}
 
 $(document).ready(function () {
 
@@ -252,6 +272,8 @@ $(document).ready(function () {
                 VremeZahteva: Date.now(),
                 StartnaLokacija: `${$('#ulica').val()}`,
                 Broj: `${$('#broj').val()}`,
+                Mesto: `${$('#naseljenoMesto').val()}`,
+                PozivniBroj: `${$('#pozivniBroj').val()}`, 
                 ZeljeniAuto: `${$('#tipAutomobila').val()}`,
                 Musterija: `${korisnik.Username}`
             };
@@ -264,7 +286,6 @@ $(document).ready(function () {
                 dataType: 'json',
                 success: function (data) {
                     $('#neuspesanZahtev').hide();
-                    $('#uspesanZahtevKreiran').show();
                 },
                 error: function (data) {
                     if (data.status === 409) {
@@ -274,5 +295,46 @@ $(document).ready(function () {
             });
         }
 
+    });
+
+    $("#zahtevVoznjeButton").click(function () {
+        $('#zahtevVoznje').hide(); 
+        $('#prikazVoznji').show(); 
+    });
+
+    $("#pocetnaStranica").click(function () {
+        $("#tabelaVoznji").empty();
+        var s1 = $("<th></th>").text("Datum i vreme zahteva");
+        var s2 = $("<th></th>").text("Ulica i broj");
+        var s3 = $("<th></th>").text("Grad");
+        var s4 = $("<th></th>").text("Iznos");
+        var s5 = $("<th></th>").text("Status voznje");
+        var s6 = $("<th colspan=\"2\"></th>").text("Opcije");
+        $("#tabelaVoznji").append("<tr>", s1, s2, s3, s4, s5, s6, "</tr>");
+
+        korisnikJSON = sessionStorage.getItem('korisnik');
+        korisnik = $.parseJSON(korisnikJSON);
+          
+
+        $.ajax({
+            method: "GET",
+            url: "/api/Musterija/GetVoznje",
+            data: { username: korisnik.Username },
+            dataType: "json",
+            success: function(data, status) {
+                var i;
+                for (i = 0; i < data.length; i++) {
+                    var txt1 = $("<td></td>").text(data[i].VremePorudzbine);
+                    var txt2 = $("<td></td>").text(data[i].StartLokacija.Adresa.UlicaBroj);
+                    var txt3 = $("<td></td>").text(data[i].StartLokacija.Adresa.NaseljenoMesto);
+                    var txt4 = $("<td></td>").text(data[i].Iznos);
+                    var txt5 = $("<td></td>").text(getStatusVoznje(data[i].Status));
+                    var txt6 = $("<input type=\"submit\" value=\"izmeni\" onclick=\"izmeni(" + i + ")\">").attr("id", "izmeni_" + i);
+                    var txt7 = $("<input type=\"submit\" value=\"odustani\" onclick=\"odustani(" + i + ")\">").attr("id", "odystani_" + i);
+                    $("#tabelaVoznji").append("<tr>", txt1, txt2, txt3, txt4, txt5, txt6, txt7, "</tr>");
+                }
+            }
+        });
+       
     });
 });

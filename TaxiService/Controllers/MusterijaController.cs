@@ -103,12 +103,15 @@ namespace TaxiService.Controllers
             ListeKorisnika.Instanca.UpisiUBazuMusterije();
             return Request.CreateResponse(HttpStatusCode.OK);
         }
+        
         [Route("PosaljiZahtev")]
         public HttpResponseMessage PosaljiZahtev([FromBody]JToken jToken)
         {
             var vreme = jToken.Value<double>("VremeZahteva");
             var lokacijastart = jToken.Value<string>("StartnaLokacija");
-            var broj = jToken.Value<double>("");
+            var broj = jToken.Value<double>("Broj");
+            var mesto = jToken.Value<string>("Mesto");
+            var pozivniBroj = jToken.Value<double>("PozivniBroj");
             var autoTip = jToken.Value<string>("ZeljeniAuto");
             var musterija = jToken.Value<string>("Musterija");
 
@@ -123,16 +126,34 @@ namespace TaxiService.Controllers
             }
 
             Voznja v = new Voznja();
-            v.Musterija = musterija;
-            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
-            epoch.AddMilliseconds(vreme);
-            v.VremePorudzbine = epoch;
+            v.Musterija = musterija;         
+            v.VremePorudzbine = DateTime.Now.ToString("R");
             v.ZeljeniTipAutomobila = (autoTip.Equals("Putnicki Automobil") ? Enums.TipAutomobila.PutnickiAutomobil : Enums.TipAutomobila.KombiVozilo);
-            v.StartLokacija = lokacijastart + " " + broj.ToString() ;
+            v.StartLokacija.Adresa.UlicaBroj = lokacijastart + " " + broj.ToString();
+            v.StartLokacija.Adresa.NaseljenoMesto = mesto;
+            v.StartLokacija.Adresa.PozivniBrojMesta = pozivniBroj.ToString();
             v.IDVoznje = (ListeKorisnika.Instanca.Voznje.Count + 1).ToString();
             v.Status = Enums.StatusVoznje.Kreirana;
             ListeKorisnika.Instanca.Voznje.Add(v);
+            Korisnik k = ListeKorisnika.Instanca.NadjiKorisnika(musterija);
+            k = (Musterija)k;
+            k.Voznje.Add(v);
             return Request.CreateResponse(HttpStatusCode.OK,v);
+        }
+        [HttpGet]
+        [Route("GetVoznje")]
+        public HttpResponseMessage GetVoznje(string Username)
+        {
+            Korisnik ulogovan = ListeKorisnika.Instanca.NadjiKorisnika(Username);
+            ulogovan = (Musterija)ulogovan;
+            if (ulogovan != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, ulogovan.Voznje);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
         }
 
     }

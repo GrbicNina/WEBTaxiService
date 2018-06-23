@@ -8,11 +8,16 @@ namespace TaxiService.Models
 {
     public class Voznja
     {
-        public DateTime VremePorudzbine { get; set; }
-        public string StartLokacija { get; set; }
+        public Voznja()
+        {
+            StartLokacija = new Lokacija();
+            EndLokacija = new Lokacija();
+        }
+        public string VremePorudzbine { get; set; }
+        public Lokacija StartLokacija { get; set; }
         public TipAutomobila ZeljeniTipAutomobila { get; set; }
         public string Musterija { get; set; }
-        public string EndLokacija { get; set; }
+        public Lokacija EndLokacija { get; set; }
         public string Dispecer { get; set; }
         public string Vozac { get; set; }
         public double Iznos { get; set; }
