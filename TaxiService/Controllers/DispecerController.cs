@@ -229,7 +229,7 @@ namespace TaxiService.Controllers
             v.StartLokacija.Adresa.Broj = (int)broj;
             v.StartLokacija.Adresa.NaseljenoMesto = mesto;
             v.StartLokacija.Adresa.PozivniBrojMesta = (int)pozivniBroj;
-            v.IDVoznje = (ListeKorisnika.Instanca.Voznje.Count + 1).ToString();
+            v.IDVoznje = (ListeKorisnika.Instanca.Voznje.Count + 1);
             v.Status = Enums.StatusVoznje.Formirana;
             foreach (var item in ListeKorisnika.Instanca.Vozaci)
             {
@@ -275,7 +275,7 @@ namespace TaxiService.Controllers
         [Route("GetVoznja")]
         public HttpResponseMessage GetVoznja(int id)
         {
-            Voznja v = ListeKorisnika.Instanca.Voznje.Find(x => x.IDVoznje.Equals(id.ToString()));
+            Voznja v = ListeKorisnika.Instanca.Voznje.Find(x => x.IDVoznje == id);
             string result = "";
             var response = new HttpResponseMessage();
             if (v != null)
@@ -326,7 +326,7 @@ namespace TaxiService.Controllers
         public HttpResponseMessage ObradiVoznju([FromBody]JToken jToken)
         {
             var usernameVozaca = jToken.Value<string>("Vozac");
-            var idVoznje = jToken.Value<int>("IDVoznje");
+            var idVoznje = jToken.Value<double>("IDVoznje");
             var response = new HttpResponseMessage();
             string result = "";
             if (HttpContext.Current.Application["voznjeNaCekanju"] == null)
@@ -339,7 +339,7 @@ namespace TaxiService.Controllers
             else
             {
                 List<Voznja> naCekanju = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
-                Voznja temp = naCekanju.Find(x => x.IDVoznje.Equals(idVoznje.ToString()));
+                Voznja temp = naCekanju.Find(x => x.IDVoznje == idVoznje);
                 if(temp != null)
                 {
                     naCekanju.Remove(temp);

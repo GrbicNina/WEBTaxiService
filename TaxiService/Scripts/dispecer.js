@@ -4,7 +4,6 @@
     var korisnikJSON = sessionStorage.getItem('korisnik');
     korisnik = $.parseJSON(korisnikJSON);
 }
-idVoznje = 0;
 
 function openPage(pageName, elmnt, color) {
     // Hide all elements with class="tabcontent" by default */
@@ -45,26 +44,7 @@ function getStatusVoznje(id) {
     return status;
 }
 
-function obradi(no) {
-    $("#obradiVoznju").css('display', 'none');
-    $("#obradiVoznju").hide();
-    $("#voznjaZaObradu").css('display', 'block');
-    $("#voznjaZaObradu").show();
-
-    idVoznje = no + 1;
-    $.ajax({
-        method: "GET",
-        url: "/api/Dispecer/GetVoznja",
-        data: { id: idVoznje },
-        dataType: "html",
-        success: function (data,status) {
-            $("#voznjaZaObradu").html(data);
-        },
-        error: function (data) {
-            $("#voznjaZaObradu").html(data);
-        }
-    });
-}
+idVoznje = 0;
 
 $(document).ready(function () {
 
@@ -473,7 +453,7 @@ $(document).ready(function () {
                     var txt6 = $("<td></td>").text(tip);
                     var txt7 = $("<td></td>").text(data[i].Iznos);
                     var txt8 = $("<td></td>").text(getStatusVoznje(data[i].Status));
-                    var txt9 = $("<input type=\"submit\" value=\"obradi\" onclick=\"obradi(" + i + ")\">").attr("id", "obradi_button" + i);
+                    var txt9 = $("<button>Obradi</button>").attr({ "value": data[i].IDVoznje, "class": "obradi_buttonClass" });
                     $("#tabelaObrade").append("<tr>", txt1, txt2, txt3, txt4, txt5, txt6, txt7, txt8, txt9, "</tr>");
                 }                             
             }
@@ -481,34 +461,33 @@ $(document).ready(function () {
         });
     });
 
-    //$("#buttonObradiVoznju").click(function () {
-    //    var voznja = {
-    //        Vozac: `${$('#odabraniVozac').val()}`,
-    //        IDVoznje: idVoznje
-    //    };
-    //    $.ajax({
-    //        type: 'POST',
-    //        url: '/api/Dispecer/ObradiVoznju',
-    //        data: JSON.stringify(voznja),
-    //        contentType: 'application/json; charset=utf-8',
-    //        dataType: 'json',
-    //        success: function (data) {
-    //            $('#voznjaZaObradu').hide();
-    //            $("#voznjaZaObradu").html(data.responseText);
-    //        },
-    //        error: function (data) {
-    //            $('#voznjaZaObradu').hide();
-    //            $("#voznjaZaObradu").html(data.responseText);
-    //        }
-    //    });
+});
 
-    //});
+$(document).on("click", ".obradi_buttonClass", function () {
+    $("#obradiVoznju").css('display', 'none');
+    $("#obradiVoznju").hide();
+    $("#voznjaZaObradu").css('display', 'block');
+    $("#voznjaZaObradu").show();
+
+    idVoznje = `${$(this).val()}`;
+    $.ajax({
+        method: "GET",
+        url: "/api/Dispecer/GetVoznja",
+        data: { id: idVoznje },
+        dataType: "html",
+        success: function (data,status) {
+            $("#voznjaZaObradu").html(data);
+        },
+        error: function (data) {
+            $("#voznjaZaObradu").html(data);
+        }
+    });
 });
 
 $(document).on('click', '#buttonObradiVoznju', function () {
     var voznja = {
         Vozac: `${$('#odabraniVozac').val()}`,
-        IDVoznje: idVoznje
+        IDVoznje: `${idVoznje}` 
     };
     $.ajax({
         type: 'POST',
@@ -516,13 +495,12 @@ $(document).on('click', '#buttonObradiVoznju', function () {
         data: JSON.stringify(voznja),
         contentType: 'application/json; charset=utf-8',
         dataType: 'html',
-        success: function (data,status) {
-            $('#voznjaZaObradu').html("");
-            $("#voznjaZaObradu").append(data);
+        success: function (data, status) {
+            $("#voznjaZaObradu").html(data);
+            idVoznje = data.IDVoznje;
         },
-        error: function (data,status) {
-            $('#voznjaZaObradu').html("");
-            $("#voznjaZaObradu").append(data);
+        error: function (data) {
+            $("#voznjaZaObradu").html(data);
         }
     });
 

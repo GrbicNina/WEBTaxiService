@@ -134,7 +134,7 @@ namespace TaxiService.Controllers
             v.StartLokacija.Adresa.Broj = (int)broj;
             v.StartLokacija.Adresa.NaseljenoMesto = mesto;
             v.StartLokacija.Adresa.PozivniBrojMesta = (int)pozivniBroj;
-            v.IDVoznje = (ListeKorisnika.Instanca.Voznje.Count + 1).ToString();
+            v.IDVoznje = (ListeKorisnika.Instanca.Voznje.Count + 1);
             v.Status = Enums.StatusVoznje.Kreirana;
             ListeKorisnika.Instanca.Voznje.Add(v);
             Korisnik k = ListeKorisnika.Instanca.NadjiKorisnika(musterija);
@@ -174,7 +174,7 @@ namespace TaxiService.Controllers
             ulogovan = (Musterija)ulogovan;
             if (ulogovan != null)
             {
-                Voznja v = ulogovan.Voznje.Find(x => x.IDVoznje.Equals(id.ToString()));
+                Voznja v = ulogovan.Voznje.Find(x => x.IDVoznje == id);
                 if(v != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, v);
@@ -205,7 +205,7 @@ namespace TaxiService.Controllers
             ulogovan = (Musterija)ulogovan;
             if (ulogovan != null)
             {
-                Voznja v = ulogovan.Voznje.Find(x => x.IDVoznje.Equals(idVoznje.ToString()));
+                Voznja v = ulogovan.Voznje.Find(x => x.IDVoznje==idVoznje);
                 if (v != null)
                 {
                     ulogovan.Voznje.Remove(v);
@@ -215,7 +215,7 @@ namespace TaxiService.Controllers
                     izmenjeno.StartLokacija.Adresa.Broj = (int)broj;
                     izmenjeno.StartLokacija.Adresa.NaseljenoMesto = mesto;
                     izmenjeno.StartLokacija.Adresa.PozivniBrojMesta = (int)pozivniBroj;
-                    izmenjeno.IDVoznje = idVoznje.ToString();
+                    izmenjeno.IDVoznje = (int)idVoznje;
                     izmenjeno.VremePorudzbine = DateTime.Now.ToString("R");
                     izmenjeno.Status = Enums.StatusVoznje.Kreirana;
                     izmenjeno.ZeljeniTipAutomobila = (tipVozila.Equals("Kombi Vozilo") ? Enums.TipAutomobila.KombiVozilo : Enums.TipAutomobila.PutnickiAutomobil);

@@ -44,36 +44,7 @@ function getStatusVoznje(id) {
     return status;
 }
 
-function izmeni(no) {
-    $("#prikazVoznji").css('display', 'none');
-    $("#prikazVoznji").hide();
-    $("#izmenaVoznje").css('display','block');
-    $("#izmenaVoznje").show();
-
-    idVoznje = no+1;
-    $.ajax({
-        method: "GET",
-        url: "/api/Musterija/GetVoznja",
-        data: { id: idVoznje },
-        dataType: "json",
-        success: function (data, status) {
-
-            $("#ulicaIzmenaV").val(`${data.StartLokacija.Adresa.Ulica}`);
-            $("#brojIzmenaV").val(`${ data.StartLokacija.Adresa.Broj}`);
-            $("#gradIzmenaV").val(`${data.StartLokacija.Adresa.NaseljenoMesto }`);
-            $("#pozivniBrV").val(`${data.StartLokacija.Adresa.PozivniBrojMesta}`);
-            if (`${data.ZeljeniTipAutomobila}` == 0) {
-                $("#au").attr("selected", "true");
-            } else {
-                $("#kom").attr("selected", "true");
-            }
-           
-            
-        }
-    });
-}
-
-
+idVoznje = 0;
 
 $(document).ready(function () {
 
@@ -317,6 +288,9 @@ $(document).ready(function () {
                 dataType: 'json',
                 success: function (data) {
                     $('#neuspesanZahtev').hide();
+                    $('#zahtevVoznje').html("");
+                    $('#zahtevVoznje').append("<h4>Uspesno ste poslali zahtev za voznju!</h4>");
+
                 },
                 error: function (data) {
                     if (data.status === 409) {
@@ -333,10 +307,10 @@ $(document).ready(function () {
         window.location.href = "Index.html";
     });
 
-    $("#zahtevVoznjeButton").click(function () {
-        $('#zahtevVoznje').hide(); 
-        $('#prikazVoznji').show(); 
-    });
+    //$("#zahtevVoznjeButton").click(function () {
+    //    $('#zahtevVoznje').hide(); 
+    //    $('#prikazVoznji').show(); 
+    //});
 
     $("#pocetnaStranica").click(function () {
         $("#tabelaVoznji").empty();
@@ -380,8 +354,11 @@ $(document).ready(function () {
                     var txt9 = "";
                     var txt10 = "";
                     if (getStatusVoznje(data[i].Status) === "Kreirana") {
-                        txt9 = $("<input type=\"submit\" value=\"izmeni\" onclick=\"izmeni(" + i + ")\">").attr("id", "izmeni_button" + i);
-                        txt10 = $("<input type=\"submit\" value=\"odustani\" onclick=\"odustani(" + i + ")\">").attr("id", "odustani_button" + i);
+                        txt9 = $("<button>Izmeni</button>").attr({ "value": data[i].IDVoznje, "class": "izmeni_buttonClass" });
+                        txt10 = $("<button>Odustani</button>").attr({ "value": data[i].IDVoznje, "class": "odustani_buttonClass" });
+
+                        //txt9 = $("<input type=\"submit\" value=\"izmeni\" onclick=\"izmeni(" + i + ")\">").attr("id", "izmeni_button" + i);
+                        //txt10 = $("<input type=\"submit\" value=\"odustani\" onclick=\"odustani(" + i + ")\">").attr("id", "odustani_button" + i);
                     }
                     $("#tabelaVoznji").append("<tr>", txt1, txt2, txt3, txt4, txt5, txt6, txt7, txt8, txt9, txt10, "</tr>");
                     $("#prikazVoznji").append("<label id = \"greskaIzmenaVoznje\" class=\"labeleGresaka\" hidden>Ne mozete da menjate izabranu voznju!</label>");
@@ -410,14 +387,42 @@ $(document).ready(function () {
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: function (data) {
-                $('#uspesnoIzmenjenaVoznja').show();
+                $("#izmenaVoznje").html("");
+                $('#izmenaVoznje').append("<label id=\"uspesnoIzmenjenaVoznja\">Uspesno ste izmenili voznju!</label>");
             },
             error: function (data) {
                 if (data.status === 409) {
-                   // $('#neuspesanZahtev').show();
+                   // $('#neuspesanZahtev').show(); dodati validaciju i poruku za lose ispunjenu formu
                 }
             }
         });
     });
     
+});
+
+$(document).on("click",".izmeni_buttonClass",function () {
+    $("#prikazVoznji").css('display', 'none');
+    $("#prikazVoznji").hide();
+    $("#izmenaVoznje").css('display', 'block');
+    $("#izmenaVoznje").show();
+
+    idVoznje = `${$(this).val()}`;
+    $.ajax({
+        method: "GET",
+        url: "/api/Musterija/GetVoznja",
+        data: { id: idVoznje },
+        dataType: "json",
+        success: function (data, status) {
+
+            $("#ulicaIzmenaV").val(`${data.StartLokacija.Adresa.Ulica}`);
+            $("#brojIzmenaV").val(`${data.StartLokacija.Adresa.Broj}`);
+            $("#gradIzmenaV").val(`${data.StartLokacija.Adresa.NaseljenoMesto}`);
+            $("#pozivniBrV").val(`${data.StartLokacija.Adresa.PozivniBrojMesta}`);
+            if (`${data.ZeljeniTipAutomobila}` == 0) {
+                $("#au").attr("selected", "true");
+            } else {
+                $("#kom").attr("selected", "true");
+            }
+        }
+    });
 });

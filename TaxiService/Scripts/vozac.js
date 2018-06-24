@@ -218,4 +218,37 @@ $(document).ready(function () {
             });
         }
     });
+    $("#prihvatajVoznju").click(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/Vozac/VratiVoznjeNaCekanju',
+            dataType: 'html',
+            success: function (data) {
+                $('#prihvatVoznje').html(data);
+            },
+            error: function (data) {
+                $('#prihvatVoznje').html(data);
+            }
+        });
+    });
+});
+
+$(document).on("click", ".prihvatiVoznjuButtonClass", function () {
+    var voznja = {
+        IDVoznje: `${$(this).val()}`,
+        username: `${korisnik.Username}`
+    };
+    $.ajax({
+        type: 'POST',
+        url: '/api/Vozac/PrihvatiVoznju',
+        data: JSON.stringify(voznja),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function (data) {
+            $('#prihvatVoznje').html(data);
+        },
+        error: function (data) {
+            $('#prihvatVoznje').html(data);
+        }
+    });
 });

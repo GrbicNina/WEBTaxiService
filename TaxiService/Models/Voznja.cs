@@ -23,6 +23,6 @@ namespace TaxiService.Models
         public double Iznos { get; set; }
         public string Komentar { get; set; }
         public StatusVoznje Status { get; set; }
-        public string IDVoznje { get; set; }
+        public int IDVoznje { get; set; }
     }
 }
