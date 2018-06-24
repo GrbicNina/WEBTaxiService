@@ -192,5 +192,53 @@ namespace TaxiService.Controllers
                 return response;
             }
         }
+
+        [HttpPost]
+        [Route("IzmeniLokaciju")]
+        public HttpResponseMessage IzmeniLokaciju([FromBody]JToken jToken)
+        {
+            var username = jToken.Value<string>("username");
+            var novaUlica = jToken.Value<string>("novaUlica");
+            var noviBroj = jToken.Value<int>("noviBroj");
+            var novoMesto = jToken.Value<string>("novoMesto");
+            var noviPozivniBroj = jToken.Value<int>("noviPozivniBroj");
+
+            string result = "";
+            HttpResponseMessage response = new HttpResponseMessage();
+
+            if (novaUlica == "" || noviBroj == 0 || novoMesto == "" || noviPozivniBroj == 0)
+            {
+                result += "<h4>Niste dobro popunili podatke o svojoj trenutnoj lokaciji!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
+
+            Vozac v = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(username));
+            if (v != null)
+            {
+                ListeKorisnika.Instanca.Vozaci.Remove(v);
+                v.Lokacija.Adresa.Ulica = novaUlica;
+                v.Lokacija.Adresa.Broj = noviBroj;
+                v.Lokacija.Adresa.NaseljenoMesto = novoMesto;
+                v.Lokacija.Adresa.PozivniBrojMesta = noviPozivniBroj;
+                ListeKorisnika.Instanca.Vozaci.Add(v);
+                ListeKorisnika.Instanca.UpisiUBazuVozace();
+                result += "<h4>Uspesno ste promenili svoju trenutnu lokaciju!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.OK;
+                return response;
+            }
+            else
+            {
+                result += "<h4>Desila se greska prilikom izmene Vase lokacije!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.Conflict;
+                return response;
+            }
+        }
     }
 }

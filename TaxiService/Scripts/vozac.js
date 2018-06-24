@@ -231,6 +231,38 @@ $(document).ready(function () {
             }
         });
     });
+
+    $("#menjajLokaciju").click(function () {
+        $('#promenaLokacije').show();
+        $('#LokacijaPromenaDiv').hide();
+    });
+
+    $("#novaLokacijaButton").click(function () {
+        var lokacija =
+            {
+                username: `${korisnik.Username}`,
+                novaUlica: `${$('#novaUlica').val()}`,
+                noviBroj: `${$('#noviBroj').val()}`,
+                novoMesto: `${$('#novoMesto').val()}`,
+                noviPozivniBroj: `${$('#noviPozivniBroj').val()}`
+            };
+        $.ajax({
+            type: 'POST',
+            url: '/api/Vozac/IzmeniLokaciju',
+            data: JSON.stringify(lokacija),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            success: function (data) {
+                $('#promenaLokacije').hide();
+                $('#LokacijaPromenaDiv').html(data);
+                $('#LokacijaPromenaDiv').show();
+            },
+            error: function (data) {
+                $('#promenaLokacije').hide();
+                $('#LokacijaPromenaDiv').html(data);
+            }
+        });
+    });
 });
 
 $(document).on("click", ".prihvatiVoznjuButtonClass", function () {
