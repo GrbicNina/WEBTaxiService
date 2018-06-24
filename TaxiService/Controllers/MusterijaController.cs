@@ -140,6 +140,13 @@ namespace TaxiService.Controllers
             Korisnik k = ListeKorisnika.Instanca.NadjiKorisnika(musterija);
             k = (Musterija)k;
             k.Voznje.Add(v);
+            if(HttpContext.Current.Application["voznjeNaCekanju"] == null)
+            {
+                HttpContext.Current.Application["voznjeNaCekanju"] = new List<Voznja>();
+            }
+            List<Voznja> listaVoznji = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
+            listaVoznji.Add(v);
+            HttpContext.Current.Application["voznjeNaCekanju"] = listaVoznji;
             return Request.CreateResponse(HttpStatusCode.OK,v);
         }
         [HttpGet]

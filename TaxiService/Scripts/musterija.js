@@ -378,7 +378,7 @@ $(document).ready(function () {
                     var txt7 = $("<td></td>").text(data[i].Iznos);
                     var txt8 = $("<td></td>").text(getStatusVoznje(data[i].Status));
                     var txt9 = "";
-                    var txt10 = ""
+                    var txt10 = "";
                     if (getStatusVoznje(data[i].Status) === "Kreirana") {
                         txt9 = $("<input type=\"submit\" value=\"izmeni\" onclick=\"izmeni(" + i + ")\">").attr("id", "izmeni_button" + i);
                         txt10 = $("<input type=\"submit\" value=\"odustani\" onclick=\"odustani(" + i + ")\">").attr("id", "odustani_button" + i);
@@ -386,7 +386,6 @@ $(document).ready(function () {
                     $("#tabelaVoznji").append("<tr>", txt1, txt2, txt3, txt4, txt5, txt6, txt7, txt8, txt9, txt10, "</tr>");
                     $("#prikazVoznji").append("<label id = \"greskaIzmenaVoznje\" class=\"labeleGresaka\" hidden>Ne mozete da menjate izabranu voznju!</label>");
                     $("#prikazVoznji").append("<label id = \"uspesnaIzmenaVoznje\" hidden>Uspesno ste izmenili lokaciju svoje voznje!</label>");
-
                 }
             }
         });

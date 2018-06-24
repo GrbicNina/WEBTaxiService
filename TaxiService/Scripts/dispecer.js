@@ -4,6 +4,7 @@
     var korisnikJSON = sessionStorage.getItem('korisnik');
     korisnik = $.parseJSON(korisnikJSON);
 }
+idVoznje = 0;
 
 function openPage(pageName, elmnt, color) {
     // Hide all elements with class="tabcontent" by default */
@@ -23,6 +24,47 @@ function openPage(pageName, elmnt, color) {
     elmnt.style.backgroundColor = color;
 }
 
+function getStatusVoznje(id) {
+    var status = "undefined";
+    if (id == 0) {
+        status = "Kreirana";
+    } else if (id == 1) {
+        status = "Formirana";
+    } else if (id == 2) {
+        status = "Obradjena";
+    } else if (id == 3) {
+        status = "Prihvacena";
+    } else if (id == 4) {
+        status = "Otkazana";
+    } else if (id == 5) {
+        status = "Neuspesna";
+    } else if (id == 6) {
+        status = "Uspesna";
+    }
+
+    return status;
+}
+
+function obradi(no) {
+    $("#obradiVoznju").css('display', 'none');
+    $("#obradiVoznju").hide();
+    $("#voznjaZaObradu").css('display', 'block');
+    $("#voznjaZaObradu").show();
+
+    idVoznje = no + 1;
+    $.ajax({
+        method: "GET",
+        url: "/api/Dispecer/GetVoznja",
+        data: { id: idVoznje },
+        dataType: "html",
+        success: function (data,status) {
+            $("#voznjaZaObradu").html(data);
+        },
+        error: function (data) {
+            $("#voznjaZaObradu").html(data);
+        }
+    });
+}
 
 $(document).ready(function () {
 
@@ -377,13 +419,14 @@ $(document).ready(function () {
     });
 
     $("#formirajVoznjuButton").click(function () {
+        
         var voznja = {
             Ulica: `${$('#ulica').val()}`,
             Broj: `${$('#broj').val()}`,
             NaseljenoMesto: `${$('#naseljenoMesto').val()}`,
             PozivniBroj: `${$('#pozivniBroj').val()}`,
             TipVozila: `${$('#tipAutomobila').val()}`
-        }
+        };
         $.ajax({
             type: 'POST',
             url: '/api/Dispecer/FormirajVoznju',
@@ -403,6 +446,84 @@ $(document).ready(function () {
                 }
             }
         });
-    });  
+    });
+    
+    $("#obradaVoznje").click(function () {
+        $('#tabelaObrade').empty();
+    $.ajax({
+        method: "GET",
+        url: "/api/Dispecer/GetVoznje",
+        success: function (data, status) {
+            var i;
+            var tip;
+            
+            for (i = 0; i < data.length; i++) {
+
+                if (getStatusVoznje(data[i].Status) === "Kreirana") {
+                    var txt1 = $("<td></td>").text(data[i].VremePorudzbine);
+                    var txt2 = $("<td></td>").text(data[i].StartLokacija.Adresa.Ulica);
+                    var txt3 = $("<td></td>").text(data[i].StartLokacija.Adresa.Broj);
+                    var txt4 = $("<td></td>").text(data[i].StartLokacija.Adresa.NaseljenoMesto);
+                    var txt5 = $("<td></td>").text(data[i].StartLokacija.Adresa.PozivniBrojMesta);
+                    if (data[i].ZeljeniTipAutomobila == 0) {
+                        tip = "Putnicki Automobil";
+                    } else {
+                        tip = "Kombi Vozilo";
+                    }
+                    var txt6 = $("<td></td>").text(tip);
+                    var txt7 = $("<td></td>").text(data[i].Iznos);
+                    var txt8 = $("<td></td>").text(getStatusVoznje(data[i].Status));
+                    var txt9 = $("<input type=\"submit\" value=\"obradi\" onclick=\"obradi(" + i + ")\">").attr("id", "obradi_button" + i);
+                    $("#tabelaObrade").append("<tr>", txt1, txt2, txt3, txt4, txt5, txt6, txt7, txt8, txt9, "</tr>");
+                }                             
+            }
+        }
+        });
+    });
+
+    //$("#buttonObradiVoznju").click(function () {
+    //    var voznja = {
+    //        Vozac: `${$('#odabraniVozac').val()}`,
+    //        IDVoznje: idVoznje
+    //    };
+    //    $.ajax({
+    //        type: 'POST',
+    //        url: '/api/Dispecer/ObradiVoznju',
+    //        data: JSON.stringify(voznja),
+    //        contentType: 'application/json; charset=utf-8',
+    //        dataType: 'json',
+    //        success: function (data) {
+    //            $('#voznjaZaObradu').hide();
+    //            $("#voznjaZaObradu").html(data.responseText);
+    //        },
+    //        error: function (data) {
+    //            $('#voznjaZaObradu').hide();
+    //            $("#voznjaZaObradu").html(data.responseText);
+    //        }
+    //    });
+
+    //});
+});
+
+$(document).on('click', '#buttonObradiVoznju', function () {
+    var voznja = {
+        Vozac: `${$('#odabraniVozac').val()}`,
+        IDVoznje: idVoznje
+    };
+    $.ajax({
+        type: 'POST',
+        url: '/api/Dispecer/ObradiVoznju',
+        data: JSON.stringify(voznja),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'html',
+        success: function (data,status) {
+            $('#voznjaZaObradu').html("");
+            $("#voznjaZaObradu").append(data);
+        },
+        error: function (data,status) {
+            $('#voznjaZaObradu').html("");
+            $("#voznjaZaObradu").append(data);
+        }
+    });
 
 });

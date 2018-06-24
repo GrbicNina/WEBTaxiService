@@ -236,11 +236,16 @@ namespace TaxiService.Controllers
                 if(!item.Zauzet)
                 {
                     v.Vozac = item;
+                    v.Vozac.Zauzet = true;
                     break;
                 }
             }
             if(v.Vozac != null)
             {
+                 Vozac taj = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(v.Vozac.Username));
+                 ListeKorisnika.Instanca.Vozaci.Remove(taj);   
+                 taj.Zauzet = true;
+                 ListeKorisnika.Instanca.Vozaci.Add(taj);
                  ListeKorisnika.Instanca.Voznje.Add(v);
                  return Request.CreateResponse(HttpStatusCode.OK, v);
             }
@@ -249,6 +254,126 @@ namespace TaxiService.Controllers
                 return Request.CreateResponse(HttpStatusCode.Conflict);
             }
             
+        }
+
+        [HttpGet]
+        [Route("GetVoznje")]
+        public HttpResponseMessage GetVoznje()
+        {
+            List<Voznja> voznje = ListeKorisnika.Instanca.Voznje;
+            if (voznje != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, voznje);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetVoznja")]
+        public HttpResponseMessage GetVoznja(int id)
+        {
+            Voznja v = ListeKorisnika.Instanca.Voznje.Find(x => x.IDVoznje.Equals(id.ToString()));
+            string result = "";
+            var response = new HttpResponseMessage();
+            if (v != null)
+            {
+               
+                List<Vozac> slobodniVozaci = new List<Vozac>();
+                foreach (var item in ListeKorisnika.Instanca.Vozaci)
+                {
+                    if(!item.Zauzet)
+                    {
+                        slobodniVozaci.Add(item);
+                    }
+                }
+                if(slobodniVozaci.Count == 0)
+                {
+                    result += "<h4>Trenutno nema slobodnih vozaca. Molimo vas pokusajte malo kasnije...</h4>";
+                    response.Content = new StringContent(result);
+                    response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return response;
+                }
+                result += String.Format(@"<table><tr><td>Ulica:</td><td>{0}</td></tr>", v.StartLokacija.Adresa.Ulica);
+                result += String.Format(@"<tr><td>Broj:</td><td>{0}</td></tr>", v.StartLokacija.Adresa.Broj);
+                result += String.Format(@"<tr><td>Mesto:</td><td>{0}</td></tr>", v.StartLokacija.Adresa.NaseljenoMesto);
+                result += String.Format(@"<tr><td>Pozivni broj mesta:</td><td>{0}</td></tr>", v.StartLokacija.Adresa.PozivniBrojMesta);
+                result += String.Format(@"<tr><td>Biraje slobodnog vozaca:</td><td><select id=""odabraniVozac"">");
+                foreach (var item in slobodniVozaci)
+                {
+                    result += String.Format(@"<option>{0}</option>", item.Username);
+                }
+                result += String.Format(@"</select></td></tr></table><button id=""buttonObradiVoznju"">Obradi</button>");
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.OK;
+                return response;
+            }
+            else
+            {
+                result+="<h4>Desila se greska prilikom obrade voznje!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.Conflict;
+                return response;
+            }
+        }
+
+        [Route("ObradiVoznju")]
+        public HttpResponseMessage ObradiVoznju([FromBody]JToken jToken)
+        {
+            var usernameVozaca = jToken.Value<string>("Vozac");
+            var idVoznje = jToken.Value<int>("IDVoznje");
+            var response = new HttpResponseMessage();
+            string result = "";
+            if (HttpContext.Current.Application["voznjeNaCekanju"] == null)
+            {
+                result += "<h4>Desila se greska prilikom obrade korisnika!</h4>";
+                response.Content = new StringContent(result);
+                response.StatusCode = HttpStatusCode.Conflict;
+                return response;
+            }
+            else
+            {
+                List<Voznja> naCekanju = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
+                Voznja temp = naCekanju.Find(x => x.IDVoznje.Equals(idVoznje.ToString()));
+                if(temp != null)
+                {
+                    naCekanju.Remove(temp);
+                    HttpContext.Current.Application["voznjeNaCekanju"] = naCekanju;
+                    ListeKorisnika.Instanca.Voznje.Remove(temp);
+                    Vozac dodeljen = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(usernameVozaca));
+                    if (dodeljen != null)
+                    {
+                        ListeKorisnika.Instanca.Vozaci.Remove(dodeljen);
+                        dodeljen.Zauzet = true;
+                        temp.Vozac = dodeljen;
+                        temp.Status = Enums.StatusVoznje.Obradjena;
+                        ListeKorisnika.Instanca.Vozaci.Add(dodeljen);
+                        ListeKorisnika.Instanca.Voznje.Add(temp);
+                        result += "<h4>Uspesno ste obradili voznju!</h4>";
+                        response.Content = new StringContent(result);
+                        response.StatusCode = HttpStatusCode.OK;
+                        return response;
+                    }
+                    else
+                    {
+                        result += "<h4>Desila se greska prilikom obrade korisnika!</h4>";
+                        response.Content = new StringContent(result);
+                        response.StatusCode = HttpStatusCode.Conflict;
+                        return response;
+                    }
+                }else
+                {
+                    result += "<h4>Desila se greska prilikom obrade korisnika!</h4>";
+                    response.Content = new StringContent(result);
+                    response.StatusCode = HttpStatusCode.Conflict;
+                    return response;
+                }
+            }
         }
     }
 }
