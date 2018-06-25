@@ -14,6 +14,7 @@
     <button class="tablink" onclick="openPage('promenaSifre', this)" id="menjajSifru">Promeni sifru</button>
     <button class="tablink" onclick="openPage('prihvatVoznje', this)" id="prihvatajVoznju">Prihvati voznju</button>
     <button class="tablink" onclick="openPage('promenaLokacije', this)" id="menjajLokaciju">Promeni lokaciju</button>
+    <button class="tablink" onclick="openPage('promenaStatusa', this)" id="menjajStatus">Promeni status voznje</button>
     <button class="tablink" id="buttonLogOff">Odjavi se</button>
 
     <div id="pocetna" class="tabcontent">
@@ -120,7 +121,7 @@
         </table>
         <button id="menjajSifruButton">Promeni</button><label id="uspesnaSifra" hidden>Uspesno ste promenili sifru!</label>
     </div>
-    <div id="prihvatVoznje">
+    <div id="prihvatVoznje" class="tabcontent">>
 
     </div>
     <div id="promenaLokacije" class="tabcontent">
@@ -128,11 +129,11 @@
         <table>
             <tr>
                 <th>Ulica:</th>
-                <td><input type="text" id="novaUlica"/></td>
+                <td><input type="text" id="novaUlica" /></td>
             </tr>
             <tr>
                 <th>Broj:</th>
-                <td><input type="number" min="1" max="1000" id="noviBroj"/></td>
+                <td><input type="number" min="1" max="1000" id="noviBroj" /></td>
             </tr>
             <tr>
                 <th>Mesto:</th>
@@ -140,10 +141,14 @@
             </tr>
             <tr>
                 <th>Pozivni broj:</th>
-                <td><input type="number" min="10000" max="39000" id="noviPozivniBroj"/></td>
+                <td><input type="number" min="10000" max="39000" id="noviPozivniBroj" /></td>
             </tr>
         </table>
         <button id="novaLokacijaButton">Postavi</button>
-    </div><div id="LokacijaPromenaDiv" hidden></div>
+    </div>
+    <div id="LokacijaPromenaDiv" hidden></div>
+    <div id="promenaStatusa" class="tabcontent">
+        
+    </div>
 </body>
 </html>

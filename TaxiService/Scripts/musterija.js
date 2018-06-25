@@ -236,71 +236,7 @@ $(document).ready(function () {
         }
     });
 
-    $("#zahtevVoznjeButton").click(function () {
-        var userinput = $('#ulica').val();
-        var pattern = /^[a-zA-Z]+( [a-zA-Z]+)*$/i;
-        if (userinput != "") {
-            if (!pattern.test(userinput)) {
-                $('#greskaUlica').show();
-                retVal = false;
-            } else {
-                $('#greskaUlica').hide();
-                retVal = true;
-            }
-        } else {
-            $('#greskaUlica').show();
-            retVal = false;
-        }
-        userinput = $('#naseljenoMesto').val();
-        pattern = /^[a-zA-Z]+( [a-zA-Z]+)*$/i;
-        if (userinput != "") {
-            if (!pattern.test(userinput)) {
-                $('#greskaMesto').show();
-                retVal = false;
-            } else {
-                $('#greskaMesto').hide();
-                retVal = true;
-            }
-        } else {
-            $('#greskaMesto').show();
-            retVal = false;
-        }
-
-        if (retVal) {
-            $('#greskaUlica').hide();
-            $('#greskaMesto').hide();
-
-            var voznja = {
-                VremeZahteva: Date.now(),
-                StartnaLokacija: `${$('#ulica').val()}`,
-                Broj: `${$('#broj').val()}`,
-                Mesto: `${$('#naseljenoMesto').val()}`,
-                PozivniBroj: `${$('#pozivniBroj').val()}`, 
-                ZeljeniAuto: `${$('#tipAutomobila').val()}`,
-                Musterija: `${korisnik.Username}`
-            };
-
-            $.ajax({
-                type: 'POST',
-                url: '/api/Musterija/PosaljiZahtev',
-                data: JSON.stringify(voznja),
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                success: function (data) {
-                    $('#neuspesanZahtev').hide();
-                    $('#zahtevVoznje').html("");
-                    $('#zahtevVoznje').append("<h4>Uspesno ste poslali zahtev za voznju!</h4>");
-
-                },
-                error: function (data) {
-                    if (data.status === 409) {
-                        $('#neuspesanZahtev').show();
-                    }
-                }
-            });
-        }
-
-    });
+   
 
     $('#buttonLogOff').click(function () {
         sessionStorage.removeItem('korisnik');
@@ -313,97 +249,61 @@ $(document).ready(function () {
     //});
 
     $("#pocetnaStranica").click(function () {
-        $("#tabelaVoznji").empty();
-        var s1 = $("<th></th>").text("Datum i vreme zahteva");
-        var s2 = $("<th></th>").text("Ulica");
-        var s3 = $("<th></th>").text("Broj");
-        var s4 = $("<th></th>").text("Grad");
-        var s5 = $("<th></th>").text("Pozivni Broj");
-        var s6 = $("<th></th>").text("Tip vozila");
-        var s7 = $("<th></th>").text("Iznos");
-        var s8 = $("<th></th>").text("Status voznje");
-        var s9 = $("<th colspan=\"2\"></th>").text("Opcije");
-        $("#tabelaVoznji").append("<tr>", s1, s2, s3, s4, s5, s6, s7, s8, s9,"</tr>");
 
         korisnikJSON = sessionStorage.getItem('korisnik');
         korisnik = $.parseJSON(korisnikJSON);
           
-
         $.ajax({
             method: "GET",
             url: "/api/Musterija/GetVoznje",
             data: { username: korisnik.Username },
-            dataType: "json",
-            success: function(data, status) {
-                var i;
-                var tip;
-                for (i = 0; i < data.length; i++) {
-                    var txt1 = $("<td></td>").text(data[i].VremePorudzbine);
-                    var txt2 = $("<td></td>").text(data[i].StartLokacija.Adresa.Ulica);
-                    var txt3 = $("<td></td>").text(data[i].StartLokacija.Adresa.Broj);
-                    var txt4 = $("<td></td>").text(data[i].StartLokacija.Adresa.NaseljenoMesto);
-                    var txt5 = $("<td></td>").text(data[i].StartLokacija.Adresa.PozivniBrojMesta);
-                    if (data[i].ZeljeniTipAutomobila == 0) {
-                        tip = "Putnicki Automobil";
-                    } else {
-                        tip = "Kombi Vozilo";
-                    }
-                    var txt6 = $("<td></td>").text(tip);
-                    var txt7 = $("<td></td>").text(data[i].Iznos);
-                    var txt8 = $("<td></td>").text(getStatusVoznje(data[i].Status));
-                    var txt9 = "";
-                    var txt10 = "";
-                    if (getStatusVoznje(data[i].Status) === "Kreirana") {
-                        txt9 = $("<button>Izmeni</button>").attr({ "value": data[i].IDVoznje, "class": "izmeni_buttonClass" });
-                        txt10 = $("<button>Odustani</button>").attr({ "value": data[i].IDVoznje, "class": "odustani_buttonClass" });
-
-                        //txt9 = $("<input type=\"submit\" value=\"izmeni\" onclick=\"izmeni(" + i + ")\">").attr("id", "izmeni_button" + i);
-                        //txt10 = $("<input type=\"submit\" value=\"odustani\" onclick=\"odustani(" + i + ")\">").attr("id", "odustani_button" + i);
-                    }
-                    $("#tabelaVoznji").append("<tr>", txt1, txt2, txt3, txt4, txt5, txt6, txt7, txt8, txt9, txt10, "</tr>");
-                    $("#prikazVoznji").append("<label id = \"greskaIzmenaVoznje\" class=\"labeleGresaka\" hidden>Ne mozete da menjate izabranu voznju!</label>");
-                    $("#prikazVoznji").append("<label id = \"uspesnaIzmenaVoznje\" hidden>Uspesno ste izmenili lokaciju svoje voznje!</label>");
-                }
+          //  contentType: 'application/json; charset=utf-8',
+            dataType: "html",
+            complete: function (data, status) {
+                if (status == 200) {
+                    $("#prikazVoznji").show();
+                    $("#prikazVoznji").html(data.responseText);
+                } else {
+                    $("#prikazVoznji").show();
+                    $("#prikazVoznji").html(data.responseText);
+                }              
             }
         });
        
-    });
+    }); 
+});
 
-    $("#izmeniVoznjuButton").click(function () {
-        $('#uspesnoIzmenjenaVoznja').hide();
-        var voznja = {
-            Ulica: `${$("#ulicaIzmenaV").val()}`,
-            Broj: `${$("#brojIzmenaV").val()}`,
-            Grad: `${$("#gradIzmenaV").val()}`,
-            PozivBr: `${$("#pozivniBrV").val()}`,
-            TipVozila: `${$("#selectVoziloV").val()}`,
-            IndeksVoznje: idVoznje
-        };
+$(document).on("click","#izmeniVoznjuButton",function () {
 
-        $.ajax({
-            type: 'POST',
-            url: '/api/Musterija/IzmeniVoznju',
-            data: JSON.stringify(voznja),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function (data) {
-                $("#izmenaVoznje").html("");
-                $('#izmenaVoznje').append("<label id=\"uspesnoIzmenjenaVoznja\">Uspesno ste izmenili voznju!</label>");
-            },
-            error: function (data) {
-                if (data.status === 409) {
-                   // $('#neuspesanZahtev').show(); dodati validaciju i poruku za lose ispunjenu formu
-                }
+    var voznja = {
+        Ulica: `${$("#ulicaIzmenaV").val()}`,
+        Broj: `${$("#brojIzmenaV").val()}`,
+        Grad: `${$("#gradIzmenaV").val()}`,
+        PozivBr: `${$("#pozivniBrV").val()}`,
+        TipVozila: `${$("#selectVoziloV").val()}`,
+        IndeksVoznje: idVoznje
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: '/api/Musterija/IzmeniVoznju',
+        data: JSON.stringify(voznja),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'html',
+        complete: function (data) {
+            if (data.status == 200) {
+                $("#izmenaVoznje").show();
+                $("#izmenaVoznje").html(data);
+            } else {
+                $("#izmenaVoznje").show();
+                $("#izmenaVoznje").html(data);
             }
-        });
+        }
     });
-    
 });
 
 $(document).on("click",".izmeni_buttonClass",function () {
-    $("#prikazVoznji").css('display', 'none');
     $("#prikazVoznji").hide();
-    $("#izmenaVoznje").css('display', 'block');
     $("#izmenaVoznje").show();
 
     idVoznje = `${$(this).val()}`;
@@ -411,18 +311,76 @@ $(document).on("click",".izmeni_buttonClass",function () {
         method: "GET",
         url: "/api/Musterija/GetVoznja",
         data: { id: idVoznje },
-        dataType: "json",
-        success: function (data, status) {
-
-            $("#ulicaIzmenaV").val(`${data.StartLokacija.Adresa.Ulica}`);
-            $("#brojIzmenaV").val(`${data.StartLokacija.Adresa.Broj}`);
-            $("#gradIzmenaV").val(`${data.StartLokacija.Adresa.NaseljenoMesto}`);
-            $("#pozivniBrV").val(`${data.StartLokacija.Adresa.PozivniBrojMesta}`);
-            if (`${data.ZeljeniTipAutomobila}` == 0) {
-                $("#au").attr("selected", "true");
+        dataType: "html",
+        complete: function (data) {
+            if (data.status == 200) {
+                $("#izmenaVoznje").html(data.responseText);
             } else {
-                $("#kom").attr("selected", "true");
+                $("#izmenaVoznje").html(data.responseText);
             }
         }
     });
+});
+
+$(document).on("click","#zahtevVoznjeButton", function () {
+    var userinput = $('#ulica').val();
+    var pattern = /^[a-zA-Z]+( [a-zA-Z]+)*$/i;
+    if (userinput != "") {
+        if (!pattern.test(userinput)) {
+            $('#greskaUlica').show();
+            retVal = false;
+        } else {
+            $('#greskaUlica').hide();
+            retVal = true;
+        }
+    } else {
+        $('#greskaUlica').show();
+        retVal = false;
+    }
+    userinput = $('#naseljenoMesto').val();
+    pattern = /^[a-zA-Z]+( [a-zA-Z]+)*$/i;
+    if (userinput != "") {
+        if (!pattern.test(userinput)) {
+            $('#greskaMesto').show();
+            retVal = false;
+        } else {
+            $('#greskaMesto').hide();
+            retVal = true;
+        }
+    } else {
+        $('#greskaMesto').show();
+        retVal = false;
+    }
+
+    if (retVal) {
+        $('#greskaUlica').hide();
+        $('#greskaMesto').hide();
+
+        var voznja = {
+            VremeZahteva: Date.now(),
+            StartnaLokacija: `${$('#ulica').val()}`,
+            Broj: `${$('#broj').val()}`,
+            Mesto: `${$('#naseljenoMesto').val()}`,
+            PozivniBroj: `${$('#pozivniBroj').val()}`,
+            ZeljeniAuto: `${$('#tipAutomobila').val()}`,
+            Musterija: `${korisnik.Username}`
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/Musterija/PosaljiZahtev',
+            data: JSON.stringify(voznja),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            complete: function (data) {
+                if (data.status == 200) {
+                    $('#neuspesanZahtev').hide();
+                    $('#zahtevVoznje').html(data.responseText);
+                } else {
+                    $('#neuspesanZahtev').html(data.responseText);
+                }
+            }
+        });
+    }
+
 });

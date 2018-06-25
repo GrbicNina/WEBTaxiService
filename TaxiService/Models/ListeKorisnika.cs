@@ -115,12 +115,48 @@ namespace TaxiService.Models
                 }
             }
         }
+        private void LoadVoznje()
+        {
+            using (TextReader tr = new StreamReader(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\voznje.txt"))
+            {
+                Voznja voznja = null;
+                string podaci = "";
+                int idVoznje = 1;
+                while ((podaci = tr.ReadLine()) != null)
+                {
+                    string[] parsirani = podaci.Split(';');
+                    voznja = new Voznja();
+                    voznja.IDVoznje = idVoznje;
+                    voznja.VremePorudzbine = parsirani[0];
+                    voznja.StartLokacija.Adresa.Ulica = parsirani[1];
+                    voznja.StartLokacija.Adresa.Broj = Int32.Parse(parsirani[2]);
+                    voznja.StartLokacija.Adresa.NaseljenoMesto = parsirani[3];
+                    voznja.StartLokacija.Adresa.PozivniBrojMesta = Int32.Parse(parsirani[4]);
+                    voznja.Status = (Enums.StatusVoznje)System.Enum.Parse(typeof(Enums.StatusVoznje), parsirani[5]);
+                    if(!parsirani[6].Equals(""))
+                    {
+                        voznja.Musterija = ListeKorisnika.Instanca.Musterije.Find(x=>x.Username.Equals(parsirani[6]));
+                    }
+                    if(!parsirani[7].Equals(""))
+                    {
+                        voznja.Dispecer = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(parsirani[7]));
+                    }
+                    voznja.Vozac = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(parsirani[8]));
+                    voznja.EndLokacija.Adresa.Ulica = parsirani[9];
+                    voznja.EndLokacija.Adresa.Broj = Int32.Parse(parsirani[10]);
+                    voznja.EndLokacija.Adresa.NaseljenoMesto = parsirani[11];
+                    voznja.Iznos = double.Parse(parsirani[12]);
+                    ++idVoznje;
+                }
+            }
+        }
 
         public void UcitajSveListe()
         {
             LoadDispecere();
             LoadMusterije();
             LoadVozaci();
+            LoadVoznje();
         }
 
         public Korisnik NadjiKorisnika(string username)
@@ -289,6 +325,68 @@ namespace TaxiService.Models
                         tw.Write(";");
                         tw.Write(item.Automobil.TipAutomobila);
                         if (Vozaci.IndexOf(item) != Vozaci.Count - 1)
+                        {
+                            tw.Write("\n");
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public void UpisiUBazuVoznje()
+        {
+            try
+            {
+                using (TextWriter tw = new StreamWriter(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\voznje.txt"))
+                {
+                    foreach (var item in Voznje)
+                    {
+                        tw.Write(item.VremePorudzbine);
+                        tw.Write(";");
+                        tw.Write(item.StartLokacija.Adresa.Ulica);
+                        tw.Write(";");
+                        tw.Write(item.StartLokacija.Adresa.Broj);
+                        tw.Write(";");
+                        tw.Write(item.StartLokacija.Adresa.NaseljenoMesto);
+                        tw.Write(";");
+                        tw.Write(item.StartLokacija.Adresa.PozivniBrojMesta);
+                        tw.Write(";");
+                        tw.Write(item.ZeljeniTipAutomobila.ToString());
+                        tw.Write(";");
+                        if (item.Musterija == null)
+                        {
+                            tw.Write(";");
+                        }else
+                        {
+                            tw.Write(item.Musterija.Username);
+                            tw.Write(";");
+                        }
+                        if(item.Dispecer == null)
+                        {
+                            tw.Write(";");
+                        }else
+                        {
+                            tw.Write(item.Dispecer.Username);
+                            tw.Write(";");
+                        }
+                        tw.Write(item.Vozac.Username);
+                        tw.Write(";");
+                        tw.Write(item.EndLokacija.Adresa.Ulica);
+                        tw.Write(";");
+                        tw.Write(item.EndLokacija.Adresa.Broj);
+                        tw.Write(";");
+                        tw.Write(item.EndLokacija.Adresa.NaseljenoMesto);
+                        tw.Write(";");
+                        tw.Write(item.EndLokacija.Adresa.PozivniBrojMesta);
+                        tw.Write(";");
+                        tw.Write(item.Iznos);
+                        tw.Write(";");
+                        tw.Write(item.Status);
+                        if (Voznje.IndexOf(item) != Voznje.Count - 1)
                         {
                             tw.Write("\n");
                         }

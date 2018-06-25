@@ -240,5 +240,211 @@ namespace TaxiService.Controllers
                 return response;
             }
         }
+
+        [HttpGet]
+        [Route("GetVoznjaZaIzmenuStatusa")]
+        public HttpResponseMessage GetVoznjaZaIzmenuStatusa(string username)
+        {
+            //string username = HttpContext.Current.Application["ulogovani"].ToString();
+            string usernameUlogovanog = username;
+            Vozac v = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(usernameUlogovanog));
+            string result = "";
+            HttpResponseMessage response = new HttpResponseMessage();
+            if (v.Username != "")
+            {
+                Voznja voznjaVozaca = new Voznja();
+                foreach (var item in ListeKorisnika.Instanca.Voznje)
+                {
+                    if(item.Vozac!= null)
+                    {
+                        if (item.Vozac.Username.Equals(v.Username) && v.Zauzet)
+                        {
+                            voznjaVozaca = item;
+                            break;
+                        }
+                    }
+
+                }
+
+                if (voznjaVozaca.Vozac != null)
+                {
+                    result += String.Format("<table><tr><th>Vreme porudzbine</th><td>{0}</td></tr>", voznjaVozaca.VremePorudzbine);
+                    result += String.Format("<tr><th>Ulica</th><td>{0}</td></tr>", voznjaVozaca.StartLokacija.Adresa.Ulica);
+                    result += String.Format("<tr><th>Broj</th><td>{0}</td></tr>", voznjaVozaca.StartLokacija.Adresa.Broj);
+                    result += String.Format("<tr><th>Mesto</th><td>{0}</td></tr>", voznjaVozaca.StartLokacija.Adresa.NaseljenoMesto);
+                    result += String.Format("<tr><th>Pozivni broj</th><td>{0}</td></tr>", voznjaVozaca.StartLokacija.Adresa.PozivniBrojMesta);
+                    string status = "";
+                    if(voznjaVozaca.Status == Enums.StatusVoznje.Prihvacena)
+                    {
+                        status = "Prihvacena";
+                    }else if(voznjaVozaca.Status == Enums.StatusVoznje.Formirana)
+                    {
+                        status = "Formirana";
+                    }else if(voznjaVozaca.Status == Enums.StatusVoznje.Obradjena)
+                    {
+                        status = "Obradjena";
+                    }
+                    result += String.Format("<tr><th>Trenutni status</th><td>{0}</td></tr>", status);                                     
+                    result += String.Format(@"<tr><th>Novi status</th><td><select id=""izabraniNoviStatus""><option>Uspesna</option><option>Neuspesna</option></select></td></tr></table>");
+                    result += String.Format(@"<button value=""{0}"" id=""promenaStatusaButton"">Potvrdi</button>",voznjaVozaca.IDVoznje);
+
+                    response.Content = new StringContent(result);
+                    response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                    response.StatusCode = HttpStatusCode.OK;
+                    return response;
+
+                } else
+                {
+                    result += "<h4>Trenutno niste angazovani ni na jednoj voznji!<h4>";
+                    response.Content = new StringContent(result);
+                    response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return response;
+                }
+            }
+            else
+            {
+                result += "<h4>Desila se greska prilikom odabira opcije -Promeni status voznje-<h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.Conflict;
+                return response;
+            }
+        }
+        [HttpPost]
+        [Route("IzmeniStatus")]
+        public HttpResponseMessage IzmeniStatus([FromBody]JToken jToken)
+        {
+            string username = jToken.Value<string>("username");
+            int idVoznje = jToken.Value<int>("idVoznje");
+            string status = jToken.Value<string>("status");
+            string result = "";
+            HttpResponseMessage response = new HttpResponseMessage();
+
+            Vozac v = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(username));
+            if(v != null)
+            {
+                Voznja voznja = ListeKorisnika.Instanca.Voznje.Find(x => x.IDVoznje == idVoznje);
+                if(voznja != null)
+                {
+                    Enums.StatusVoznje noviStatus;
+                    if (status.Equals("Uspesna"))
+                    {
+                       // noviStatus = Enums.StatusVoznje.Uspesna;
+                        result += String.Format(@"<table><tr><th>Ulica odredista:</th><td><input id=""ulicaOdredista"" type=""text""/></td></tr>");
+                        result += String.Format(@"<tr><th>Broj odredista:</th><td><input id=""brojOdredista"" type=""number"" min=""1"" max=""1000""/></td></tr>");
+                        result += String.Format(@"<tr><th>Mesto odredista:</th><td><input id=""mestoOdredista"" type=""text""/></td></tr>");
+                        result += String.Format(@"<tr><th>Pozivni broj mesta odredista:</th><td><input id=""pozivniBrojOdredista"" type=""number"" min=""10000"" max=""39000""/></td></tr>");
+                        result += String.Format(@"<tr><th>Cena voznje:</th><td><input id=""cenaVoznje"" type=""number"" min=""100"" max=""100000""/></td></tr></table>");
+                        result += String.Format(@"<button value=""{0}"" id=""potvrdiUspesnoButton"">Potvrdi</button>",voznja.IDVoznje);
+
+                    }
+                    else
+                    {
+                        noviStatus = Enums.StatusVoznje.Neuspesna;
+                        ListeKorisnika.Instanca.Voznje.Remove(voznja);
+                        voznja.Status = noviStatus;                       
+                        voznja.Iznos = 0;
+                        voznja.EndLokacija.Adresa.Ulica = "";
+                        voznja.EndLokacija.Adresa.Broj = 0;
+                        voznja.EndLokacija.Adresa.NaseljenoMesto = "";
+                        voznja.EndLokacija.Adresa.PozivniBrojMesta = 0;
+                        voznja.Vozac.Zauzet = false;
+                        ListeKorisnika.Instanca.Voznje.Add(voznja);
+                        result = "<h4>Uspesno ste izmenili status voznje!</h4>";
+                    }
+
+                    ListeKorisnika.Instanca.Vozaci.Remove(v);
+                    v.Zauzet = false;
+                    ListeKorisnika.Instanca.Vozaci.Add(v);
+
+                    response.Content = new StringContent(result);
+                    response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                    response.StatusCode = HttpStatusCode.OK;
+                    return response;
+                }
+                else
+                {
+                    result += "<h4>Desila se greska prilikom odabira opcije -Promeni status voznje-<h4>";
+                    response.Content = new StringContent(result);
+                    response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                    response.StatusCode = HttpStatusCode.Conflict;
+                    return response;
+                }
+            }else
+            {
+                result += "<h4>Desila se greska prilikom odabira opcije -Promeni status voznje-<h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.Conflict;
+                return response;
+            }
+        }
+        [HttpPost]
+        [Route("UspesnaVoznja")]
+        public HttpResponseMessage UspesnaVoznja([FromBody]JToken jToken)
+        {
+            var username = jToken.Value<string>("username");
+            var idVoznje = jToken.Value<int>("idVoznje");
+            var odredisteUlica = jToken.Value<string>("odredisteUlica");
+            var odredisteBroj = jToken.Value<int>("odredisteBroj");
+            var odredisteMesto = jToken.Value<string>("odredisteMesto");
+            var odredistePozivniBr = jToken.Value<int>("odredistePozivniBr");
+            var cena = jToken.Value<int>("cena");
+
+            string result = "";
+            var response = new HttpResponseMessage();
+
+            Voznja voznja = ListeKorisnika.Instanca.Voznje.Find(x => x.IDVoznje == idVoznje);
+            if(voznja != null)
+            {
+                ListeKorisnika.Instanca.Voznje.Remove(voznja);
+                Voznja temp = voznja;
+                temp.EndLokacija.Adresa.Ulica = odredisteUlica;
+                temp.EndLokacija.Adresa.Broj = odredisteBroj;
+                temp.EndLokacija.Adresa.NaseljenoMesto = odredisteMesto;
+                temp.EndLokacija.Adresa.PozivniBrojMesta = odredistePozivniBr;
+                temp.Status = Enums.StatusVoznje.Uspesna;
+                temp.Iznos = cena;
+                temp.Vozac.Zauzet = false;
+                foreach (var item in ListeKorisnika.Instanca.Musterije)
+                {
+                    if(item.Voznje.Find(x => x.IDVoznje == idVoznje) != null)
+                    {
+                        item.Voznje.Remove(voznja);
+                        item.Voznje.Add(temp);
+                    }
+                }
+                foreach (var item in ListeKorisnika.Instanca.Dispeceri)
+                {
+                    if(item.Voznje.Find(x => x.IDVoznje == idVoznje) != null)
+                    {
+                        item.Voznje.Remove(voznja);
+                        item.Voznje.Add(temp);
+                    }
+                }
+                foreach (var item in ListeKorisnika.Instanca.Vozaci)
+                {
+                    if(item.Voznje.Find(x => x.IDVoznje == idVoznje) != null)
+                    {
+                        item.Voznje.Remove(voznja);
+                        item.Voznje.Add(temp);
+                    }
+                }
+                result = "<h4>Uspesno ste izvrsili svoju voznju!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.OK;
+                return response;
+            }
+            else
+            {
+                result = "<h4>Desila se greska prilikom promene voznje na status Uspesna!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
+        }
     }
 }

@@ -223,11 +223,14 @@ $(document).ready(function () {
             type: 'GET',
             url: '/api/Vozac/VratiVoznjeNaCekanju',
             dataType: 'html',
-            success: function (data) {
-                $('#prihvatVoznje').html(data);
-            },
-            error: function (data) {
-                $('#prihvatVoznje').html(data);
+            complete: function (data) {
+                if (data.status == 200) {
+                    $('#prihvatVoznje').show();
+                    $('#prihvatVoznje').html(data.responseText);
+                } else {
+                    $('#prihvatVoznje').show();
+                    $('#prihvatVoznje').html(data.responseText);
+                }
             }
         });
     });
@@ -281,6 +284,85 @@ $(document).on("click", ".prihvatiVoznjuButtonClass", function () {
         },
         error: function (data) {
             $('#prihvatVoznje').html(data);
+        }
+    });
+});
+
+$(document).on("click", "#menjajStatus", function () {
+    $('#promenaStatusa').hide();
+    var usernameVozaca =  `${korisnik.Username}`;
+    $.ajax({
+        type: 'GET',
+        url: '/api/Vozac/GetVoznjaZaIzmenuStatusa', 
+        data: { username: usernameVozaca},
+        dataType: 'html',
+        complete: function (data) {
+            if (data.status == 200) {
+                $('#promenaStatusa').show();
+                $('#promenaStatusa').html(data.responseText);
+
+            } else {
+                $('#promenaStatusa').show();
+                $('#promenaStatusa').html(data.responseText);
+            }
+        }
+    });
+});
+
+$(document).on("click", "#promenaStatusaButton", function () {
+    $('#promenaStatusa').hide();
+    var voznja =
+        {
+            username: `${korisnik.Username}`,
+            idVoznje: `${$('#promenaStatusaButton').val()}`,
+            status: `${$('#izabraniNoviStatus').val()}`
+        }
+    $.ajax({
+        type: 'POST',
+        url: '/api/Vozac/IzmeniStatus',
+        data: JSON.stringify(voznja),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'html',
+        complete: function (data) {
+            if (data.status == 200) {
+                $('#promenaStatusa').show();
+                $('#promenaStatusa').html(data.responseText);
+
+            } else {
+                $('#promenaStatusa').show();
+                $('#promenaStatusa').html(data.responseText);
+            }
+        }
+    });
+});
+
+$(document).on("click", "#potvrdiUspesnoButton", function () {
+    $('#promenaStatusa').hide();
+    var podaci =
+        {
+            username: `${korisnik.Username}`,
+            idVoznje: `${$('#potvrdiUspesnoButton').val()}`,
+            odredisteUlica: `${$('#ulicaOdredista').val()}`,
+            odredisteBroj: `${$('#brojOdredista').val()}`,
+            odredisteMesto: `${$('#mestoOdredista').val()}`,
+            odredistePozivniBr: `${$('#pozivniBrojOdredista').val()}`,
+            cena: `${$('#cenaVoznje').val()}`
+        }
+    $.ajax({
+        type: 'POST',
+        url: '/api/Vozac/UspesnaVoznja',
+        data: JSON.stringify(podaci),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'html',
+        complete: function (data) {
+            if (data.status == 200) {
+                $('#promenaStatusa').show();
+                $('#promenaStatusa').html(data.responseText);
+
+            } else {
+                $('#promenaStatusa').show();
+                $('#promenaStatusa').html(data.responseText);
+            }
         }
     });
 });

@@ -190,5 +190,5 @@ D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\obj\Debug\TaxiService.c
 D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\obj\Debug\TaxiService.csproj.CopyComplete
 D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\obj\Debug\TaxiService.dll
 D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\obj\Debug\TaxiService.pdb
-D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\obj\Debug\TaxiService.csprojResolveAssemblyReference.cache
 D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\bin\roslyn\System.Collections.Immutable.dll
+D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\obj\Debug\TaxiService.csprojResolveAssemblyReference.cache

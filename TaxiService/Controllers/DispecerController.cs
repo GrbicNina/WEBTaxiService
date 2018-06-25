@@ -224,7 +224,7 @@ namespace TaxiService.Controllers
             else
             {
             }
-            v.Dispecer = usernameUlogovanog;
+            v.Dispecer = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameUlogovanog));
             v.StartLokacija.Adresa.Ulica = lokacijastart;
             v.StartLokacija.Adresa.Broj = (int)broj;
             v.StartLokacija.Adresa.NaseljenoMesto = mesto;
@@ -328,6 +328,7 @@ namespace TaxiService.Controllers
             var usernameVozaca = jToken.Value<string>("Vozac");
             var idVoznje = jToken.Value<double>("IDVoznje");
             var response = new HttpResponseMessage();
+            var usernameUlogovanog = HttpContext.Current.Application["ulogovani"].ToString();
             string result = "";
             if (HttpContext.Current.Application["voznjeNaCekanju"] == null)
             {
@@ -351,6 +352,7 @@ namespace TaxiService.Controllers
                         ListeKorisnika.Instanca.Vozaci.Remove(dodeljen);
                         dodeljen.Zauzet = true;
                         temp.Vozac = dodeljen;
+                        temp.Dispecer = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameUlogovanog));
                         temp.Status = Enums.StatusVoznje.Obradjena;
                         ListeKorisnika.Instanca.Vozaci.Add(dodeljen);
                         ListeKorisnika.Instanca.Voznje.Add(temp);
