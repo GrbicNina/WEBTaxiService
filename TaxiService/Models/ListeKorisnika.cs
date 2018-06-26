@@ -140,11 +140,19 @@ namespace TaxiService.Models
                     {
                         m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(parsirani[6]));
                         voznja.Musterija = m.Username;
+                    }else
+                    {
+                        voznja.Musterija = "";
                     }
+
                     if(!parsirani[7].Equals(""))
                     {
                         d = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(parsirani[7]));
                         voznja.Dispecer = d.Username;
+                    }
+                    else
+                    {
+                        voznja.Dispecer = "";
                     }
                     v = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(parsirani[8]));
                     voznja.Vozac = new Vozac();
@@ -390,7 +398,7 @@ namespace TaxiService.Models
                         tw.Write(";");
                         tw.Write(item.ZeljeniTipAutomobila.ToString());
                         tw.Write(";");
-                        if (item.Musterija == null)
+                        if (item.Musterija == "")
                         {
                             tw.Write(";");
                         }else
@@ -398,7 +406,7 @@ namespace TaxiService.Models
                             tw.Write(item.Musterija);
                             tw.Write(";");
                         }
-                        if(item.Dispecer == null)
+                        if(item.Dispecer == "")
                         {
                             tw.Write(";");
                         }else

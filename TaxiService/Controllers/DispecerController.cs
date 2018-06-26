@@ -105,6 +105,90 @@ namespace TaxiService.Controllers
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
+        [HttpGet]
+        [Route("VratiVoznjePocetna/{username}")]
+        public HttpResponseMessage VratiVoznjeNaCekanju(string username)
+        {
+            var response = new HttpResponseMessage();
+            string result = "";
+            List<Voznja> voznjeDispecera = new List<Voznja>();
+            foreach (var item in ListeKorisnika.Instanca.Voznje)
+            {
+                if(item.Dispecer != null)
+                {
+                    if (item.Dispecer.Equals(username))
+                    {
+                        voznjeDispecera.Add(item);
+                    }
+                }
+
+            }
+            if (voznjeDispecera.Count != 0)
+            {
+                result += "<h4>Voznje na kojima ste angazovani</h4>";
+                result += String.Format(@"<table align = ""center"" border = ""1"">");
+                result += "<tr><th>Vreme porudzbine:</th>";
+                result += "<th>[START]Ulica:</th>";
+                result += "<th>[START]Broj:</th>";
+                result += "<th>[START]Mesto:</th>";
+                result += "<th>[START]Pozivni broj mesta:</th>";
+                result += "<th>Zeljeni tip vozila:</th>";
+                result += "<th>Status voznje</th>";
+                result += "<th>[END]Ulica</th>";
+                result += "<th>[END]Broj</th>";
+                result += "<th>[END]Mesto</th>";
+                result += "<th>[END]Pozivni broj mesta:</th>";
+                result += "<th>Iznos voznje</th><tr>";
+                foreach (var item in voznjeDispecera)
+                {
+                    if (item.Status == Enums.StatusVoznje.Uspesna || item.Status == Enums.StatusVoznje.Neuspesna || item.Status == Enums.StatusVoznje.Otkazana)
+                    {
+                        result += String.Format("<tr><td>{0}</td>", item.VremePorudzbine);
+                        result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.Ulica);
+                        result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.Broj);
+                        result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.NaseljenoMesto);
+                        result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.PozivniBrojMesta);
+                        result += String.Format("<td>{0}</td>", item.ZeljeniTipAutomobila);
+                        result += String.Format("<td>{0}</td>", item.Status);
+                        result += String.Format("<td>{0}</td>", item.EndLokacija.Adresa.Ulica);
+                        result += String.Format("<td>{0}</td>", item.EndLokacija.Adresa.Broj);
+                        result += String.Format("<td>{0}</td>", item.EndLokacija.Adresa.NaseljenoMesto);
+                        result += String.Format("<td>{0}</td>", item.EndLokacija.Adresa.PozivniBrojMesta);
+                        result += String.Format("<td>{0}</td></tr>", item.Iznos);
+                    }
+                    else
+                    {
+                        result += String.Format("<tr><td>{0}</td>", item.VremePorudzbine);
+                        result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.Ulica);
+                        result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.Broj);
+                        result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.NaseljenoMesto);
+                        result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.PozivniBrojMesta);
+                        result += String.Format("<td>{0}</td>", item.ZeljeniTipAutomobila);
+                        result += String.Format("<td>{0}</td>", item.Status);
+                        result += String.Format("<td> </td>");
+                        result += String.Format("<td> </td>");
+                        result += String.Format("<td> </td>");
+                        result += String.Format("<td> </td>");
+                        result += String.Format("<td> </td></tr>");
+                    }
+
+                }
+                result += "</table>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.OK;
+                return response;
+            }
+            else
+            {
+                result += "<h4>Niste bili angazovani ni na jednoj voznji!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
+        }
+
         [Route("DodajVozaca")]
         public HttpResponseMessage DodajVozaca([FromBody]JToken jToken)
         {

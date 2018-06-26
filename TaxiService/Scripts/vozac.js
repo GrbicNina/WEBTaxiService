@@ -360,3 +360,19 @@ $(document).on("click", "#potvrdiUspesnoButton", function () {
         }
     });
 });
+
+$(document).on("click", "#pocetnaStranica", function () {
+    var username = korisnik.Username;
+    $.ajax({
+        method: "GET",
+        url: "/api/Vozac/VratiVoznjePocetna/" + username,
+        dataType: "html",
+        complete: function (data) {
+            if (data.status == 200) {
+                $("#pocetna").html(data.responseText);
+            } else {
+                $("#pocetna").html(data.responseText);
+            }
+        }
+    });
+});
