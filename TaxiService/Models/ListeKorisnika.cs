@@ -155,14 +155,31 @@ namespace TaxiService.Models
                         voznja.Dispecer = "";
                     }
                     v = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(parsirani[8]));
-                    voznja.Vozac = new Vozac();
-                    voznja.Vozac.Username = v.Username;
+                    if(v != null)
+                    {
+                        voznja.Vozac.Username = v.Username;
+                    }
+
                     voznja.EndLokacija.Adresa.Ulica = parsirani[9];
                     voznja.EndLokacija.Adresa.Broj = Int32.Parse(parsirani[10]);
                     voznja.EndLokacija.Adresa.NaseljenoMesto = parsirani[11];
                     voznja.EndLokacija.Adresa.PozivniBrojMesta = Int32.Parse(parsirani[12]);
                     voznja.Iznos = double.Parse(parsirani[13]);
                     voznja.Status = (Enums.StatusVoznje)System.Enum.Parse(typeof(Enums.StatusVoznje), parsirani[14]);
+                    if(parsirani[15] != "")
+                    {
+                        voznja.Komentar.DatumObjave = parsirani[15];
+                        voznja.Komentar.Opis = parsirani[16];
+                        voznja.Komentar.OcenaVoznje = Int32.Parse(parsirani[17]);
+                        voznja.Komentar.Korisnik = parsirani[18];
+                    }
+                    else {
+                        voznja.Komentar.DatumObjave = "";
+                        voznja.Komentar.Opis = "";
+                        voznja.Komentar.OcenaVoznje = 0;
+                        voznja.Komentar.Korisnik = "";
+                    }
+
                     if (m != null)
                     {
                         ListeKorisnika.Instanca.Musterije.Remove(m);
@@ -426,14 +443,37 @@ namespace TaxiService.Models
                         tw.Write(";");
                         tw.Write(item.Iznos);
                         tw.Write(";");
-                        tw.Write(item.Status);
+                        tw.Write(item.Status);                        
+                        tw.Write(";");
+                        if (item.Komentar!=null)
+                        {
+                            if(item.Komentar.DatumObjave != "")
+                            {
+                                tw.Write(item.Komentar.DatumObjave);
+                                tw.Write(";");
+                                tw.Write(item.Komentar.Opis);
+                                tw.Write(";");
+                                tw.Write(item.Komentar.OcenaVoznje);
+                                tw.Write(";");
+                                tw.Write(item.Komentar.Korisnik);
+                            }                      
+                        }else
+                        {
+                        tw.Write("");
+                        tw.Write(";");
+                        tw.Write("");
+                        tw.Write(";");
+                        tw.Write("");
+                        tw.Write(";");
+                        tw.Write("");
+                        }
+                       
                         if (Voznje.IndexOf(item) != Voznje.Count - 1)
                         {
                             tw.Write("\n");
                         }
                     }
-                }
-           
+                }           
         }
     }
 }

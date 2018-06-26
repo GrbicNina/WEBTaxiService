@@ -13,6 +13,7 @@ namespace TaxiService.Models
             StartLokacija = new Lokacija();
             EndLokacija = new Lokacija();
             Vozac = new Vozac();
+            Komentar = new Komentar();
         }
         public string VremePorudzbine { get; set; }
         public Lokacija StartLokacija { get; set; }
@@ -23,7 +24,7 @@ namespace TaxiService.Models
         public Lokacija EndLokacija { get; set; }
         public double Iznos { get; set; }
         public StatusVoznje Status { get; set; }
-        public string Komentar { get; set; }
+        public Komentar Komentar { get; set; }
         public int IDVoznje { get; set; }
     }
 }

@@ -1,5 +1,1 @@
-Tue, 26 Jun 2018 18:28:48 GMT;ewre;1;wrwer;10000;PutnickiAutomobil;najna;nino;brzy;;0;;0;0;Neuspesna
-Tue, 26 Jun 2018 18:35:56 GMT;sdfsdfs;2;fsdfsd;10002;KombiVozilo;najna;;brzy;hfhgf;1;hgfhgf;10002;101;Uspesna
-Tue, 26 Jun 2018 20:10:39 GMT;sadds;1;dasd;10001;PutnickiAutomobil;najna;;brzy;;0;;0;0;Neuspesna
-Tue, 26 Jun 2018 20:14:18 GMT;trytry;1;ytr;10000;PutnickiAutomobil;najna;nino;brzy;;0;;0;0;Neuspesna
-Tue, 26 Jun 2018 20:18:16 GMT;hgfh;1;fghg;10001;PutnickiAutomobil;najna;nino;brzy;;0;;0;0;Neuspesna
+Wed, 27 Jun 2018 01:26:48 GMT;Kralja Petra;15;Cortanovci;21500;PutnickiAutomobil;najna;;;;0;;0;0;Otkazana;Wed, 27 Jun 2018 01:27:27 GMT;Dugo sam cekao na voznju..;1;najna

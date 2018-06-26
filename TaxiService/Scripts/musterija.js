@@ -304,7 +304,6 @@ $(document).on("click","#izmeniVoznjuButton",function () {
 
 $(document).on("click",".izmeni_buttonClass",function () {
     $("#prikazVoznji").hide();
-    $("#izmenaVoznje").show();
     idVoznje = `${$(this).val()}`;
     var paket = korisnik.Username.concat('_');
     paket = paket.concat(idVoznje.toString());
@@ -385,4 +384,54 @@ $(document).on("click","#zahtevVoznjeButton", function () {
         });
     }
 
+});
+
+
+$(document).on("click", ".odustani_buttonClass", function () {
+
+    idVoznje = `${$(this).val()}`;
+    var IDVoznje = idVoznje ;
+
+    $.ajax({
+        method: "GET",
+        url: "/api/Musterija/OtkaziVoznju/" + IDVoznje,
+        dataType: "html",
+        complete: function (data) {
+            if (data.status == 200) {
+                $("#prikazVoznji").html(data.responseText);
+                $(':button').not('#komentarisi :button').attr('disabled', true);
+            } else {
+                $("#prikazVoznji").html(data.responseText);
+            }
+        }
+    });
+});
+
+$(document).on("click", "#komentarisi", function () {
+
+    idVoznje = `${$(this).val()}`;
+
+    var komentar = {
+        IDVoznje: idVoznje,
+        OpisKomentara: `${$('#komentarOtkaz').val()}`,
+        KorisnikUsername: korisnik.Username,
+        Ocena: `${$('#ocena').val()}`
+    };
+
+    $.ajax({
+        method: "POST",
+        url: "/api/Musterija/OstaviKomentarOtkaz",
+        data: JSON.stringify(komentar),
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        complete: function (data) {
+            if (data.status == 200) {
+                $("#prikazVoznji").html(data.responseText);
+                $(':button').not('#komentarisi :button').attr('disabled', false);
+                $('#komentarisi').attr('disabled', false);
+            } else {
+                $("#prikazVoznji").html(data.responseText);
+            }
+        }
+    });
 });

@@ -177,8 +177,8 @@ namespace TaxiService.Controllers
             var response = new HttpResponseMessage();
             if (ulogovan.Voznje.Count > 0)
             {
-                result += String.Format(@"<h3>Vase voznje:</h3><table border=""1"" id=""tabelaVoznji""><tr><th> Datum i vreme narudzbe </th><th> Ulica </th>" +
-                    "<th> Broj </th><th> Grad </th><th> Pozivni broj </th><th> Zeljeni tip vozila </th><th> Iznos </th><th> Status voznje </th></tr>");
+                result += String.Format(@"<h3>Vase voznje:</h3><table border=""1"" id=""tabelaVoznji""><tr><th> Datum i vreme narudzbe </th><th>[START]Ulica </th>" +
+                    "<th>[START]Broj </th><th>[START]Grad </th><th>[START]Pozivni broj </th><th> Zeljeni tip vozila </th><th> Iznos </th><th> Status voznje </th></tr>");
                 foreach (var item in ulogovan.Voznje)
                 {
                     result += String.Format(@"<tr><td>{0}</td>", item.VremePorudzbine);
@@ -318,10 +318,83 @@ namespace TaxiService.Controllers
                 result += "<h4>Desila se greska prilikom izmene voznje!</h4>";
                 response.Content = new StringContent(result);
                 response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
-                response.StatusCode = HttpStatusCode.OK;
+                response.StatusCode = HttpStatusCode.BadRequest;
                 return response;
             }
         }
 
+        [HttpGet]
+        [Route("OtkaziVoznju/{IDVoznje}")]
+        public HttpResponseMessage OtkaziVoznju(int IDVoznje)
+        {
+
+            string result = "";
+            var response = new HttpResponseMessage();
+            Voznja v = ListeKorisnika.Instanca.Voznje.Find(x => x.IDVoznje == IDVoznje);
+            if(v != null)
+            {
+                result += String.Format(@"<div class=""commentSection""><h3>Ostavljanje komentara je obavezno</h3>");
+                result += String.Format(@"<textarea id=""komentarOtkaz"" rows=""4"" cols=""50"" placeholder=""Unesite komentar...""></textarea></br>");
+                result += String.Format(@"<label>Ocena</label><select id=""ocena""><option value=""1"">1</option><option value=""2"">2</option><option value=""3"">3</option><option value=""4"">4</option><option value=""5"">5</option></select>");
+                result += String.Format(@"<button id=""komentarisi"" value=""{0}"">Ostavi komentar</button></div>",v.IDVoznje);
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.OK;
+                return response;
+            }
+            else
+            {
+                result += "<h4>Desila se greska prilikom otkazivanja!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
+        }
+        [HttpPost]
+        [Route("OstaviKomentarOtkaz")]
+        public HttpResponseMessage OstaviKomentarOtkaz([FromBody]JToken jToken)
+        {
+            var usernameKorisnika = jToken.Value<string>("KorisnikUsername");
+            var idVoznje = jToken.Value<int>("IDVoznje");
+            var opisKomentara = jToken.Value<string>("OpisKomentara");
+            var ocena = jToken.Value<int>("Ocena");
+            opisKomentara = opisKomentara.Replace("\n", "");
+
+            string result = "";
+            var response = new HttpResponseMessage();
+
+            Musterija m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(usernameKorisnika));
+            Voznja v = ListeKorisnika.Instanca.Voznje.Find(x => x.IDVoznje == idVoznje);
+            if(m != null && v != null)
+            {
+                v.Komentar.IDVoznje = idVoznje;
+                v.Komentar.Opis = opisKomentara;
+                v.Komentar.OcenaVoznje = ocena;
+                v.Komentar.DatumObjave = DateTime.Now.ToString("R");
+                v.Komentar.Korisnik = usernameKorisnika;
+                v.Status = Enums.StatusVoznje.Otkazana;
+                ListeKorisnika.Instanca.UpisiUBazuVoznje();
+
+                List<Voznja> naCekanju = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
+                naCekanju.Remove(naCekanju.Find(x => x.IDVoznje == idVoznje));
+                HttpContext.Current.Application["voznjeNaCekanju"] = naCekanju;
+
+                result += "<h4>Uspesno ste otkazali voznju i ostavili komentar!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.OK;
+                return response;
+
+            }
+            else
+            {
+                result += "<h4>Desila se greska prilikom ostavljanja komentara!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
+        }
     }
 }
