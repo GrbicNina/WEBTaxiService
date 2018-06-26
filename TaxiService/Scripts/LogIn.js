@@ -34,24 +34,25 @@ $(document).ready(function () {
             data: JSON.stringify(korisnik),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json'
-        }).done(function (data) {
+        }).complete(function (data) {
             if (data != null) {
                 $('#greskaLogovanja').hide();
-                sessionStorage.setItem('korisnik', JSON.stringify(data));
-                if (data.Uloga == 0)
-                {
+                sessionStorage.setItem('korisnik', data.responseJSON);
+                ulogovan = JSON.parse(data.responseJSON);
+                if (ulogovan.Uloga == 0) {
                     loadMusterije();
                 }
-                else if (data.Uloga == 1)
-                {
+                else if (ulogovan.Uloga== 1) {
                     loadDispecere();
                 }
-                else if (data.Uloga == 2)
-                {
+                else if (ulogovan.Uloga == 2) {
                     loadVozace();
                 }
             } else {
-                $('#greskaLogovanja').show();
+                if (data.status == 409) {
+                    $('#greskaLogovanja').html(data.textResponse);
+                }
+                $('#greskaLogovanja').html(data.textResponse);
             }
         });
     });

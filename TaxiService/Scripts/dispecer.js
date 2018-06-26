@@ -405,7 +405,8 @@ $(document).ready(function () {
             Broj: `${$('#broj').val()}`,
             NaseljenoMesto: `${$('#naseljenoMesto').val()}`,
             PozivniBroj: `${$('#pozivniBroj').val()}`,
-            TipVozila: `${$('#tipAutomobila').val()}`
+            TipVozila: `${$('#tipAutomobila').val()}`,
+            Username: korisnik.Username
         };
         $.ajax({
             type: 'POST',
@@ -429,35 +430,19 @@ $(document).ready(function () {
     });
     
     $("#obradaVoznje").click(function () {
-        $('#tabelaObrade').empty();
-    $.ajax({
-        method: "GET",
-        url: "/api/Dispecer/GetVoznje",
-        success: function (data, status) {
-            var i;
-            var tip;
-            
-            for (i = 0; i < data.length; i++) {
-
-                if (getStatusVoznje(data[i].Status) === "Kreirana") {
-                    var txt1 = $("<td></td>").text(data[i].VremePorudzbine);
-                    var txt2 = $("<td></td>").text(data[i].StartLokacija.Adresa.Ulica);
-                    var txt3 = $("<td></td>").text(data[i].StartLokacija.Adresa.Broj);
-                    var txt4 = $("<td></td>").text(data[i].StartLokacija.Adresa.NaseljenoMesto);
-                    var txt5 = $("<td></td>").text(data[i].StartLokacija.Adresa.PozivniBrojMesta);
-                    if (data[i].ZeljeniTipAutomobila == 0) {
-                        tip = "Putnicki Automobil";
-                    } else {
-                        tip = "Kombi Vozilo";
-                    }
-                    var txt6 = $("<td></td>").text(tip);
-                    var txt7 = $("<td></td>").text(data[i].Iznos);
-                    var txt8 = $("<td></td>").text(getStatusVoznje(data[i].Status));
-                    var txt9 = $("<button>Obradi</button>").attr({ "value": data[i].IDVoznje, "class": "obradi_buttonClass" });
-                    $("#tabelaObrade").append("<tr>", txt1, txt2, txt3, txt4, txt5, txt6, txt7, txt8, txt9, "</tr>");
-                }                             
+        
+        $.ajax({
+            method: "GET",
+            url: "/api/Dispecer/GetVoznjeZaObradu",
+            dataType: 'html',
+            complete: function (data) {
+                if (data.status == 200) {
+                    $("#obradiVoznju").html(data.responseText);
+                }
+                else {
+                    $("#obradiVoznju").html(data.responseText);
+                }
             }
-        }
         });
     });
 
@@ -487,7 +472,8 @@ $(document).on("click", ".obradi_buttonClass", function () {
 $(document).on('click', '#buttonObradiVoznju', function () {
     var voznja = {
         Vozac: `${$('#odabraniVozac').val()}`,
-        IDVoznje: `${idVoznje}` 
+        IDVoznje: `${idVoznje}`,
+        Dispecer: korisnik.Username
     };
     $.ajax({
         type: 'POST',

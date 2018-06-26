@@ -139,18 +139,18 @@ namespace TaxiService.Controllers
             }
 
             Voznja v = new Voznja();
-            v.Musterija = new Musterija();
-            v.Musterija = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(musterija));         
+            Musterija m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(musterija));
+            v.Musterija = m.Username;
             v.VremePorudzbine = DateTime.Now.ToString("R");
-            v.ZeljeniTipAutomobila = (autoTip.Equals("Putnicki Automobil") ? Enums.TipAutomobila.PutnickiAutomobil : Enums.TipAutomobila.KombiVozilo);
+            v.ZeljeniTipAutomobila = (autoTip.Equals("PutnickiAutomobil") ? Enums.TipAutomobila.PutnickiAutomobil : Enums.TipAutomobila.KombiVozilo);
             v.StartLokacija.Adresa.Ulica = lokacijastart;
             v.StartLokacija.Adresa.Broj = (int)broj;
             v.StartLokacija.Adresa.NaseljenoMesto = mesto;
             v.StartLokacija.Adresa.PozivniBrojMesta = (int)pozivniBroj;
-            v.IDVoznje = (ListeKorisnika.Instanca.Voznje.Count + 1);
+            v.IDVoznje = ListeKorisnika.Instanca.Voznje.Count + 1;
             v.Status = Enums.StatusVoznje.Kreirana;
             ListeKorisnika.Instanca.Voznje.Add(v);
-            Musterija m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(musterija));
+            //Musterija m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(musterija));
             ListeKorisnika.Instanca.Musterije.Remove(m);
             m.Voznje.Add(v);
             ListeKorisnika.Instanca.Musterije.Add(m);
@@ -212,10 +212,14 @@ namespace TaxiService.Controllers
         }
 
         [HttpGet]
-        [Route("GetVoznja")]
-        public HttpResponseMessage GetVoznja(int id)
+        [Route("GetVoznja/{paket}")]
+        public HttpResponseMessage GetVoznja(string paket)
         {
-            var usernameUlogovanog = HttpContext.Current.Application["ulogovani"].ToString();
+            //List<Korisnik> ulogovani = (List<Korisnik>)HttpContext.Current.Application["ulogovani"];
+            //var usernameUlogovanog = HttpContext.Current.Application["ulogovani"].ToString();
+            string[] parsiraj = paket.Split('_');
+            var usernameUlogovanog = parsiraj[0];
+            int id = Int32.Parse(parsiraj[1]);
             Musterija ulogovan = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(usernameUlogovanog));
             string result = "";
             var response = new HttpResponseMessage();
@@ -228,7 +232,7 @@ namespace TaxiService.Controllers
                     result += String.Format(@"<tr><th> Broj </th><td><input type = ""number"" id = ""brojIzmenaV"" min = ""1"" max = ""1000"" value=""{0}""/></td></tr>",v.StartLokacija.Adresa.Broj);
                     result += String.Format(@"<tr><th> Grad </th><td><input type = ""text"" id = ""gradIzmenaV"" value=""{0}""/></td></tr>", v.StartLokacija.Adresa.NaseljenoMesto);
                     result += String.Format(@"<tr><th> Pozivni broj mesta </th><td><input type = ""number"" id = ""pozivniBrV"" min = ""10000"" max = ""39000"" value=""{0}""/></td></tr>",v.StartLokacija.Adresa.PozivniBrojMesta);
-                    result += String.Format(@"<tr><th> Zeljeni tip vozila </th><td><select id = ""selectVoziloV"" ><option id = ""kom""> Kombi vozilo </option><option id = ""au""> Putnicki automobil </option><option id = ""prazno"" style = ""display:none""></select></td></tr> ");
+                    result += String.Format(@"<tr><th> Zeljeni tip vozila </th><td><select id = ""selectVoziloV"" ><option id = ""kom""> KombiVozilo </option><option id = ""au""> PutnickiAutomobil </option><option id = ""prazno"" style = ""display:none""></select></td></tr> ");
                     result += String.Format(@"<tr><td colspan = ""2""><button id = ""izmeniVoznjuButton""> Sacuvaj izmene </button></td></tr></table>");
                     response.Content = new StringContent(result);
                     response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
@@ -263,13 +267,12 @@ namespace TaxiService.Controllers
             var pozivniBroj = jToken.Value<double>("PozivBr");
             var tipVozila = jToken.Value<string>("TipVozila");
             var idVoznje = jToken.Value<double>("IndeksVoznje");
-            var usernameUlogovanog = HttpContext.Current.Application["ulogovani"].ToString();
+            var usernameUlogovanog = jToken.Value<string>("ulogovani");
 
             string result = "";
             var response = new HttpResponseMessage();
 
-            Korisnik ulogovan = ListeKorisnika.Instanca.NadjiKorisnika(usernameUlogovanog);
-            ulogovan = (Musterija)ulogovan;
+            Musterija ulogovan = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(usernameUlogovanog));
             if (ulogovan != null)
             {
                 Voznja v = ulogovan.Voznje.Find(x => x.IDVoznje==idVoznje);
@@ -277,7 +280,7 @@ namespace TaxiService.Controllers
                 {
                     ulogovan.Voznje.Remove(v);
                     Voznja izmenjeno = new Voznja();
-                    izmenjeno.Musterija = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(usernameUlogovanog));
+                    izmenjeno.Musterija = ulogovan.Username;
                     izmenjeno.StartLokacija.Adresa.Ulica = ulica;
                     izmenjeno.StartLokacija.Adresa.Broj = (int)broj;
                     izmenjeno.StartLokacija.Adresa.NaseljenoMesto = mesto;
@@ -285,8 +288,10 @@ namespace TaxiService.Controllers
                     izmenjeno.IDVoznje = (int)idVoznje;
                     izmenjeno.VremePorudzbine = DateTime.Now.ToString("R");
                     izmenjeno.Status = Enums.StatusVoznje.Kreirana;
-                    izmenjeno.ZeljeniTipAutomobila = (tipVozila.Equals("Kombi Vozilo") ? Enums.TipAutomobila.KombiVozilo : Enums.TipAutomobila.PutnickiAutomobil);
+                    izmenjeno.ZeljeniTipAutomobila = (tipVozila.Equals("KombiVozilo") ? Enums.TipAutomobila.KombiVozilo : Enums.TipAutomobila.PutnickiAutomobil);
                     ulogovan.Voznje.Add(izmenjeno);
+                    ListeKorisnika.Instanca.Voznje.Remove(v);
+                    ListeKorisnika.Instanca.Voznje.Add(izmenjeno);
 
                     result += "<h4>Uspesno ste izmenili voznju!</h4>";
                     response.Content = new StringContent(result);

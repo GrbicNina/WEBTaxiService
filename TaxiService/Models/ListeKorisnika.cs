@@ -120,6 +120,9 @@ namespace TaxiService.Models
             using (TextReader tr = new StreamReader(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\voznje.txt"))
             {
                 Voznja voznja = null;
+                Musterija m = null;
+                Dispecer d = null;
+                Vozac v = null;
                 string podaci = "";
                 int idVoznje = 1;
                 while ((podaci = tr.ReadLine()) != null)
@@ -132,20 +135,51 @@ namespace TaxiService.Models
                     voznja.StartLokacija.Adresa.Broj = Int32.Parse(parsirani[2]);
                     voznja.StartLokacija.Adresa.NaseljenoMesto = parsirani[3];
                     voznja.StartLokacija.Adresa.PozivniBrojMesta = Int32.Parse(parsirani[4]);
-                    voznja.Status = (Enums.StatusVoznje)System.Enum.Parse(typeof(Enums.StatusVoznje), parsirani[5]);
+                    voznja.ZeljeniTipAutomobila = (Enums.TipAutomobila)System.Enum.Parse(typeof(Enums.TipAutomobila), parsirani[5]);
                     if(!parsirani[6].Equals(""))
                     {
-                        voznja.Musterija = ListeKorisnika.Instanca.Musterije.Find(x=>x.Username.Equals(parsirani[6]));
+                        m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(parsirani[6]));
+                        voznja.Musterija = m.Username;
                     }
                     if(!parsirani[7].Equals(""))
                     {
-                        voznja.Dispecer = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(parsirani[7]));
+                        d = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(parsirani[7]));
+                        voznja.Dispecer = d.Username;
                     }
-                    voznja.Vozac = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(parsirani[8]));
+                    v = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(parsirani[8]));
+                    voznja.Vozac = new Vozac();
+                    voznja.Vozac.Username = v.Username;
                     voznja.EndLokacija.Adresa.Ulica = parsirani[9];
                     voznja.EndLokacija.Adresa.Broj = Int32.Parse(parsirani[10]);
                     voznja.EndLokacija.Adresa.NaseljenoMesto = parsirani[11];
-                    voznja.Iznos = double.Parse(parsirani[12]);
+                    voznja.EndLokacija.Adresa.PozivniBrojMesta = Int32.Parse(parsirani[12]);
+                    voznja.Iznos = double.Parse(parsirani[13]);
+                    voznja.Status = (Enums.StatusVoznje)System.Enum.Parse(typeof(Enums.StatusVoznje), parsirani[14]);
+                    if (m != null)
+                    {
+                        ListeKorisnika.Instanca.Musterije.Remove(m);
+                        m.Voznje.Add(voznja);
+                        ListeKorisnika.Instanca.Musterije.Add(m);
+                    }
+                    if(d != null)
+                    {
+                        ListeKorisnika.Instanca.Dispeceri.Remove(d);
+                        d.Voznje.Add(voznja);
+                        ListeKorisnika.Instanca.Dispeceri.Add(d);
+                    }
+                    if(v != null)
+                    {
+                        ListeKorisnika.Instanca.Vozaci.Remove(v);
+                        if(voznja.Status == StatusVoznje.Obradjena || voznja.Status == StatusVoznje.Prihvacena || voznja.Status == StatusVoznje.Formirana)
+                        {
+                            voznja.Vozac.Zauzet = true;
+                            v.Zauzet = true;
+                        }
+                        v.Voznje.Add(voznja);
+                        ListeKorisnika.Instanca.Vozaci.Add(v);     
+                    }
+                    Voznje.Add(voznja);
+
                     ++idVoznje;
                 }
             }
@@ -339,8 +373,7 @@ namespace TaxiService.Models
 
         public void UpisiUBazuVoznje()
         {
-            try
-            {
+
                 using (TextWriter tw = new StreamWriter(@"D:\TaxiService\WEBTaxiService\WEBTaxiService\TaxiService\App_Data\voznje.txt"))
                 {
                     foreach (var item in Voznje)
@@ -362,7 +395,7 @@ namespace TaxiService.Models
                             tw.Write(";");
                         }else
                         {
-                            tw.Write(item.Musterija.Username);
+                            tw.Write(item.Musterija);
                             tw.Write(";");
                         }
                         if(item.Dispecer == null)
@@ -370,7 +403,7 @@ namespace TaxiService.Models
                             tw.Write(";");
                         }else
                         {
-                            tw.Write(item.Dispecer.Username);
+                            tw.Write(item.Dispecer);
                             tw.Write(";");
                         }
                         tw.Write(item.Vozac.Username);
@@ -392,11 +425,7 @@ namespace TaxiService.Models
                         }
                     }
                 }
-            }
-            catch
-            {
-
-            }
+           
         }
     }
 }

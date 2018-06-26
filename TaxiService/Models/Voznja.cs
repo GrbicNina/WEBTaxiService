@@ -12,12 +12,13 @@ namespace TaxiService.Models
         {
             StartLokacija = new Lokacija();
             EndLokacija = new Lokacija();
+            Vozac = new Vozac();
         }
         public string VremePorudzbine { get; set; }
         public Lokacija StartLokacija { get; set; }
         public TipAutomobila ZeljeniTipAutomobila { get; set; }
-        public Musterija Musterija { get; set; }
-        public Dispecer Dispecer { get; set; }
+        public string Musterija { get; set; }
+        public string Dispecer { get; set; }
         public Vozac Vozac { get; set; }
         public Lokacija EndLokacija { get; set; }
         public double Iznos { get; set; }

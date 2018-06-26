@@ -121,7 +121,7 @@ namespace TaxiService.Controllers
             else
             {
                 List<Voznja> voznjeCekaju = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
-                result += String.Format(@"<table align = ""center"" border = ""2""><tr><th>Vreme porudzbine:</th></tr>");
+                result += String.Format(@"<table align = ""center"" border = ""1"">");
                 result += "<tr><th>Vreme porudzbine:</th>";
                 result += "<th>Ulica:</th>";
                 result += "<th>Broj:</th>";
@@ -159,11 +159,13 @@ namespace TaxiService.Controllers
                 {
                     List<Voznja> voznjeCekaju = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
                     voznjeCekaju.Remove(v);
+                    HttpContext.Current.Application["voznjeNaCekanju"] = voznjeCekaju;
 
                     ListeKorisnika.Instanca.Voznje.Remove(v);
                     v.Status = Enums.StatusVoznje.Prihvacena;
                     temp.Zauzet = true;
-                    v.Vozac = temp;
+                    v.Vozac.Username = temp.Username;
+                    v.Vozac.Zauzet = true;
                     ListeKorisnika.Instanca.Voznje.Add(v);
                 
                     ListeKorisnika.Instanca.Vozaci.Remove(ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(username)));
@@ -255,9 +257,9 @@ namespace TaxiService.Controllers
                 Voznja voznjaVozaca = new Voznja();
                 foreach (var item in ListeKorisnika.Instanca.Voznje)
                 {
-                    if(item.Vozac!= null)
+                    if(item.Vozac.Username != null)
                     {
-                        if (item.Vozac.Username.Equals(v.Username) && v.Zauzet)
+                        if (item.Vozac.Username.Equals(v.Username) && item.Vozac.Zauzet)
                         {
                             voznjaVozaca = item;
                             break;
@@ -266,7 +268,7 @@ namespace TaxiService.Controllers
 
                 }
 
-                if (voznjaVozaca.Vozac != null)
+                if (voznjaVozaca.Vozac.Username != null)
                 {
                     result += String.Format("<table><tr><th>Vreme porudzbine</th><td>{0}</td></tr>", voznjaVozaca.VremePorudzbine);
                     result += String.Format("<tr><th>Ulica</th><td>{0}</td></tr>", voznjaVozaca.StartLokacija.Adresa.Ulica);
@@ -330,7 +332,6 @@ namespace TaxiService.Controllers
                     Enums.StatusVoznje noviStatus;
                     if (status.Equals("Uspesna"))
                     {
-                       // noviStatus = Enums.StatusVoznje.Uspesna;
                         result += String.Format(@"<table><tr><th>Ulica odredista:</th><td><input id=""ulicaOdredista"" type=""text""/></td></tr>");
                         result += String.Format(@"<tr><th>Broj odredista:</th><td><input id=""brojOdredista"" type=""number"" min=""1"" max=""1000""/></td></tr>");
                         result += String.Format(@"<tr><th>Mesto odredista:</th><td><input id=""mestoOdredista"" type=""text""/></td></tr>");
@@ -341,6 +342,10 @@ namespace TaxiService.Controllers
                     }
                     else
                     {
+                        List<Voznja> voznjeCekaju = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
+                        voznjeCekaju.Remove(voznjeCekaju.Find(x=> x.IDVoznje == voznja.IDVoznje));
+                        HttpContext.Current.Application["voznjeNaCekanju"] = voznjeCekaju;
+
                         noviStatus = Enums.StatusVoznje.Neuspesna;
                         ListeKorisnika.Instanca.Voznje.Remove(voznja);
                         voznja.Status = noviStatus;                       
@@ -350,7 +355,12 @@ namespace TaxiService.Controllers
                         voznja.EndLokacija.Adresa.NaseljenoMesto = "";
                         voznja.EndLokacija.Adresa.PozivniBrojMesta = 0;
                         voznja.Vozac.Zauzet = false;
+                        ListeKorisnika.Instanca.Vozaci.Remove(v);
+                        v.Zauzet = false;
+                        ListeKorisnika.Instanca.Vozaci.Add(v);
+
                         ListeKorisnika.Instanca.Voznje.Add(voznja);
+                        ListeKorisnika.Instanca.UpisiUBazuVoznje();
                         result = "<h4>Uspesno ste izmenili status voznje!</h4>";
                     }
 
@@ -406,7 +416,16 @@ namespace TaxiService.Controllers
                 temp.EndLokacija.Adresa.PozivniBrojMesta = odredistePozivniBr;
                 temp.Status = Enums.StatusVoznje.Uspesna;
                 temp.Iznos = cena;
+                Vozac v = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(temp.Vozac.Username));
+                ListeKorisnika.Instanca.Vozaci.Remove(v);
+                v.Zauzet = false;
+                ListeKorisnika.Instanca.Vozaci.Add(v);
                 temp.Vozac.Zauzet = false;
+
+                List<Voznja> voznjeCekaju = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
+                voznjeCekaju.Remove(voznjeCekaju.Find(x => x.IDVoznje == voznja.IDVoznje));
+                HttpContext.Current.Application["voznjeNaCekanju"] = voznjeCekaju;
+
                 foreach (var item in ListeKorisnika.Instanca.Musterije)
                 {
                     if(item.Voznje.Find(x => x.IDVoznje == idVoznje) != null)
@@ -431,6 +450,8 @@ namespace TaxiService.Controllers
                         item.Voznje.Add(temp);
                     }
                 }
+                ListeKorisnika.Instanca.Voznje.Add(temp);
+                ListeKorisnika.Instanca.UpisiUBazuVoznje();
                 result = "<h4>Uspesno ste izvrsili svoju voznju!</h4>";
                 response.Content = new StringContent(result);
                 response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");

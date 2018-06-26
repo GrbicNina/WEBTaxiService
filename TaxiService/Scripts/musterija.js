@@ -257,10 +257,9 @@ $(document).ready(function () {
             method: "GET",
             url: "/api/Musterija/GetVoznje",
             data: { username: korisnik.Username },
-          //  contentType: 'application/json; charset=utf-8',
             dataType: "html",
-            complete: function (data, status) {
-                if (status == 200) {
+            complete: function (data) {
+                if (data.status == 200) {
                     $("#prikazVoznji").show();
                     $("#prikazVoznji").html(data.responseText);
                 } else {
@@ -281,7 +280,8 @@ $(document).on("click","#izmeniVoznjuButton",function () {
         Grad: `${$("#gradIzmenaV").val()}`,
         PozivBr: `${$("#pozivniBrV").val()}`,
         TipVozila: `${$("#selectVoziloV").val()}`,
-        IndeksVoznje: idVoznje
+        IndeksVoznje: idVoznje,
+        ulogovani: `${korisnik.Username}`
     };
 
     $.ajax({
@@ -293,10 +293,10 @@ $(document).on("click","#izmeniVoznjuButton",function () {
         complete: function (data) {
             if (data.status == 200) {
                 $("#izmenaVoznje").show();
-                $("#izmenaVoznje").html(data);
+                $("#izmenaVoznje").html(data.responseText);
             } else {
                 $("#izmenaVoznje").show();
-                $("#izmenaVoznje").html(data);
+                $("#izmenaVoznje").html(data.responseText);
             }
         }
     });
@@ -305,12 +305,14 @@ $(document).on("click","#izmeniVoznjuButton",function () {
 $(document).on("click",".izmeni_buttonClass",function () {
     $("#prikazVoznji").hide();
     $("#izmenaVoznje").show();
-
     idVoznje = `${$(this).val()}`;
+    var paket = korisnik.Username.concat('_');
+    paket = paket.concat(idVoznje.toString());
+    
     $.ajax({
         method: "GET",
-        url: "/api/Musterija/GetVoznja",
-        data: { id: idVoznje },
+        url: "/api/Musterija/GetVoznja/" + paket,
+       // data: { usernameiID: paket },
         dataType: "html",
         complete: function (data) {
             if (data.status == 200) {

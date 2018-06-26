@@ -269,6 +269,7 @@ $(document).ready(function () {
 });
 
 $(document).on("click", ".prihvatiVoznjuButtonClass", function () {
+    $('#prihvatVoznje').html("");
     var voznja = {
         IDVoznje: `${$(this).val()}`,
         username: `${korisnik.Username}`
@@ -280,16 +281,16 @@ $(document).on("click", ".prihvatiVoznjuButtonClass", function () {
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         success: function (data) {
-            $('#prihvatVoznje').html(data);
+            $('#prihvatVoznje').html(data.responseText);
         },
         error: function (data) {
-            $('#prihvatVoznje').html(data);
+            $('#prihvatVoznje').html(data.responseText);
         }
     });
 });
 
 $(document).on("click", "#menjajStatus", function () {
-    $('#promenaStatusa').hide();
+
     var usernameVozaca =  `${korisnik.Username}`;
     $.ajax({
         type: 'GET',
@@ -298,11 +299,9 @@ $(document).on("click", "#menjajStatus", function () {
         dataType: 'html',
         complete: function (data) {
             if (data.status == 200) {
-                $('#promenaStatusa').show();
                 $('#promenaStatusa').html(data.responseText);
 
             } else {
-                $('#promenaStatusa').show();
                 $('#promenaStatusa').html(data.responseText);
             }
         }
@@ -310,7 +309,7 @@ $(document).on("click", "#menjajStatus", function () {
 });
 
 $(document).on("click", "#promenaStatusaButton", function () {
-    $('#promenaStatusa').hide();
+
     var voznja =
         {
             username: `${korisnik.Username}`,
@@ -325,11 +324,9 @@ $(document).on("click", "#promenaStatusaButton", function () {
         dataType: 'html',
         complete: function (data) {
             if (data.status == 200) {
-                $('#promenaStatusa').show();
                 $('#promenaStatusa').html(data.responseText);
 
             } else {
-                $('#promenaStatusa').show();
                 $('#promenaStatusa').html(data.responseText);
             }
         }
@@ -337,7 +334,7 @@ $(document).on("click", "#promenaStatusaButton", function () {
 });
 
 $(document).on("click", "#potvrdiUspesnoButton", function () {
-    $('#promenaStatusa').hide();
+
     var podaci =
         {
             username: `${korisnik.Username}`,
@@ -356,11 +353,8 @@ $(document).on("click", "#potvrdiUspesnoButton", function () {
         dataType: 'html',
         complete: function (data) {
             if (data.status == 200) {
-                $('#promenaStatusa').show();
                 $('#promenaStatusa').html(data.responseText);
-
             } else {
-                $('#promenaStatusa').show();
                 $('#promenaStatusa').html(data.responseText);
             }
         }

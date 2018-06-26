@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,24 +15,37 @@ namespace TaxiService.Controllers
     public class KorisnikController : ApiController
     {
         [Route("LogIn")]
-        public Korisnik LogIn([FromBody]JToken jToken)
+        public HttpResponseMessage LogIn([FromBody]JToken jToken)
         {
             var username = jToken.Value<string>("username");
             var password = jToken.Value<string>("password");
 
-            Korisnik kor = ListeKorisnika.Instanca.NadjiKorisnika(username);
-            if(kor.Password.Equals(password))
-            {
-                if(HttpContext.Current.Application["ulogovani"] == null)
-                {
-                    HttpContext.Current.Application["ulogovani"] = username;
-                }
-                var ulogovan = HttpContext.Current.Application["ulogovani"];
+            var response = new HttpResponseMessage();
 
-                return kor;
-            }else
+            Korisnik kor = ListeKorisnika.Instanca.NadjiKorisnika(username);
+            try
             {
-                return null;
+                if (kor.Password.Equals(password))
+                {
+                    if (HttpContext.Current.Application["ulogovani"] == null)
+                    {
+                        HttpContext.Current.Application["ulogovani"] = new List<Korisnik>();
+                    }
+                    List<Korisnik> ulogovani = (List<Korisnik>)HttpContext.Current.Application["ulogovani"];
+                    ulogovani.Add(kor);
+                    HttpContext.Current.Application["ulogovani"] = ulogovani;
+                    //kor.Voznje = null;
+                    var json = JsonConvert.SerializeObject(kor);
+                    return Request.CreateResponse(HttpStatusCode.OK, json);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+            }
+            catch
+            {
+                return Request.CreateResponse(HttpStatusCode.Conflict);
             }
         }
 

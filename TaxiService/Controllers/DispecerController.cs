@@ -126,7 +126,7 @@ namespace TaxiService.Controllers
             var tipVozila = jToken.Value<string>("TipVozila");
 
             Enums.TipAutomobila tip;
-            tip = (tipVozila.Equals("Kombi Vozilo")) ? Enums.TipAutomobila.KombiVozilo : Enums.TipAutomobila.PutnickiAutomobil;
+            tip = (tipVozila.Equals("KombiVozilo")) ? Enums.TipAutomobila.KombiVozilo : Enums.TipAutomobila.PutnickiAutomobil;
 
             if (username == null || ime == null || prezime == null || jmbg == null || email == null || password == null || ulica == null || broj == null || 
                 naseljenoMesto == null || pozivniBroj == null || godisteAutomobila == null || registarkaOznaka == null || idVozila == null || tipVozila == null)
@@ -195,11 +195,11 @@ namespace TaxiService.Controllers
         public HttpResponseMessage FormirajVoznju([FromBody]JToken jToken)
         {
             var lokacijastart = jToken.Value<string>("Ulica");
-            var broj = jToken.Value<double>("Broj");
+            var broj = jToken.Value<int>("Broj");
             var mesto = jToken.Value<string>("NaseljenoMesto");
-            var pozivniBroj = jToken.Value<double>("PozivniBroj");
+            var pozivniBroj = jToken.Value<int>("PozivniBroj");
             var autoTip = jToken.Value<string>("TipVozila");
-            var usernameUlogovanog = HttpContext.Current.Application["ulogovani"].ToString();
+            var usernameUlogovanog = jToken.Value<string>("Username");
 
             if (lokacijastart == "" || mesto  == "")
             {
@@ -213,38 +213,39 @@ namespace TaxiService.Controllers
 
             Voznja v = new Voznja();
             v.VremePorudzbine = DateTime.Now.ToString("R");
-            if(autoTip.Equals("Putnicki Automobil"))
+            if(autoTip.Equals("PutnickiAutomobil"))
             {
                 v.ZeljeniTipAutomobila = Enums.TipAutomobila.PutnickiAutomobil;
             }
-            else if(autoTip.Equals("Kombi Vozilo"))
+            else if(autoTip.Equals("KombiVozilo"))
             {
                 v.ZeljeniTipAutomobila = Enums.TipAutomobila.KombiVozilo;
             }
             else
             {
             }
-            v.Dispecer = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameUlogovanog));
+            Dispecer d = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameUlogovanog));
+            v.Dispecer = d.Username;
             v.StartLokacija.Adresa.Ulica = lokacijastart;
-            v.StartLokacija.Adresa.Broj = (int)broj;
+            v.StartLokacija.Adresa.Broj = broj;
             v.StartLokacija.Adresa.NaseljenoMesto = mesto;
-            v.StartLokacija.Adresa.PozivniBrojMesta = (int)pozivniBroj;
+            v.StartLokacija.Adresa.PozivniBrojMesta = pozivniBroj;
             v.IDVoznje = (ListeKorisnika.Instanca.Voznje.Count + 1);
             v.Status = Enums.StatusVoznje.Formirana;
             foreach (var item in ListeKorisnika.Instanca.Vozaci)
             {
                 if(!item.Zauzet)
                 {
-                    v.Vozac = item;
-                    v.Vozac.Zauzet = true;
+                    v.Vozac.Username = item.Username;
                     break;
                 }
             }
-            if(v.Vozac != null)
+            if(v.Vozac.Username != null)
             {
                  Vozac taj = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(v.Vozac.Username));
                  ListeKorisnika.Instanca.Vozaci.Remove(taj);   
                  taj.Zauzet = true;
+                 taj.Voznje.Add(v);
                  ListeKorisnika.Instanca.Vozaci.Add(taj);
                  ListeKorisnika.Instanca.Voznje.Add(v);
                  return Request.CreateResponse(HttpStatusCode.OK, v);
@@ -257,17 +258,43 @@ namespace TaxiService.Controllers
         }
 
         [HttpGet]
-        [Route("GetVoznje")]
-        public HttpResponseMessage GetVoznje()
+        [Route("GetVoznjeZaObradu")]
+        public HttpResponseMessage GetVoznjeZaObradu()
         {
-            List<Voznja> voznje = ListeKorisnika.Instanca.Voznje;
-            if (voznje != null)
+            List<Voznja> voznje = new List<Voznja>();
+            string result = "";
+            var response = new HttpResponseMessage();
+            foreach (var item in ListeKorisnika.Instanca.Voznje)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, voznje);
+                if(item.Status == Enums.StatusVoznje.Kreirana)
+                {
+                    voznje.Add(item);
+                }
+            }
+            
+            if (voznje.Count != 0)
+            {
+                result += String.Format(@"<table border=""1"" id=""tabelaObrade""><tr><th>Datum i vreme narudzbe</th><th>Ulica</th><th>Broj</th><th>Grad</th><th>Pozivni broj</th><th>Zeljeni tip vozila</th><th>Status voznje</th></tr>");
+               
+                foreach (var item in voznje)
+                {
+                    result += String.Format(@"<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td>",item.VremePorudzbine, item.StartLokacija.Adresa.Ulica, item.StartLokacija.Adresa.Broj, item.StartLokacija.Adresa.NaseljenoMesto, item.StartLokacija.Adresa.PozivniBrojMesta, item.ZeljeniTipAutomobila, item.Status);
+                    result += String.Format(@"<td><button value = ""{0}"" class = ""obradi_buttonClass"">Obradi</button></td></tr>", item.IDVoznje);
+                }
+                
+                result += "</table>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.OK;
+                return response;
             }
             else
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest);
+                result += "<h4>Trenutno ne postoje voznje za obradu!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
             }
         }
 
@@ -327,8 +354,8 @@ namespace TaxiService.Controllers
         {
             var usernameVozaca = jToken.Value<string>("Vozac");
             var idVoznje = jToken.Value<double>("IDVoznje");
+            var usernameUlogovanog = jToken.Value<string>("Dispecer");
             var response = new HttpResponseMessage();
-            var usernameUlogovanog = HttpContext.Current.Application["ulogovani"].ToString();
             string result = "";
             if (HttpContext.Current.Application["voznjeNaCekanju"] == null)
             {
@@ -351,11 +378,18 @@ namespace TaxiService.Controllers
                     {
                         ListeKorisnika.Instanca.Vozaci.Remove(dodeljen);
                         dodeljen.Zauzet = true;
-                        temp.Vozac = dodeljen;
-                        temp.Dispecer = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameUlogovanog));
+                        temp.Vozac.Username = dodeljen.Username;
+                        temp.Vozac.Zauzet = true;
+                        Dispecer d = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameUlogovanog));
+                        temp.Dispecer = d.Username;
                         temp.Status = Enums.StatusVoznje.Obradjena;
+                        dodeljen.Voznje.Add(temp);
                         ListeKorisnika.Instanca.Vozaci.Add(dodeljen);
                         ListeKorisnika.Instanca.Voznje.Add(temp);
+                        Dispecer dispecer = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameUlogovanog));
+                        ListeKorisnika.Instanca.Dispeceri.Remove(dispecer);
+                        dispecer.Voznje.Add(temp);
+                        ListeKorisnika.Instanca.Dispeceri.Add(dispecer);
                         result += "<h4>Uspesno ste obradili voznju!</h4>";
                         response.Content = new StringContent(result);
                         response.StatusCode = HttpStatusCode.OK;
