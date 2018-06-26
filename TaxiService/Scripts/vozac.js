@@ -219,9 +219,10 @@ $(document).ready(function () {
         }
     });
     $("#prihvatajVoznju").click(function () {
+        var username = korisnik.Username;
         $.ajax({
             type: 'GET',
-            url: '/api/Vozac/VratiVoznjeNaCekanju',
+            url: '/api/Vozac/VratiVoznjeNaCekanju/' + username,
             dataType: 'html',
             complete: function (data) {
                 if (data.status == 200) {

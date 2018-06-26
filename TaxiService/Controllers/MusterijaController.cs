@@ -142,7 +142,7 @@ namespace TaxiService.Controllers
             Musterija m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(musterija));
             v.Musterija = m.Username;
             v.VremePorudzbine = DateTime.Now.ToString("R");
-            v.ZeljeniTipAutomobila = (autoTip.Equals("PutnickiAutomobil") ? Enums.TipAutomobila.PutnickiAutomobil : Enums.TipAutomobila.KombiVozilo);
+            v.ZeljeniTipAutomobila = (Enums.TipAutomobila)System.Enum.Parse(typeof(Enums.TipAutomobila), autoTip);
             v.StartLokacija.Adresa.Ulica = lokacijastart;
             v.StartLokacija.Adresa.Broj = (int)broj;
             v.StartLokacija.Adresa.NaseljenoMesto = mesto;
@@ -150,7 +150,7 @@ namespace TaxiService.Controllers
             v.IDVoznje = ListeKorisnika.Instanca.Voznje.Count + 1;
             v.Status = Enums.StatusVoznje.Kreirana;
             ListeKorisnika.Instanca.Voznje.Add(v);
-            //Musterija m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(musterija));
+
             ListeKorisnika.Instanca.Musterije.Remove(m);
             m.Voznje.Add(v);
             ListeKorisnika.Instanca.Musterije.Add(m);
@@ -232,7 +232,7 @@ namespace TaxiService.Controllers
                     result += String.Format(@"<tr><th> Broj </th><td><input type = ""number"" id = ""brojIzmenaV"" min = ""1"" max = ""1000"" value=""{0}""/></td></tr>",v.StartLokacija.Adresa.Broj);
                     result += String.Format(@"<tr><th> Grad </th><td><input type = ""text"" id = ""gradIzmenaV"" value=""{0}""/></td></tr>", v.StartLokacija.Adresa.NaseljenoMesto);
                     result += String.Format(@"<tr><th> Pozivni broj mesta </th><td><input type = ""number"" id = ""pozivniBrV"" min = ""10000"" max = ""39000"" value=""{0}""/></td></tr>",v.StartLokacija.Adresa.PozivniBrojMesta);
-                    result += String.Format(@"<tr><th> Zeljeni tip vozila </th><td><select id = ""selectVoziloV"" ><option id = ""kom""> KombiVozilo </option><option id = ""au""> PutnickiAutomobil </option><option id = ""prazno"" style = ""display:none""></select></td></tr> ");
+                    result += String.Format(@"<tr><th> Zeljeni tip vozila </th><td><select id = ""selectVoziloV"" ><option id = ""kom""> KombiVozilo </option><option id = ""au""> PutnickiAutomobil </option><option selected id = ""svejedno"">Svejedno</select></td></tr> ");
                     result += String.Format(@"<tr><td colspan = ""2""><button id = ""izmeniVoznjuButton""> Sacuvaj izmene </button></td></tr></table>");
                     response.Content = new StringContent(result);
                     response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
@@ -262,11 +262,11 @@ namespace TaxiService.Controllers
         public HttpResponseMessage IzmeniVoznju([FromBody]JToken jToken)
         {
             var ulica = jToken.Value<string>("Ulica");
-            var broj = jToken.Value<double>("Broj");
+            var broj = jToken.Value<int>("Broj");
             var mesto = jToken.Value<string>("Grad");
-            var pozivniBroj = jToken.Value<double>("PozivBr");
+            var pozivniBroj = jToken.Value<int>("PozivBr");
             var tipVozila = jToken.Value<string>("TipVozila");
-            var idVoznje = jToken.Value<double>("IndeksVoznje");
+            var idVoznje = jToken.Value<int>("IndeksVoznje");
             var usernameUlogovanog = jToken.Value<string>("ulogovani");
 
             string result = "";
@@ -282,16 +282,21 @@ namespace TaxiService.Controllers
                     Voznja izmenjeno = new Voznja();
                     izmenjeno.Musterija = ulogovan.Username;
                     izmenjeno.StartLokacija.Adresa.Ulica = ulica;
-                    izmenjeno.StartLokacija.Adresa.Broj = (int)broj;
+                    izmenjeno.StartLokacija.Adresa.Broj = broj;
                     izmenjeno.StartLokacija.Adresa.NaseljenoMesto = mesto;
-                    izmenjeno.StartLokacija.Adresa.PozivniBrojMesta = (int)pozivniBroj;
-                    izmenjeno.IDVoznje = (int)idVoznje;
+                    izmenjeno.StartLokacija.Adresa.PozivniBrojMesta = pozivniBroj;
+                    izmenjeno.IDVoznje = idVoznje;
                     izmenjeno.VremePorudzbine = DateTime.Now.ToString("R");
                     izmenjeno.Status = Enums.StatusVoznje.Kreirana;
-                    izmenjeno.ZeljeniTipAutomobila = (tipVozila.Equals("KombiVozilo") ? Enums.TipAutomobila.KombiVozilo : Enums.TipAutomobila.PutnickiAutomobil);
+                    izmenjeno.ZeljeniTipAutomobila = (Enums.TipAutomobila)System.Enum.Parse(typeof(Enums.TipAutomobila), tipVozila);
                     ulogovan.Voznje.Add(izmenjeno);
                     ListeKorisnika.Instanca.Voznje.Remove(v);
                     ListeKorisnika.Instanca.Voznje.Add(izmenjeno);
+
+                    List<Voznja> voznjeNaCekanju = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
+                    voznjeNaCekanju.Remove(voznjeNaCekanju.Find(x => x.IDVoznje == idVoznje));
+                    voznjeNaCekanju.Add(izmenjeno);
+                    HttpContext.Current.Application["voznjeNaCekanju"] = voznjeNaCekanju;
 
                     result += "<h4>Uspesno ste izmenili voznju!</h4>";
                     response.Content = new StringContent(result);

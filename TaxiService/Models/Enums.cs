@@ -23,7 +23,8 @@ namespace TaxiService.Models
         public enum TipAutomobila
         {
             PutnickiAutomobil,
-            KombiVozilo
+            KombiVozilo,
+            Svejedno
         }
 
         public enum StatusVoznje

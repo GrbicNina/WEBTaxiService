@@ -449,10 +449,6 @@ $(document).ready(function () {
 });
 
 $(document).on("click", ".obradi_buttonClass", function () {
-    $("#obradiVoznju").css('display', 'none');
-    $("#obradiVoznju").hide();
-    $("#voznjaZaObradu").css('display', 'block');
-    $("#voznjaZaObradu").show();
 
     idVoznje = `${$(this).val()}`;
     $.ajax({
@@ -460,11 +456,8 @@ $(document).on("click", ".obradi_buttonClass", function () {
         url: "/api/Dispecer/GetVoznja",
         data: { id: idVoznje },
         dataType: "html",
-        success: function (data,status) {
-            $("#voznjaZaObradu").html(data);
-        },
-        error: function (data) {
-            $("#voznjaZaObradu").html(data);
+        complete: function (data) {
+            $("#obradiVoznju").html(data.responseText);
         }
     });
 });
@@ -482,11 +475,11 @@ $(document).on('click', '#buttonObradiVoznju', function () {
         contentType: 'application/json; charset=utf-8',
         dataType: 'html',
         success: function (data, status) {
-            $("#voznjaZaObradu").html(data);
+            $("#obradiVoznju").html(data);
             idVoznje = data.IDVoznje;
         },
         error: function (data) {
-            $("#voznjaZaObradu").html(data);
+            $("#obradiVoznju").html(data);
         }
     });
 

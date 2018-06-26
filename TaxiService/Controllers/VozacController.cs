@@ -106,14 +106,14 @@ namespace TaxiService.Controllers
         }
         [HttpGet]
         [Route("VratiVoznjePocetna/{username}")]
-        public HttpResponseMessage VratiVoznjeNaCekanju(string username)
+        public HttpResponseMessage VratiVoznjePocetna(string username)
         {
             var response = new HttpResponseMessage();
             string result = "";
             List<Voznja> voznjeVozaca = new List<Voznja>();
             foreach (var item in ListeKorisnika.Instanca.Voznje)
             {
-                if(item.Vozac != null)
+                if(item.Vozac.Username != null)
                 {
                     if (item.Vozac.Username.Equals(username))
                     {
@@ -146,7 +146,7 @@ namespace TaxiService.Controllers
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.Broj);
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.NaseljenoMesto);
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.PozivniBrojMesta);
-                        result += String.Format("<td>{0}</td>", item.ZeljeniTipAutomobila);
+                        result += String.Format("<td>{0}</td>", item.ZeljeniTipAutomobila.ToString());
                         result += String.Format("<td>{0}</td>", item.Status);
                         result += String.Format("<td>{0}</td>", item.EndLokacija.Adresa.Ulica);
                         result += String.Format("<td>{0}</td>", item.EndLokacija.Adresa.Broj);
@@ -160,7 +160,7 @@ namespace TaxiService.Controllers
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.Broj);
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.NaseljenoMesto);
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.PozivniBrojMesta);
-                        result += String.Format("<td>{0}</td>", item.ZeljeniTipAutomobila);
+                        result += String.Format("<td>{0}</td>", item.ZeljeniTipAutomobila.ToString());
                         result += String.Format("<td>{0}</td>", item.Status);
                         result += String.Format("<td> </td>");
                         result += String.Format("<td> </td>");
@@ -187,12 +187,31 @@ namespace TaxiService.Controllers
         }
 
         [HttpGet]
-        [Route("VratiVoznjeNaCekanju")]
-        public HttpResponseMessage VratiVoznjeNaCekanju()
+        [Route("VratiVoznjeNaCekanju/{username}")]
+        public HttpResponseMessage VratiVoznjeNaCekanju(string username)
         {
             var response = new HttpResponseMessage();
             string result = "";
-            List<Voznja> voznjeCekaju = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
+            List<Voznja> sveVoznjeNaCekanju = (List<Voznja>)HttpContext.Current.Application["voznjeNaCekanju"];
+            if(sveVoznjeNaCekanju == null)
+            {
+                result += "<h4>Trenutno nema voznji na cekanju!</h4>";
+                response.Content = new StringContent(result);
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
+
+            Vozac v = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(username));
+            List<Voznja> voznjeCekaju = new List<Voznja>();
+            foreach (var item in sveVoznjeNaCekanju)
+            {
+                if (item.ZeljeniTipAutomobila == Enums.TipAutomobila.Svejedno || item.ZeljeniTipAutomobila == v.Automobil.TipAutomobila)
+                {
+                    voznjeCekaju.Add(item);
+                }
+            }
+
             if (voznjeCekaju.Count == 0)
             {
                 result += "<h4>Trenutno nema voznji na cekanju!</h4>";
@@ -203,7 +222,6 @@ namespace TaxiService.Controllers
             }
             else
             {
-                
                 result += String.Format(@"<table align = ""center"" border = ""1"">");
                 result += "<tr><th>Vreme porudzbine:</th>";
                 result += "<th>Ulica:</th>";

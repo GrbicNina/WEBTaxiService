@@ -108,7 +108,7 @@ namespace TaxiService.Models
                     vozac.Automobil.IdVozila = parsirani[13];
                     vozac.Automobil.BrojRegistarskeOznake = parsirani[14];
                     vozac.Automobil.GodisteAutomobila = parsirani[15];
-                    vozac.Automobil.TipAutomobila = (parsirani[16].Equals("KombiVozilo") ? TipAutomobila.KombiVozilo : TipAutomobila.PutnickiAutomobil);
+                    vozac.Automobil.TipAutomobila = (Enums.TipAutomobila)System.Enum.Parse(typeof(Enums.TipAutomobila), parsirani[16]);
 
 
                     Vozaci.Add(vozac);

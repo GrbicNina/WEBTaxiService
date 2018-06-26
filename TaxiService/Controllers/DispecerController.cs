@@ -148,7 +148,7 @@ namespace TaxiService.Controllers
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.Broj);
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.NaseljenoMesto);
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.PozivniBrojMesta);
-                        result += String.Format("<td>{0}</td>", item.ZeljeniTipAutomobila);
+                        result += String.Format("<td>{0}</td>", item.ZeljeniTipAutomobila.ToString());
                         result += String.Format("<td>{0}</td>", item.Status);
                         result += String.Format("<td>{0}</td>", item.EndLokacija.Adresa.Ulica);
                         result += String.Format("<td>{0}</td>", item.EndLokacija.Adresa.Broj);
@@ -163,7 +163,7 @@ namespace TaxiService.Controllers
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.Broj);
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.NaseljenoMesto);
                         result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.PozivniBrojMesta);
-                        result += String.Format("<td>{0}</td>", item.ZeljeniTipAutomobila);
+                        result += String.Format("<td>{0}</td>", item.ZeljeniTipAutomobila.ToString());
                         result += String.Format("<td>{0}</td>", item.Status);
                         result += String.Format("<td> </td>");
                         result += String.Format("<td> </td>");
@@ -209,8 +209,7 @@ namespace TaxiService.Controllers
             var idVozila = jToken.Value<string>("IdVozila");
             var tipVozila = jToken.Value<string>("TipVozila");
 
-            Enums.TipAutomobila tip;
-            tip = (tipVozila.Equals("KombiVozilo")) ? Enums.TipAutomobila.KombiVozilo : Enums.TipAutomobila.PutnickiAutomobil;
+            Enums.TipAutomobila tip = (Enums.TipAutomobila)System.Enum.Parse(typeof(Enums.TipAutomobila), tipVozila);
 
             if (username == null || ime == null || prezime == null || jmbg == null || email == null || password == null || ulica == null || broj == null || 
                 naseljenoMesto == null || pozivniBroj == null || godisteAutomobila == null || registarkaOznaka == null || idVozila == null || tipVozila == null)
@@ -297,17 +296,8 @@ namespace TaxiService.Controllers
 
             Voznja v = new Voznja();
             v.VremePorudzbine = DateTime.Now.ToString("R");
-            if(autoTip.Equals("PutnickiAutomobil"))
-            {
-                v.ZeljeniTipAutomobila = Enums.TipAutomobila.PutnickiAutomobil;
-            }
-            else if(autoTip.Equals("KombiVozilo"))
-            {
-                v.ZeljeniTipAutomobila = Enums.TipAutomobila.KombiVozilo;
-            }
-            else
-            {
-            }
+            v.ZeljeniTipAutomobila = (Enums.TipAutomobila)System.Enum.Parse(typeof(Enums.TipAutomobila), autoTip);
+           
             Dispecer d = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameUlogovanog));
             v.Dispecer = d.Username;
             v.StartLokacija.Adresa.Ulica = lokacijastart;
@@ -395,7 +385,7 @@ namespace TaxiService.Controllers
                 List<Vozac> slobodniVozaci = new List<Vozac>();
                 foreach (var item in ListeKorisnika.Instanca.Vozaci)
                 {
-                    if(!item.Zauzet)
+                    if(!item.Zauzet && (v.ZeljeniTipAutomobila == Enums.TipAutomobila.Svejedno || v.ZeljeniTipAutomobila == item.Automobil.TipAutomobila))
                     {
                         slobodniVozaci.Add(item);
                     }
@@ -412,7 +402,7 @@ namespace TaxiService.Controllers
                 result += String.Format(@"<tr><td>Broj:</td><td>{0}</td></tr>", v.StartLokacija.Adresa.Broj);
                 result += String.Format(@"<tr><td>Mesto:</td><td>{0}</td></tr>", v.StartLokacija.Adresa.NaseljenoMesto);
                 result += String.Format(@"<tr><td>Pozivni broj mesta:</td><td>{0}</td></tr>", v.StartLokacija.Adresa.PozivniBrojMesta);
-                result += String.Format(@"<tr><td>Biraje slobodnog vozaca:</td><td><select id=""odabraniVozac"">");
+                result += String.Format(@"<tr><td>Birajte slobodnog vozaca:</td><td><select id=""odabraniVozac"">");
                 foreach (var item in slobodniVozaci)
                 {
                     result += String.Format(@"<option>{0}</option>", item.Username);
