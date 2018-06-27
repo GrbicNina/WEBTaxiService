@@ -243,11 +243,6 @@ $(document).ready(function () {
         window.location.href = "Index.html";
     });
 
-    //$("#zahtevVoznjeButton").click(function () {
-    //    $('#zahtevVoznje').hide(); 
-    //    $('#prikazVoznji').show(); 
-    //});
-
     $("#pocetnaStranica").click(function () {
 
         korisnikJSON = sessionStorage.getItem('korisnik');
@@ -257,14 +252,73 @@ $(document).ready(function () {
             method: "GET",
             url: "/api/Musterija/GetVoznje",
             data: { username: korisnik.Username },
-            dataType: "html",
-            complete: function (data) {
-                if (data.status == 200) {
+            dataType: "json",
+            complete: function (data,status) {
+                if (status == "success") {
+                    var i;
+                    var izgled = '<h3>Vase voznje:</h3><table border="1" id="tabelaVoznji"></table>';
                     $("#prikazVoznji").show();
-                    $("#prikazVoznji").html(data.responseText);
+                    $("#prikazVoznji").html(izgled);
+                    var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");
+                    var izgled2 = $("<th></th>").text("[START]Ulica");
+                    var izgled3 = $("<th></th>").text("[START]Broj");
+                    var izgled4 = $("<th></th>").text("[START]Grad");
+                    var izgled5 = $("<th></th>").text("[START]Pozivni broj");
+                    var izgled6 = $("<th></th>").text("Zeljeni tip vozila");
+                    var izgled7 = $("<th></th>").text("Iznos");
+                    var izgled8 = $("<th></th>").text("Status voznje");
+                    var izgled9 = $("<th></th>").text("Opcije");
+                    var izgled10 = $("<th></th>").text("Komentar");
+                    var izgled11 = $("<th></th>").text("Ocena");
+                    $("#tabelaVoznji").append('<tr>', izgled1, izgled2, izgled3, izgled4, izgled5, izgled6, izgled7, izgled8, izgled9, izgled10, izgled11,'</tr>');
+
+                    var lista = JSON.parse(data.responseText)
+                    for (i = 0; i < lista.length; i++) {
+                        var t0 = $('<td></td>').text(lista[i].VremePorudzbine);
+                        var t1 = $('<td></td>').text(lista[i].StartLokacija.Adresa.Ulica);
+                        var t2 = $('<td></td>').text(lista[i].StartLokacija.Adresa.Broj);
+                        var t3 = $('<td></td>').text(lista[i].StartLokacija.Adresa.NaseljenoMesto);
+                        var t4 = $('<td></td>').text(lista[i].StartLokacija.Adresa.PozivniBrojMesta);
+                        var t5 = $('<td></td>').text(lista[i].ZeljeniTipAutomobila.toString());
+                        var t6 = $('<td></td>').text(lista[i].Iznos);
+                        var t7 = $('<td></td>').text(getStatusVoznje(lista[i].Status));
+                        if (getStatusVoznje(lista[i].Status) == "Kreirana") {
+                            var t8 = $('<td></td>').append('<button id="izmeniID" class="izmeni_buttonClass">Izmeni</button> <button id="otkaziID" class="odustani_buttonClass" > Odustani</button >');
+                            var nazivIzmena = "izmeniID" + lista[i].IDVoznje.toString();
+                            var nazivOtkaz = "otkaziID" + lista[i].IDVoznje.toString();
+                            var t9 = $('<td></td>').text("");
+                            var t10 = $('<td></td>').text("");
+                            $("#tabelaVoznji").append('<tr>', t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, '</tr>');
+                            document.getElementById("izmeniID").id = nazivIzmena;
+                            document.getElementById(nazivIzmena).value = lista[i].IDVoznje;
+                            document.getElementById("otkaziID").id = nazivOtkaz;
+                            document.getElementById(nazivOtkaz).value = lista[i].IDVoznje;
+                        } else if (getStatusVoznje(lista[i].Status) == "Uspesna") {
+                            if (lista[i].Komentar.Opis != null && lista[i].Komentar.Opis != "") {
+                                var t8 = $('<td></td>').text("");
+                                var t9 = $('<td></td>').text(lista[i].Komentar.Opis);
+                                var t10 = $('<td></td>').text(lista[i].Komentar.OcenaVoznje);
+                                $("#tabelaVoznji").append('<tr>', t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, '</tr>');
+                            } else {
+                                var t8 = $('<td></td>').append('<button id="komentarID" class="komentarMusterija_buttonClass">Komentarisi</button>');
+                                var t9 = $('<td></td>').text("");
+                                var t10 = $('<td></td>').text("");
+                                $("#tabelaVoznji").append('<tr>', t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, '</tr>');
+                                var nazivKomentar = "komentarID" + lista[i].IDVoznje.toString();
+                                document.getElementById("komentarID").id = nazivKomentar;
+                                document.getElementById(nazivKomentar).value = lista[i].IDVoznje;
+                            }
+                        } else {
+                            var t8 = $('<td></td>').text("");
+                            var t9 = $('<td></td>').text("");
+                            var t10 = $('<td></td>').text("");
+                            $("#tabelaVoznji").append('<tr>', t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, '</tr>');
+                        }                        
+                    }
+
                 } else {
                     $("#prikazVoznji").show();
-                    $("#prikazVoznji").html(data.responseText);
+                    $("#prikazVoznji").html('<h4>Ne postoji ni jedna voznja koju ste kreirali.</h4>');
                 }              
             }
         });
@@ -315,6 +369,7 @@ $(document).on("click",".izmeni_buttonClass",function () {
         dataType: "html",
         complete: function (data) {
             if (data.status == 200) {
+                $('#izmenaVoznje').show();
                 $("#izmenaVoznje").html(data.responseText);
             } else {
                 $("#izmenaVoznje").html(data.responseText);
@@ -376,6 +431,7 @@ $(document).on("click","#zahtevVoznjeButton", function () {
             complete: function (data) {
                 if (data.status == 200) {
                     $('#neuspesanZahtev').hide();
+                    $('#zahtevVoznje').show();
                     $('#zahtevVoznje').html(data.responseText);
                 } else {
                     $('#neuspesanZahtev').html(data.responseText);
@@ -390,21 +446,13 @@ $(document).on("click","#zahtevVoznjeButton", function () {
 $(document).on("click", ".odustani_buttonClass", function () {
 
     idVoznje = `${$(this).val()}`;
-    var IDVoznje = idVoznje ;
 
-    $.ajax({
-        method: "GET",
-        url: "/api/Musterija/OtkaziVoznju/" + IDVoznje,
-        dataType: "html",
-        complete: function (data) {
-            if (data.status == 200) {
-                $("#prikazVoznji").html(data.responseText);
-                $(':button').not('#komentarisi :button').attr('disabled', true);
-            } else {
-                $("#prikazVoznji").html(data.responseText);
-            }
-        }
-    });
+    var izgled = '<div class="commentSection"><h3>Ostavljanje komentara je obavezno</h3><textarea id="komentarOtkaz" rows="4" cols="50" placeholder="Unesite komentar..."></textarea></br>';
+    izgled += '<label>Ocena</label><select id="ocena"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>';
+    izgled += '<button id="komentarisi">Ostavi komentar</button></div>';
+    $("#prikazVoznji").html(izgled);
+    document.getElementById("komentarisi").value = idVoznje;
+    $(':button').not('#prikazVoznji :button').attr('disabled', true);
 });
 
 $(document).on("click", "#komentarisi", function () {
@@ -420,17 +468,54 @@ $(document).on("click", "#komentarisi", function () {
 
     $.ajax({
         method: "POST",
-        url: "/api/Musterija/OstaviKomentarOtkaz",
+        url: "/api/Musterija/OstaviKomentar",
         data: JSON.stringify(komentar),
         contentType: 'application/json; charset=utf-8',
         dataType: "json",
         complete: function (data) {
             if (data.status == 200) {
-                $("#prikazVoznji").html(data.responseText);
                 $(':button').not('#komentarisi :button').attr('disabled', false);
-                $('#komentarisi').attr('disabled', false);
+                $("#prikazVoznji").html('<h4>Uspesno ste otkazali voznju i ostavili komentar!</h4>');
             } else {
-                $("#prikazVoznji").html(data.responseText);
+                $("#prikazVoznji").html('<h4>Desila se greska prilikom ostavljanja komentara!</h4>');
+            }
+        }
+    });
+});
+
+$(document).on("click", ".komentarMusterija_buttonClass", function () {
+
+    idVoznje = `${$(this).val()}`;
+
+    var izgled = '<div class="commentSection"><h3>Ostavite komentar</h3><textarea id="komentarM" rows="4" cols="50" placeholder="Unesite komentar..."></textarea></br>';
+    izgled += '<label>Ocena</label><select id="ocenaM"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>';
+    izgled += '<button id="komentarisiM">Ostavi komentar</button></div>';
+    $("#prikazVoznji").html(izgled);
+    document.getElementById("komentarisiM").value = idVoznje;
+});
+
+$(document).on("click", "#komentarisiM", function () {
+
+    idVoznje = `${$(this).val()}`;
+
+    var komentar = {
+        IDVoznje: idVoznje,
+        OpisKomentara: `${$('#komentarM').val()}`,
+        KorisnikUsername: korisnik.Username,
+        Ocena: `${$('#ocenaM').val()}`
+    };
+
+    $.ajax({
+        method: "POST",
+        url: "/api/Musterija/OstaviKomentar",
+        data: JSON.stringify(komentar),
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        complete: function (data) {
+            if (data.status == 200) {
+                $("#prikazVoznji").html('<h4>Uspesno ste ostavili komentar!</h4>');
+            } else {
+                $("#prikazVoznji").html('<h4>Desila se greska prilikom ostavljanja komentara!</h4>');
             }
         }
     });

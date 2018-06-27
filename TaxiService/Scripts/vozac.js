@@ -301,7 +301,6 @@ $(document).on("click", "#menjajStatus", function () {
         complete: function (data) {
             if (data.status == 200) {
                 $('#promenaStatusa').html(data.responseText);
-
             } else {
                 $('#promenaStatusa').html(data.responseText);
             }
@@ -327,6 +326,14 @@ $(document).on("click", "#promenaStatusaButton", function () {
             if (data.status == 200) {
                 $('#promenaStatusa').html(data.responseText);
 
+            } else if (data.status == 303) {
+                $('#promenaStatusa').html("");
+                var izgled = '<div class="commentSection"><h3>Ostavljanje komentara je obavezno</h3><textarea id="komentarV" rows="4" cols="50" placeholder="Unesite komentar..."></textarea></br>';
+                izgled += '<label>Ocena</label><select id="ocenaV"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>';
+                izgled += '<button id="komentarisiV">Ostavi komentar</button></div>';
+                $("#promenaStatusa").html(izgled);
+                document.getElementById("komentarisiV").value = parseInt(data.responseText);
+                $(':button').not('#promenaStatusa :button').attr('disabled', true);
             } else {
                 $('#promenaStatusa').html(data.responseText);
             }
@@ -362,6 +369,34 @@ $(document).on("click", "#potvrdiUspesnoButton", function () {
     });
 });
 
+$(document).on("click", "#komentarisiV", function () {
+
+    idVoznje = `${$(this).val()}`;
+
+    var komentar = {
+        IDVoznje: idVoznje,
+        OpisKomentara: `${$('#komentarV').val()}`,
+        KorisnikUsername: korisnik.Username,
+        Ocena: `${$('#ocenaV').val()}`
+    };
+
+    $.ajax({
+        method: "POST",
+        url: "/api/Vozac/OstaviKomentar",
+        data: JSON.stringify(komentar),
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        complete: function (data) {
+            if (data.status == 200) {
+                $(':button').not('#komentarisi :button').attr('disabled', false);
+                $("#promenaStatusa").html('<h4>Uspesno ste ostavili komentar!</h4>');
+            } else {
+                $("#promenaStatusa").html('<h4>Desila se greska prilikom ostavljanja komentara!</h4>');
+            }
+        }
+    });
+});
+
 $(document).on("click", "#pocetnaStranica", function () {
     var username = korisnik.Username;
     $.ajax({
@@ -373,6 +408,33 @@ $(document).on("click", "#pocetnaStranica", function () {
                 $("#pocetna").html(data.responseText);
             } else {
                 $("#pocetna").html(data.responseText);
+            }
+        }
+    });
+});
+
+$(document).on("click", "#komentarisi", function () {
+    idVoznje = `${$(this).val()}`;
+
+    var komentar = {
+        IDVoznje: idVoznje,
+        OpisKomentara: `${$('#komentarOtkaz').val()}`,
+        KorisnikUsername: korisnik.Username,
+        Ocena: `${$('#ocena').val()}`
+    };
+
+    $.ajax({
+        method: "POST",
+        url: "/api/Vozac/OstaviKomentar",
+        data: JSON.stringify(komentar),
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        complete: function (data) {
+            if (data.status == 200) {
+                $(':button').not('#komentarisi :button').attr('disabled', false);
+                $("#prikazVoznji").html('<h4>Uspesno ste ostavili komentar!</h4>');
+            } else {
+                $("#prikazVoznji").html('<h4>Desila se greska prilikom ostavljanja komentara!</h4>');
             }
         }
     });

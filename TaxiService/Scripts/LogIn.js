@@ -34,7 +34,7 @@ $(document).ready(function () {
             data: JSON.stringify(korisnik),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json'
-        }).complete(function (data) {
+        }).complete(function (data,status) {
             if (data != null) {
                 $('#greskaLogovanja').hide();
                 sessionStorage.setItem('korisnik', data.responseJSON);
@@ -49,7 +49,7 @@ $(document).ready(function () {
                     loadVozace();
                 }
             } else {
-                if (data.status == 409) {
+                if (status == 409) {
                     $('#greskaLogovanja').html(data.textResponse);
                 }
                 $('#greskaLogovanja').html(data.textResponse);
