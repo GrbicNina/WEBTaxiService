@@ -1,3 +1,4 @@
 27.6.2018. 22.07.55;Milesevska;13;Novi Sad;21000;KombiVozilo;n;;brzy;;0;;0;0;Neuspesna;Wed, 27 Jun 2018 22:08:18 GMT;Izgubila Srbija..;1;brzy
-27.6.2018. 22.24.24;Fruskogorska;25;Novi Zeland;10001;Svejedno;n;;brzy;Maksima Gorkog;157;Novi Zeland;10000;15700;Uspesna;Wed, 27 Jun 2018 22:25:48 GMT;blah blah;5;n
+21.6.2018. 22.24.24;Fruskogorska;25;Novi Zeland;10001;Svejedno;n;;brzy;Maksima Gorkog;157;Novi Zeland;10000;15700;Uspesna;Wed, 27 Jun 2018 22:25:48 GMT;blah blah;5;n
 27.6.2018. 22.40.25;Dzungla;54;Banglades;22222;Svejedno;n;;brzy;Prasuma;56;Banglades;22222;7570;Uspesna;Wed, 27 Jun 2018 22:41:29 GMT;superiska;3;n
+23.6.2018. 22.40.25;Dzun;54;Banges;22222;Svejedno;n;;brzy;Praa;56;Bandes;22222;7570;Uspesna;Wed, 27 Jun 2018 22:41:29 GMT;ekstra;3;n

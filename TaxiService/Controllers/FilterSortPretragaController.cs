@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -192,6 +193,92 @@ namespace TaxiService.Controllers
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, sortirane);
+        }
+
+        [HttpGet]
+        [Route("Pretrazi")]
+        public HttpResponseMessage Pretrazi()
+        {
+            var jToken = JToken.Parse(Request.RequestUri.ToString().Split('?').Last());
+            var username = jToken.Value<string>("username");
+            var datumOd = jToken.Value<string>("datum1");
+            var datumDo = jToken.Value<string>("datum2");
+            var cenaOd = jToken.Value<int>("cenaOd");
+            var cenaDo = jToken.Value<int>("cenaDo");
+            var ocenaOd = jToken.Value<int>("ocenaOd");
+            var ocenaDo = jToken.Value<int>("ocenaDo");
+            var flag = jToken.Value<int>("flag");
+            List<Voznja> pretrazene = new List<Voznja>();
+            List<Voznja> rezultatPretrage = new List<Voznja>();
+            Korisnik k = ListeKorisnika.Instanca.NadjiKorisnika(username);
+            if(k.Uloga == Enums.Uloga.Musterija)
+            {
+                Musterija m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(username));
+                pretrazene = m.Voznje;
+            }else if(k.Uloga == Enums.Uloga.Vozac)
+            {
+                Vozac v = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(username));
+                pretrazene = v.Voznje;
+            }else
+            {
+                Dispecer d = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(username));
+                if(flag == 0)
+                {
+                    pretrazene = d.Voznje;
+                }else
+                {
+                    pretrazene = ListeKorisnika.Instanca.Voznje;
+                }
+            }
+
+            if(!datumOd.Equals("") && datumDo.Equals(""))
+            {
+                foreach (var item in pretrazene)
+                {
+                    if(item.VremePorudzbine >= DateTime.Parse(datumOd) && item.Iznos >= cenaOd && item.Iznos <= cenaDo && item.Komentar.OcenaVoznje >= ocenaOd && item.Komentar.OcenaVoznje <= ocenaDo)
+                    {
+                        rezultatPretrage.Add(item);
+                    }
+                }
+            }else if(datumOd.Equals("") && !datumDo.Equals(""))
+            {
+                foreach (var item in pretrazene)
+                {
+                    if (item.VremePorudzbine <= DateTime.Parse(datumDo).AddHours(23).AddMinutes(59) && item.Iznos >= cenaOd && item.Iznos <= cenaDo && item.Komentar.OcenaVoznje >= ocenaOd && item.Komentar.OcenaVoznje <= ocenaDo)
+                    {
+                        rezultatPretrage.Add(item);
+                    }
+                }
+            }else if(!datumOd.Equals("") && !datumDo.Equals(""))
+            {
+                foreach (var item in pretrazene)
+                {
+                    if(item.VremePorudzbine >= DateTime.Parse(datumOd) && item.VremePorudzbine <= DateTime.Parse(datumDo).AddHours(23).AddMinutes(59) && item.Iznos >= cenaOd && item.Iznos <= cenaDo && item.Komentar.OcenaVoznje >= ocenaOd && item.Komentar.OcenaVoznje <= ocenaDo)
+                    {
+                        rezultatPretrage.Add(item);
+                    }
+                }
+            }
+
+            else
+            {
+                foreach (var item in pretrazene)
+                {
+                    if (item.Iznos >= cenaOd && item.Iznos <= cenaDo && item.Komentar.OcenaVoznje >= ocenaOd && item.Komentar.OcenaVoznje <= ocenaDo)
+                    {
+                        rezultatPretrage.Add(item);
+                    }
+                }
+            }
+
+
+            if(rezultatPretrage.Count != 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, rezultatPretrage);
+            }else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
         }
     }
 }
