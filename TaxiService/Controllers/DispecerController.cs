@@ -252,7 +252,7 @@ namespace TaxiService.Controllers
             }
 
             Voznja v = new Voznja();
-            v.VremePorudzbine = DateTime.Now.ToString("R");
+            v.VremePorudzbine = DateTime.Now;
             v.ZeljeniTipAutomobila = (Enums.TipAutomobila)System.Enum.Parse(typeof(Enums.TipAutomobila), autoTip);
            
             Dispecer d = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameUlogovanog));
@@ -309,7 +309,7 @@ namespace TaxiService.Controllers
                
                 foreach (var item in voznje)
                 {
-                    result += String.Format(@"<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td>",item.VremePorudzbine, item.StartLokacija.Adresa.Ulica, item.StartLokacija.Adresa.Broj, item.StartLokacija.Adresa.NaseljenoMesto, item.StartLokacija.Adresa.PozivniBrojMesta, item.ZeljeniTipAutomobila, item.Status);
+                    result += String.Format(@"<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td>",item.VremePorudzbine.ToString(), item.StartLokacija.Adresa.Ulica, item.StartLokacija.Adresa.Broj, item.StartLokacija.Adresa.NaseljenoMesto, item.StartLokacija.Adresa.PozivniBrojMesta, item.ZeljeniTipAutomobila, item.Status);
                     result += String.Format(@"<td><button value = ""{0}"" class = ""obradi_buttonClass"">Obradi</button></td></tr>", item.IDVoznje);
                 }
                 

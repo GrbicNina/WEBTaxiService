@@ -109,7 +109,7 @@ namespace TaxiService.Controllers
         [Route("PosaljiZahtev")]
         public HttpResponseMessage PosaljiZahtev([FromBody]JToken jToken)
         {
-            var vreme = jToken.Value<double>("VremeZahteva");
+            //var vreme = jToken.Value<double>("VremeZahteva");
             var lokacijastart = jToken.Value<string>("StartnaLokacija");
             var broj = jToken.Value<double>("Broj");
             var mesto = jToken.Value<string>("Mesto");
@@ -141,7 +141,7 @@ namespace TaxiService.Controllers
             Voznja v = new Voznja();
             Musterija m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(musterija));
             v.Musterija = m.Username;
-            v.VremePorudzbine = DateTime.Now.ToString("R");
+            v.VremePorudzbine = DateTime.Now;
             v.ZeljeniTipAutomobila = (Enums.TipAutomobila)System.Enum.Parse(typeof(Enums.TipAutomobila), autoTip);
             v.StartLokacija.Adresa.Ulica = lokacijastart;
             v.StartLokacija.Adresa.Broj = (int)broj;
@@ -261,7 +261,7 @@ namespace TaxiService.Controllers
                     izmenjeno.StartLokacija.Adresa.NaseljenoMesto = mesto;
                     izmenjeno.StartLokacija.Adresa.PozivniBrojMesta = pozivniBroj;
                     izmenjeno.IDVoznje = idVoznje;
-                    izmenjeno.VremePorudzbine = DateTime.Now.ToString("R");
+                    izmenjeno.VremePorudzbine = DateTime.Now;
                     izmenjeno.Status = Enums.StatusVoznje.Kreirana;
                     izmenjeno.ZeljeniTipAutomobila = (Enums.TipAutomobila)System.Enum.Parse(typeof(Enums.TipAutomobila), tipVozila);
                     ulogovan.Voznje.Add(izmenjeno);

@@ -141,5 +141,57 @@ namespace TaxiService.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
         }
+        [HttpGet]
+        [Route("Sortiraj/{usernameIflagovi}")]
+        public HttpResponseMessage Sortiraj(string usernameIflagovi)
+        {
+            string[] splitovano = usernameIflagovi.Split('_');
+            string username = splitovano[0];
+            int flag1 = Int32.Parse(splitovano[1]);
+            int flag2 = Int32.Parse(splitovano[2]);
+            int flag3 = Int32.Parse(splitovano[3]);
+            List<Voznja> sortirane = new List<Voznja>();
+
+            Korisnik k = ListeKorisnika.Instanca.NadjiKorisnika(username);
+            if(k.Uloga == Enums.Uloga.Musterija)
+            {
+                Musterija m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(username));
+                sortirane = m.Voznje;
+
+            }else if(k.Uloga == Enums.Uloga.Vozac)
+            {
+                Vozac v = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(username));
+                sortirane = k.Voznje;
+            }else
+            {
+                Dispecer d = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(username));
+                if(flag3 == 0)
+                {
+                    sortirane = d.Voznje;
+                }else
+                {
+                    sortirane = ListeKorisnika.Instanca.Voznje;
+                }
+            }
+
+            if (flag1 == 1 && flag2 == 0)
+            {
+                sortirane = sortirane.OrderByDescending(x => x.VremePorudzbine).ToList();
+            }
+            else if (flag1 == 0 && flag2 == 1)
+            {
+                sortirane = sortirane.OrderByDescending(x => x.Komentar.OcenaVoznje).ToList();
+            }
+            else if (flag1 == 1 && flag2 == 1)
+            {
+                sortirane = sortirane.OrderByDescending(x => x.VremePorudzbine).ThenByDescending(x => x.Komentar.OcenaVoznje).ToList();
+            }
+            else
+            {
+
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, sortirane);
+        }
     }
 }

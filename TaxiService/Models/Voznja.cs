@@ -15,7 +15,7 @@ namespace TaxiService.Models
             Vozac = new Vozac();
             Komentar = new Komentar();
         }
-        public string VremePorudzbine { get; set; }
+        public DateTime VremePorudzbine { get; set; }
         public Lokacija StartLokacija { get; set; }
         public TipAutomobila ZeljeniTipAutomobila { get; set; }
         public string Musterija { get; set; }

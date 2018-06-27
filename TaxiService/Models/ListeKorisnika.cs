@@ -130,7 +130,7 @@ namespace TaxiService.Models
                     string[] parsirani = podaci.Split(';');
                     voznja = new Voznja();
                     voznja.IDVoznje = idVoznje;
-                    voznja.VremePorudzbine = parsirani[0];
+                    voznja.VremePorudzbine = DateTime.Parse(parsirani[0]);
                     voznja.StartLokacija.Adresa.Ulica = parsirani[1];
                     voznja.StartLokacija.Adresa.Broj = Int32.Parse(parsirani[2]);
                     voznja.StartLokacija.Adresa.NaseljenoMesto = parsirani[3];
@@ -403,7 +403,7 @@ namespace TaxiService.Models
                 {
                     foreach (var item in Voznje)
                     {
-                        tw.Write(item.VremePorudzbine);
+                        tw.Write(item.VremePorudzbine.ToString());
                         tw.Write(";");
                         tw.Write(item.StartLokacija.Adresa.Ulica);
                         tw.Write(";");

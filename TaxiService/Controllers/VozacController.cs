@@ -174,7 +174,7 @@ namespace TaxiService.Controllers
                 result += "<th>Pozivni broj mesta:</th><tr>";
                 foreach (var item in voznjeCekaju)
                 {
-                    result += String.Format("<tr><td>{0}</td>", item.VremePorudzbine);
+                    result += String.Format("<tr><td>{0}</td>", item.VremePorudzbine.ToString());
                     result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.Ulica);
                     result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.Broj);
                     result += String.Format("<td>{0}</td>", item.StartLokacija.Adresa.PozivniBrojMesta);
@@ -315,7 +315,7 @@ namespace TaxiService.Controllers
 
                 if (voznjaVozaca.Vozac.Username != null)
                 {
-                    result += String.Format("<table><tr><th>Vreme porudzbine</th><td>{0}</td></tr>", voznjaVozaca.VremePorudzbine);
+                    result += String.Format("<table><tr><th>Vreme porudzbine</th><td>{0}</td></tr>", voznjaVozaca.VremePorudzbine.ToString());
                     result += String.Format("<tr><th>Ulica</th><td>{0}</td></tr>", voznjaVozaca.StartLokacija.Adresa.Ulica);
                     result += String.Format("<tr><th>Broj</th><td>{0}</td></tr>", voznjaVozaca.StartLokacija.Adresa.Broj);
                     result += String.Format("<tr><th>Mesto</th><td>{0}</td></tr>", voznjaVozaca.StartLokacija.Adresa.NaseljenoMesto);
@@ -515,6 +515,10 @@ namespace TaxiService.Controllers
             Voznja v = ListeKorisnika.Instanca.Voznje.Find(x => x.IDVoznje == idVoznje);
             if (voz != null && v != null)
             {
+                v.EndLokacija.Adresa.Ulica = "";
+                v.EndLokacija.Adresa.Broj = 0;
+                v.EndLokacija.Adresa.PozivniBrojMesta = 0;
+                v.EndLokacija.Adresa.NaseljenoMesto = "";
                 v.Komentar.IDVoznje = idVoznje;
                 v.Komentar.Opis = opisKomentara;
                 v.Komentar.OcenaVoznje = ocena;
