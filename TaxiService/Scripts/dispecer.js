@@ -490,12 +490,268 @@ $(document).on("click", "#pocetnaStranica", function () {
     $.ajax({
         method: "GET",
         url: "/api/Dispecer/VratiVoznjePocetna/" + username,
-        dataType: "html",
-        complete: function (data) {
-            if (data.status == 200) {
-                $("#pocetna").html(data.responseText);
+        dataType: "json",
+        complete: function (data,status) {
+            if (status == "success") {
+                var i;
+                var izgled = '<h3>Vase voznje</h3><label>Filtriraj:</label><select id="filterD1"><option id="nista" display:none></option >';
+                izgled += '<option>Kreirana</option><option>Formirana</option><option>Obradjena</option><option>Prihvacena</option><option>Otkazana</option>';
+                izgled += '<option>Neuspesna</option><option>Uspesna</option></select><button id="filterButton1">Filtriraj</button><table border="1" id="tabelaVoznji"></table>';
+                $("#pocetna").show();
+                $("#pocetna").html(izgled);
+                var izgled0 = $("<th></th>").text("ID Voznje");
+                var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");
+                var izgled2 = $("<th></th>").text("Vozac");
+                var izgled3 = $("<th></th>").text("[START]Ulica");
+                var izgled4 = $("<th></th>").text("[START]Broj");
+                var izgled5 = $("<th></th>").text("[START]Grad");
+                var izgled6 = $("<th></th>").text("[START]Pozivni broj");
+                var izgled7 = $("<th></th>").text("Zeljeni tip vozila");
+                var izgled8 = $("<th></th>").text("Status voznje");
+                var izgled9 = $("<th></th>").text("[END]Ulica");
+                var izgled10 = $("<th></th>").text("[END]Broj");
+                var izgled11 = $("<th></th>").text("[END]Grad");
+                var izgled12 = $("<th></th>").text("[END]Pozivni broj");
+                var izgled13 = $("<th></th>").text("Iznos");
+                $("#tabelaVoznji").append('<tr>', izgled0, izgled1, izgled2, izgled3, izgled4, izgled5, izgled6, izgled7, izgled8, izgled9, izgled10, izgled11, izgled12, izgled13, '</tr>');
+
+                var lista = JSON.parse(data.responseText);
+                for (i = 0; i < lista.length; i++) {
+                    var t001, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
+                    t001 = $('<td></td>').text(lista[i].IDVoznje);
+                    t0 = $('<td></td>').text(lista[i].VremePorudzbine);
+                    t1 = $('<td></td>').text(lista[i].Vozac.Username);
+                    t2 = $('<td></td>').text(lista[i].StartLokacija.Adresa.Ulica);
+                    t3 = $('<td></td>').text(lista[i].StartLokacija.Adresa.Broj);
+                    t4 = $('<td></td>').text(lista[i].StartLokacija.Adresa.NaseljenoMesto);
+                    t5 = $('<td></td>').text(lista[i].StartLokacija.Adresa.PozivniBrojMesta);
+                    t6 = $('<td></td>').text(lista[i].ZeljeniTipAutomobila.toString());
+                    t7 = $('<td></td>').text(getStatusVoznje(lista[i].Status));
+                    if (getStatusVoznje(lista[i].Status) === "Uspesna" || getStatusVoznje(lista[i].Status) === "Neuspesna" || getStatusVoznje(lista[i].Status) === "Otkazana") {
+                        t8 = $('<td></td>').text(lista[i].EndLokacija.Adresa.Ulica);
+                        t9 = $('<td></td>').text(lista[i].EndLokacija.Adresa.Broj);
+                        t10 = $('<td></td>').text(lista[i].EndLokacija.Adresa.NaseljenoMesto);
+                        t11 = $('<td></td>').text(lista[i].EndLokacija.Adresa.PozivniBrojMesta);
+                        t12 = $('<td></td>').text(lista[i].Iznos);
+                    } else {
+                        t8 = $('<td></td>').text("");
+                        t9 = $('<td></td>').text("");
+                        t10 = $('<td></td>').text("");
+                        t11 = $('<td></td>').text("");
+                        t12 = $('<td></td>').text("");
+                    }
+                    $("#tabelaVoznji").append('<tr>', t001, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, '</tr>' );
+                }
+            
             } else {
-                $("#pocetna").html(data.responseText);
+                $("#pocetna").show();
+                $("#pocetna").html('<h4>Ne postoji ni jedna voznja za koju ste bili angazovani.</h4>');
+            }              
+        }
+    });
+});
+
+$(document).on("click", "#sveVoznje", function () {
+
+    $.ajax({
+        method: "GET",
+        url: "/api/Dispecer/VratiSveVoznje",
+        dataType: "json",
+        complete: function (data, status) {
+            if (status == "success") {
+                $("#prikaziSveVoznje").html("");
+                var i;
+                var izgled = '<h3>Vase voznje</h3><label>Filtriraj:</label><select id="filterD2"><option id="nista" display:none></option >';
+                izgled += '<option>Kreirana</option><option>Formirana</option><option>Obradjena</option><option>Prihvacena</option><option>Otkazana</option>';
+                izgled += '<option>Neuspesna</option><option>Uspesna</option></select><button id="filterButton2">Filtriraj</button><table border="1" id="tabelaSvihVoznji"></table>';
+                $("#prikaziSveVoznje").show();
+                $("#prikaziSveVoznje").html(izgled);
+                var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");
+                var izgled2 = $("<th></th>").text("[START]Ulica");
+                var izgled3 = $("<th></th>").text("[START]Broj");
+                var izgled4 = $("<th></th>").text("[START]Grad");
+                var izgled5 = $("<th></th>").text("[START]Pozivni broj");
+                var izgled6 = $("<th></th>").text("Zeljeni tip vozila");
+                var izgled7 = $("<th></th>").text("Status voznje");
+                var izgled8 = $("<th></th>").text("[END]Ulica");
+                var izgled9 = $("<th></th>").text("[END]Broj");
+                var izgled10 = $("<th></th>").text("[END]Grad");
+                var izgled11 = $("<th></th>").text("[END]Pozivni broj");
+                var izgled12 = $("<th></th>").text("Iznos");
+                $("#tabelaSvihVoznji").append('<tr>', izgled1, izgled2, izgled3, izgled4, izgled5, izgled6, izgled7, izgled8, izgled9, izgled10, izgled11, izgled12, '</tr>');
+
+                var lista = JSON.parse(data.responseText);
+                for (i = 0; i < lista.length; i++) {
+                    var t0 = $('<td></td>').text(lista[i].VremePorudzbine);
+                    var t1 = $('<td></td>').text(lista[i].StartLokacija.Adresa.Ulica);
+                    var t2 = $('<td></td>').text(lista[i].StartLokacija.Adresa.Broj);
+                    var t3 = $('<td></td>').text(lista[i].StartLokacija.Adresa.NaseljenoMesto);
+                    var t4 = $('<td></td>').text(lista[i].StartLokacija.Adresa.PozivniBrojMesta);
+                    var t5 = $('<td></td>').text(lista[i].ZeljeniTipAutomobila.toString());
+                    var t6 = $('<td></td>').text(getStatusVoznje(lista[i].Status));
+                    if (getStatusVoznje(lista[i].Status) != "Uspesna" && getStatusVoznje(lista[i].Status) != "Neuspesna" && getStatusVoznje(lista[i].Status) != "Otkazana") {
+                        var t7 = $('<td></td>').text("");
+                        var t8 = $('<td></td>').text("");
+                        var t9 = $('<td></td>').text("");
+                        var t10 = $('<td></td>').text("");
+                        var t11 = $('<td></td>').text("");
+                        $("#tabelaSvihVoznji").append('<tr>', t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, '</tr>');
+                    } else {
+                        var t7 = $('<td></td>').text(lista[i].EndLokacija.Adresa.Ulica);
+                        var t8 = $('<td></td>').text(lista[i].EndLokacija.Adresa.Broj);
+                        var t9 = $('<td></td>').text(lista[i].EndLokacija.Adresa.NaseljenoMesto);
+                        var t10 = $('<td></td>').text(lista[i].EndLokacija.Adresa.PozivniBrojMesta);
+                        var t11 = $('<td></td>').text(lista[i].Iznos);
+                        $("#tabelaSvihVoznji").append('<tr>', t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, '</tr>');
+                     }
+                }
+            }else {
+                $("#prikaziSveVoznje").html("<h3>Trenutno nema voznji u sistemu!</h3>");
+            }
+        }
+                      
+    });
+});
+
+$(document).on("click", "#filterButton1", function () {
+    var username = korisnik.Username;
+    var statusFiltera = document.getElementById('filterD1').value;
+    var usernameIstatusIflag = username + '_' + statusFiltera + '_0';
+    $("#pocetna").html("");
+    $.ajax({
+        method: "GET",
+        url: "/api/FilterSortPretraga/Filtriraj/" + usernameIstatusIflag,
+        dataType: "json",
+        complete: function (data, status) {
+            if (status == "success") {
+                var i;
+                var izgled = '<h3>Vase voznje filtrirane po statusu</h3><label>Filtriraj:</label><select id="filterD1"><option id="nista" display:none></option >';
+                izgled += '<option>Kreirana</option><option>Formirana</option><option>Obradjena</option><option>Prihvacena</option><option>Otkazana</option>';
+                izgled += '<option>Neuspesna</option><option>Uspesna</option></select><button id="filterButton1">Filtriraj</button><table border="1" id="tabelaVoznji"></table>';
+                $("#pocetna").show();
+                $("#pocetna").html(izgled);
+                var izgled0 = $("<th></th>").text("ID Voznje");
+                var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");
+                var izgled2 = $("<th></th>").text("Vozac");
+                var izgled3 = $("<th></th>").text("[START]Ulica");
+                var izgled4 = $("<th></th>").text("[START]Broj");
+                var izgled5 = $("<th></th>").text("[START]Grad");
+                var izgled6 = $("<th></th>").text("[START]Pozivni broj");
+                var izgled7 = $("<th></th>").text("Zeljeni tip vozila");
+                var izgled8 = $("<th></th>").text("Status voznje");
+                var izgled9 = $("<th></th>").text("[END]Ulica");
+                var izgled10 = $("<th></th>").text("[END]Broj");
+                var izgled11 = $("<th></th>").text("[END]Grad");
+                var izgled12 = $("<th></th>").text("[END]Pozivni broj");
+                var izgled13 = $("<th></th>").text("Iznos");
+                $("#tabelaVoznji").append('<tr>', izgled0, izgled1, izgled2, izgled3, izgled4, izgled5, izgled6, izgled7, izgled8, izgled9, izgled10, izgled11, izgled12, izgled13, '</tr>');
+
+                var lista = JSON.parse(data.responseText);
+                for (i = 0; i < lista.length; i++) {
+                    var t001, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
+                    t001 = $('<td></td>').text(lista[i].IDVoznje);
+                    t0 = $('<td></td>').text(lista[i].VremePorudzbine);
+                    t1 = $('<td></td>').text(lista[i].Vozac.Username);
+                    t2 = $('<td></td>').text(lista[i].StartLokacija.Adresa.Ulica);
+                    t3 = $('<td></td>').text(lista[i].StartLokacija.Adresa.Broj);
+                    t4 = $('<td></td>').text(lista[i].StartLokacija.Adresa.NaseljenoMesto);
+                    t5 = $('<td></td>').text(lista[i].StartLokacija.Adresa.PozivniBrojMesta);
+                    t6 = $('<td></td>').text(lista[i].ZeljeniTipAutomobila.toString());
+                    t7 = $('<td></td>').text(getStatusVoznje(lista[i].Status));
+                    if (getStatusVoznje(lista[i].Status) === "Uspesna" || getStatusVoznje(lista[i].Status) === "Neuspesna" || getStatusVoznje(lista[i].Status) === "Otkazana") {
+                        t8 = $('<td></td>').text(lista[i].EndLokacija.Adresa.Ulica);
+                        t9 = $('<td></td>').text(lista[i].EndLokacija.Adresa.Broj);
+                        t10 = $('<td></td>').text(lista[i].EndLokacija.Adresa.NaseljenoMesto);
+                        t11 = $('<td></td>').text(lista[i].EndLokacija.Adresa.PozivniBrojMesta);
+                        t12 = $('<td></td>').text(lista[i].Iznos);
+                    } else {
+                        t8 = $('<td></td>').text("");
+                        t9 = $('<td></td>').text("");
+                        t10 = $('<td></td>').text("");
+                        t11 = $('<td></td>').text("");
+                        t12 = $('<td></td>').text("");
+                    }
+                    $("#tabelaVoznji").append('<tr>', t001, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, '</tr>');
+                }
+
+            } else {
+                var izgled = '<h3>Vase voznje filtrirane po statusu</h3><label>Filtriraj:</label><select id="filterD1"><option id="nista" display:none></option >';
+                izgled += '<option>Kreirana</option><option>Formirana</option><option>Obradjena</option><option>Prihvacena</option><option>Otkazana</option>';
+                izgled += '<option>Neuspesna</option><option>Uspesna</option></select><button id="filterButton1">Filtriraj</button>';
+                $("#pocetna").show();
+                $("#pocetna").html(izgled);
+            }
+        }
+    });
+});
+
+$(document).on("click", "#filterButton2", function () {
+    var username = korisnik.Username;
+    var statusFiltera = document.getElementById('filterD2').value;
+    var usernameIstatusIflag = username + '_' + statusFiltera + '_1';
+    $("#prikaziSveVoznje").html("");
+    $.ajax({
+        method: "GET",
+        url: "/api/FilterSortPretraga/Filtriraj/" + usernameIstatusIflag,
+        dataType: "json",
+        complete: function (data, status) {
+            if (status == "success") {
+                var i;
+                var izgled = '<h3>Sve voznje filtrirane po statusu</h3><label>Filtriraj:</label><select id="filterD2"><option id="nista" display:none></option >';
+                izgled += '<option>Kreirana</option><option>Formirana</option><option>Obradjena</option><option>Prihvacena</option><option>Otkazana</option>';
+                izgled += '<option>Neuspesna</option><option>Uspesna</option></select><button id="filterButton2">Filtriraj</button><table border="1" id="tabelaVoznji2"></table>';
+                $("#prikaziSveVoznje").show();
+                $("#prikaziSveVoznje").html(izgled);
+                var izgled0 = $("<th></th>").text("ID Voznje");
+                var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");
+                var izgled2 = $("<th></th>").text("Vozac");
+                var izgled3 = $("<th></th>").text("[START]Ulica");
+                var izgled4 = $("<th></th>").text("[START]Broj");
+                var izgled5 = $("<th></th>").text("[START]Grad");
+                var izgled6 = $("<th></th>").text("[START]Pozivni broj");
+                var izgled7 = $("<th></th>").text("Zeljeni tip vozila");
+                var izgled8 = $("<th></th>").text("Status voznje");
+                var izgled9 = $("<th></th>").text("[END]Ulica");
+                var izgled10 = $("<th></th>").text("[END]Broj");
+                var izgled11 = $("<th></th>").text("[END]Grad");
+                var izgled12 = $("<th></th>").text("[END]Pozivni broj");
+                var izgled13 = $("<th></th>").text("Iznos");
+                $("#tabelaVoznji2").append('<tr>', izgled0, izgled1, izgled2, izgled3, izgled4, izgled5, izgled6, izgled7, izgled8, izgled9, izgled10, izgled11, izgled12, izgled13, '</tr>');
+
+                var lista = JSON.parse(data.responseText);
+                for (i = 0; i < lista.length; i++) {
+                    var t001, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
+                    t001 = $('<td></td>').text(lista[i].IDVoznje);
+                    t0 = $('<td></td>').text(lista[i].VremePorudzbine);
+                    t1 = $('<td></td>').text(lista[i].Vozac.Username);
+                    t2 = $('<td></td>').text(lista[i].StartLokacija.Adresa.Ulica);
+                    t3 = $('<td></td>').text(lista[i].StartLokacija.Adresa.Broj);
+                    t4 = $('<td></td>').text(lista[i].StartLokacija.Adresa.NaseljenoMesto);
+                    t5 = $('<td></td>').text(lista[i].StartLokacija.Adresa.PozivniBrojMesta);
+                    t6 = $('<td></td>').text(lista[i].ZeljeniTipAutomobila.toString());
+                    t7 = $('<td></td>').text(getStatusVoznje(lista[i].Status));
+                    if (getStatusVoznje(lista[i].Status) === "Uspesna" || getStatusVoznje(lista[i].Status) === "Neuspesna" || getStatusVoznje(lista[i].Status) === "Otkazana") {
+                        t8 = $('<td></td>').text(lista[i].EndLokacija.Adresa.Ulica);
+                        t9 = $('<td></td>').text(lista[i].EndLokacija.Adresa.Broj);
+                        t10 = $('<td></td>').text(lista[i].EndLokacija.Adresa.NaseljenoMesto);
+                        t11 = $('<td></td>').text(lista[i].EndLokacija.Adresa.PozivniBrojMesta);
+                        t12 = $('<td></td>').text(lista[i].Iznos);
+                    } else {
+                        t8 = $('<td></td>').text("");
+                        t9 = $('<td></td>').text("");
+                        t10 = $('<td></td>').text("");
+                        t11 = $('<td></td>').text("");
+                        t12 = $('<td></td>').text("");
+                    }
+                    $("#tabelaVoznji2").append('<tr>', t001, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, '</tr>');
+                }
+
+            } else {
+                var izgled = '<h3>Sve voznje filtrirane po statusu</h3><label>Filtriraj:</label><select id="filterD2"><option id="nista" display:none></option >';
+                izgled += '<option>Kreirana</option><option>Formirana</option><option>Obradjena</option><option>Prihvacena</option><option>Otkazana</option>';
+                izgled += '<option>Neuspesna</option><option>Uspesna</option></select><button id="filterButton2">Filtriraj</button>';
+                $("#prikaziSveVoznje").show();
+                $("#prikaziSveVoznje").html(izgled);
             }
         }
     });

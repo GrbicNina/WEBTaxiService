@@ -98,10 +98,10 @@ namespace TaxiService.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            Korisnik k = ListeKorisnika.Instanca.NadjiKorisnika(username);
-            ListeKorisnika.Instanca.Musterije.Remove((Musterija)k);
-            k.Password = nova;
-            ListeKorisnika.Instanca.Musterije.Add((Musterija)k);
+            Musterija m= ListeKorisnika.Instanca.Musterije.Find(x=>x.Username.Equals(username));
+            ListeKorisnika.Instanca.Musterije.Remove(m);
+            m.Password = nova;
+            ListeKorisnika.Instanca.Musterije.Add(m);
             ListeKorisnika.Instanca.UpisiUBazuMusterije();
             return Request.CreateResponse(HttpStatusCode.OK);
         }
@@ -174,7 +174,6 @@ namespace TaxiService.Controllers
         {
             Musterija ulogovan = ListeKorisnika.Instanca.Musterije.Find(x=> x.Username.Equals(username));
 
-            var response = new HttpResponseMessage();
             if (ulogovan.Voznje.Count > 0)
             {
 
@@ -309,6 +308,7 @@ namespace TaxiService.Controllers
             var opisKomentara = jToken.Value<string>("OpisKomentara");
             var ocena = jToken.Value<int>("Ocena");
             opisKomentara = opisKomentara.Replace("\n", "");
+            opisKomentara = opisKomentara.Replace(";", "");
 
             string result = "";
             var response = new HttpResponseMessage();
