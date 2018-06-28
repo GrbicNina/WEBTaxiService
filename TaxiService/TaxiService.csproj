@@ -213,6 +213,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Index.html" />
+    <Content Include="logInsSlika.jpg" />
     <Content Include="MusterijaUI.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -299,7 +300,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>56098</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:56019/</IISUrl>
+          <IISUrl>http://localhost:56030/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

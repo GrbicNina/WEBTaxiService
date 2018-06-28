@@ -11,55 +11,57 @@
     <title></title>
 </head>
 <body>
-    <div class="main">
-        <div class="container1" align="center" id="login">
-            <h1>Prijavi se</h1>
-            <input type="text" name="username" placeholder="Username" id="username">
-            <br />
-            <input type="password" name="password" placeholder="Password" id="password">
-            <button name="buttonPrijava" id="buttonLogIn">Prijava</button>
-            <br />
-            
-            <br />
-            <span style="color:mediumpurple">Ukoliko nemate svoj nalog kliknite <a id="linkRegistracija"><u>ovde</u></a> da ga napravite.</span>
-            <br />
-        </div><div class="greska" id="greskaLogovanja"></div>
-        <div class="container2" id="registracija">
-            <h1>Registruj se</h1>
+    <div id="indexDiv">
+        <div class="main">
+            <div class="container1" align="center" id="login">
+                <h1>Prijavi se</h1>
+                <input type="text" name="username" placeholder="Username" id="username">
+                <br />
+                <input type="password" name="password" placeholder="Password" id="password">
+                <button name="buttonPrijava" id="buttonLogIn">Prijava</button>
+                <br />
 
-            <label for="korisnickoIme"><b>Korisnicko ime</b></label>
-            <br />
-            <input type="text" placeholder="Unesite korisnicko ime" id="korisnickoIme" required><label id="korisnickoimeGreska" class="labeleGresaka" hidden>Korisnicko ime vec postoji!</label>
-            <br />
-            <label for="ime"><b>Ime</b></label>
-            <br />
-            <input type="text" placeholder="Unesite ime" id="ime" required><label id="imeGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za ime!</label>
-            <br />
-            <label for="prezime"><b>Prezime</b></label>
-            <br />
-            <input type="text" placeholder="Unesite prezime" id="prezime" required><label id="prezimeGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za prezime!</label>
-            <br />
-            <label for="pol"><b>Pol</b></label>
-            <br />
-            <select id="pol"><option name="m">Muski</option><option name="z">Zenski</option></select>
-            <br />
-            <label for="jmbg"><b>JMBG</b></label>
-            <br />
-            <input type="text" placeholder="Unesite jmbg" id="jmbg" required><label id="jmbgGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za jmbg!</label>
-            <br />
-            <label for="telefon"><b>Kontakt telefon</b></label>
-            <br />
-            <input type="text" placeholder="Unesite broj telefona" id="telefon" required><label id="telefonGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za telefon!</label>
-            <br />
-            <label for="email"><b>Email</b></label>
-            <br />
-            <input type="text" placeholder="Unesite Email" id="email" required><label id="emailGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za email!</label>
-            <br />
-            <label for="psw"><b>Password</b></label>
-            <br />
-            <input type="password" placeholder="Unesite sifru" id="psw" required>
-            <br />
-            <button name="buttonRegistruj" id="buttonRegistracija">Registruj se</button>
+                <br />
+                <span style="color:mediumpurple">Ukoliko nemate svoj nalog kliknite <a id="linkRegistracija"><u>ovde</u></a> da ga napravite.</span>
+                <br />
+            </div><div class="greska" id="greskaLogovanja"></div>
+            <div class="container2" id="registracija">
+                <h1>Registruj se</h1>
+
+                <label for="korisnickoIme"><b>Korisnicko ime</b></label>
+                <br />
+                <input type="text" placeholder="Unesite korisnicko ime" id="korisnickoIme" required><label id="korisnickoimeGreska" class="labeleGresaka" hidden>Korisnicko ime vec postoji!</label>
+                <br />
+                <label for="ime"><b>Ime</b></label>
+                <br />
+                <input type="text" placeholder="Unesite ime" id="ime" required><label id="imeGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za ime!</label>
+                <br />
+                <label for="prezime"><b>Prezime</b></label>
+                <br />
+                <input type="text" placeholder="Unesite prezime" id="prezime" required><label id="prezimeGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za prezime!</label>
+                <br />
+                <label for="pol"><b>Pol</b></label>
+                <br />
+                <select id="pol"><option name="m">Muski</option><option name="z">Zenski</option></select>
+                <br />
+                <label for="jmbg"><b>JMBG</b></label>
+                <br />
+                <input type="text" placeholder="Unesite jmbg" id="jmbg" required><label id="jmbgGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za jmbg!</label>
+                <br />
+                <label for="telefon"><b>Kontakt telefon</b></label>
+                <br />
+                <input type="text" placeholder="Unesite broj telefona" id="telefon" required><label id="telefonGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za telefon!</label>
+                <br />
+                <label for="email"><b>Email</b></label>
+                <br />
+                <input type="text" placeholder="Unesite Email" id="email" required><label id="emailGreska" class="labeleGresaka" hidden>Uneli ste nevalidne vrednosti za email!</label>
+                <br />
+                <label for="psw"><b>Password</b></label>
+                <br />
+                <input type="password" placeholder="Unesite sifru" id="psw" required>
+                <br />
+                <button name="buttonRegistruj" id="buttonRegistracija">Registruj se</button>
+            </div>
         </div>
     </div>
 </body>

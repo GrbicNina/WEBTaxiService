@@ -95,3 +95,8 @@ body, html {
     max-width: 500px;
     margin: auto;
 }
+
+#indexDiv {
+    background-image: url("logInsSlika.jpg");
+    background-color: #cccccc;
+}

@@ -280,5 +280,97 @@ namespace TaxiService.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
         }
+
+        [HttpGet]
+        [Route("PretraziPoMusteriji")]
+        public HttpResponseMessage PretraziPoMusteriji()
+        {
+            var jToken = JToken.Parse(Request.RequestUri.ToString().Split('?').Last());
+            var usernameDispecera = jToken.Value<string>("usernameDispecera");
+            var ime = jToken.Value<string>("ime");
+            var prezime = jToken.Value<string>("prezime");
+            var flag = jToken.Value<int>("flag");
+            List<Voznja> rezultatPretrage = new List<Voznja>();
+            Dispecer d = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameDispecera));
+            List<Voznja> voznje = new List<Voznja>();
+            if (flag == 0)
+            {
+                voznje = d.Voznje;
+            }
+            else
+            {
+                voznje = ListeKorisnika.Instanca.Voznje;
+            }
+
+            if(ime != "" ||prezime != "")
+            {
+                foreach (var item in voznje)
+                {
+                    if(item.Musterija != "")
+                    {
+                        Musterija m = ListeKorisnika.Instanca.Musterije.Find(x => x.Username.Equals(item.Musterija));
+                        if(m.Ime.Equals(ime) || m.Prezime.Equals(prezime))
+                        {
+                            rezultatPretrage.Add(item);
+                        }
+                    }
+                }
+            }
+
+            if(rezultatPretrage.Count != 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, rezultatPretrage);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+        }
+
+        [HttpGet]
+        [Route("PretraziPoVozacu")]
+        public HttpResponseMessage PretraziPoVozacu()
+        {
+            var jToken = JToken.Parse(Request.RequestUri.ToString().Split('?').Last());
+            var usernameDispecera = jToken.Value<string>("usernameDispecera");
+            var ime = jToken.Value<string>("ime");
+            var prezime = jToken.Value<string>("prezime");
+            var flag = jToken.Value<int>("flag");
+            List<Voznja> rezultatPretrage = new List<Voznja>();
+            Dispecer d = ListeKorisnika.Instanca.Dispeceri.Find(x => x.Username.Equals(usernameDispecera));
+            List<Voznja> voznje = new List<Voznja>();
+            if (flag == 0)
+            {
+                voznje = d.Voznje;
+            }
+            else
+            {
+                voznje = ListeKorisnika.Instanca.Voznje;
+            }
+
+            if (ime != "" || prezime != "")
+            {
+                foreach (var item in voznje)
+                {
+                    if(item.Vozac != null)
+                    {
+                        Vozac voz = ListeKorisnika.Instanca.Vozaci.Find(x => x.Username.Equals(item.Vozac.Username));
+                        if(voz.Ime.Equals(ime) || voz.Prezime.Equals(prezime))
+                        {
+                            rezultatPretrage.Add(item);
+                        }
+                    }
+                }
+            }
+
+            if (rezultatPretrage.Count != 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, rezultatPretrage);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+        }
     }
 }
