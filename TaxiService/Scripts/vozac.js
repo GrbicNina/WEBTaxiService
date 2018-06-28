@@ -45,13 +45,13 @@ function getStatusVoznje(id) {
 }
 
 function getNazivAuta(id) {
-    var status = "undefined";
+    var naziv = "undefined";
     if (id == 0) {
-        status = "PutnickiAutomobil";
+        naziv = "PutnickiAutomobil";
     } else if (id == 1) {
-        status = "KombiVozilo";
+        naziv = "KombiVozilo";
     } else if (id == 2) {
-        status = "Svejedno";
+        naziv = "Svejedno";
     }
     return naziv;
 }
@@ -270,6 +270,7 @@ $(document).ready(function () {
 
     $("#menjajLokaciju").click(function () {
         $('#promenaLokacije').show();
+        myMap();
         $('#LokacijaPromenaDiv').hide();
     });
 
@@ -446,7 +447,7 @@ $(document).on("click", "#pocetnaStranica", function () {
                 izgled += '</br><label>Pretrazi po:</label>OD<input id="datumOD" type="date"/>DO<input id="datumDO" type="date"/>';
                 izgled += '<label>Oceni</label>OD<input type="number" min="0" max ="5" id="ocenaOD"/><input type="number" min="0" max ="5" id="ocenaDO"/>';
                 izgled += '<label>Ceni</label>OD<input id="cenaOD" type = "number" min="0" max ="100000"/>DO<input id="cenaDO" type = "number" min="0" max ="100000"/><button id="pretraga">Pretrazi</button>';
-                izgled += '<table border="1" id="tabelaSvihVoznji"></table>';   
+                izgled += '<table class="table-style-three" border="1" id="tabelaSvihVoznji"></table>';   
                 $("#pocetna").show();
                 $("#pocetna").html(izgled);
                 document.getElementById("ocenaOD").defaultValue = 0;
@@ -483,6 +484,7 @@ $(document).on("click", "#pocetnaStranica", function () {
                         t9 = $('<td></td>').text(lista[i].EndLokacija.Adresa.NaseljenoMesto);
                         t10 = $('<td></td>').text(lista[i].EndLokacija.Adresa.PozivniBrojMesta);
                         t11 = $('<td></td>').text(lista[i].Iznos);
+                        t11 = $('<td></td>').text(lista[i].Komentar.Opis);
                         if (getStatusVoznje(lista[i].Status) === "Neuspesna") {
                             t12 = $('<td></td>').text(lista[i].komentar);
                         } else {
@@ -536,7 +538,7 @@ $(document).on("click", "#pretraga", function () {
                 $("#pocetna").html("");
                 var i;
                 var izgled = '<h3>Rezultati pretrage voznji na kojima ste Vi angazovani</h3>';
-                izgled += '<table border="1" id="tabelaSvihVoznji"></table>';   
+                izgled += '<table class="table-style-three" border="1" id="tabelaSvihVoznji"></table>';   
                 $("#pocetna").show();
                 $("#pocetna").html(izgled);
                 var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");
@@ -608,7 +610,7 @@ $(document).on("click", "#filterButton", function () {
                 var izgled = '<h3>Filtrirane voznje na kojima ste Vi angazovani</h3><label>Filtriraj:</label><select id="filter"><option id="nista" display:none></option >';
                 izgled += '<option>Kreirana</option><option>Formirana</option><option>Obradjena</option><option>Prihvacena</option><option>Otkazana</option>';
                 izgled += '<option>Neuspesna</option><option>Uspesna</option></select><button id="filterButton">Filtriraj</button>';
-                izgled +='<table border ="1" id="tabelaSvihVoznji"></table>';
+                izgled +='<table class="table-style-three" border ="1" id="tabelaSvihVoznji"></table>';
                 $("#pocetna").show();
                 $("#pocetna").html(izgled);
                 var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");
@@ -658,9 +660,7 @@ $(document).on("click", "#filterButton", function () {
                     $("#tabelaSvihVoznji").append('<tr>', t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, '</tr>');
                 }
             } else {
-                var izgled = '<h3>Filtrirane voznje na kojima ste Vi angazovani</h3><label>Filtriraj:</label><select id="filter"><option id="nista" display:none></option >';
-                izgled += '<option>Kreirana</option><option>Formirana</option><option>Obradjena</option><option>Prihvacena</option><option>Otkazana</option>';
-                izgled += '<option>Neuspesna</option><option>Uspesna</option></select><button id="filterButton">Filtriraj</button>';
+                var izgled = '';
                 $("#pocetna").html(izgled);
             }
         }
@@ -689,7 +689,7 @@ $(document).on("click", "#sort", function () {
                 $("#pocetna").html("");
                 var i;
                 var izgled = '<h3>Sortirane voznje na kojima ste Vi angazovani</h3>';
-                izgled += '<table border="1" id="tabelaSvihVoznji"></table>';
+                izgled += '<table class="table-style-three" border="1" id="tabelaSvihVoznji"></table>';
                 $("#pocetna").show();
                 $("#pocetna").html(izgled);
                 var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");

@@ -507,6 +507,7 @@ namespace TaxiService.Controllers
             var opisKomentara = jToken.Value<string>("OpisKomentara");
             var ocena = jToken.Value<int>("Ocena");
             opisKomentara = opisKomentara.Replace("\n", "");
+            opisKomentara = opisKomentara.Replace(";", "");
 
             string result = "";
             var response = new HttpResponseMessage();

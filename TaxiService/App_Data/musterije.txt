@@ -1,4 +1,4 @@
-pera;123;Sulejman;Velicanstveni;Muski;1234568779555;321112553;sulemajstor@gmail.com
-nemanjica;2703;Neca;Pereca;Muski;7894561231111;45678911;necacone@gmail.com
-bojke;1234;Milos;Bojanic;Zenski;4355435342255;3211123252;bojkeludak@gmail.com
-n;7;Nina;Ninica;Zenski;2308996805095;777888777;ninica@gmail.com
+n;7;Nina;Grbic;Zenski;2308996805095;777888777;ninica@gmail.com
+pera;123;Petar;Petrovic;Muski;1485220149625;065874521;peca@gmail.com
+mika;123;Mitar;Mitrovic;Muski;0350420137677;061024859;mika@gmail.com
+maja;123;Marija;Maric;Zenski;14178520138870;064989441;majce@gmail.com

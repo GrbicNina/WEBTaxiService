@@ -1,2 +1,4 @@
-necika;123;Nemanja;Simic;Muski;2703996772010;0647895421;necapereca@gmail.com;Strosmajerova;10;Petrovaradin;21500;necika;7;SA456D;2012;KombiVozilo
-brzy;123;Nina;Brzina;Muski;2145778945214;0614567895;brzinna@gmail.com;Micurinova;27;Novi Sad;21000;brzy;1;NS556D;2013;KombiVozilo
+neca;123;Nemanja;Simic;Muski;2703996772010;0647895421;necaa@gmail.com;Strosmajerova;10;Petrovaradin;21500;neca;7;SA456D;2012;KombiVozilo
+brzi;123;Nina;Brzina;Zenski;2145778945214;0614567895;brzinna@gmail.com;Micurinova;27;Novi Sad;21000;brzi;1;NS556D;2013;KombiVozilo
+vozac;123;Spasoje;Tosic;Muski;1123654789125;06458214785;spasa@gmail.com;Gunduliceva;15;Novi Sad;21000;vozac;5;NS456D;2015;PutnickiAutomobil
+mile;123;Miloje;Cobic;Muski;7785654789125;06458214785;mile@gmail.com;Bulevar Cara Dusana;28;Novi Sad;21000;mile;7;NS116D;2007;PutnickiAutomobil

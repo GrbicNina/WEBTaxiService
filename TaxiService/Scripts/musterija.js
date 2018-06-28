@@ -45,15 +45,76 @@ function getStatusVoznje(id) {
 }
 
 function getNazivAuta(id) {
-    var status = "undefined";
+    var naziv = "undefined";
     if (id == 0) {
-        status = "PutnickiAutomobil";
+        naziv = "PutnickiAutomobil";
     } else if (id == 1) {
-        status = "KombiVozilo";
+        naziv = "KombiVozilo";
     } else if (id == 2) {
-        status = "Svejedno";
+        naziv = "Svejedno";
     }
     return naziv;
+}
+
+function displayLocation(latitude, longitude) {
+    var request = new XMLHttpRequest();
+    var method = 'GET';
+    var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='
+        + latitude + ',' + longitude + '&sensor=true';
+    var async = false;
+    var address;
+    request.open(method, url, async);
+    request.onreadystatechange = function () {
+        if (request.readyState == 4 && request.status == 200) {
+            var data = JSON.parse(request.responseText);
+            address = data.results[0];
+            var value = address.formatted_address.split(",");
+            count = value.length;
+            country = value[count - 1];
+            state = value[count - 2];
+            city = value[count - 3];
+        }
+    };
+    request.send();
+    return address.formatted_address;
+};
+
+function placeMarker(map, location) {
+    var marker = new google.maps.Marker({
+        position: location,
+        map: map
+    });
+    var fullAdresa = displayLocation(location.lat(), location.lng());
+    var delovi = fullAdresa.split(",");
+    var ulicaIbroj = delovi[0];
+    var ulica = ulicaIbroj.split(" ");
+    var newUlica = ulica.slice(0, -1);
+    var broj = ulica[ulica.length - 1];
+    var temp = newUlica.join(' ');
+    var grad = delovi[1];
+    var drzava = delovi[2];
+    var fulAdresa = location.lat() + "," + location.lng() + "," + ulicaIbroj + "," + grad + "," + drzava;
+    $("#ulica").val(temp);
+    $("#broj").val(broj);
+    $("#naseljenoMesto").val(grad);
+    $("#pozivniBroj").val(grad);
+    $("#xKordinata").val(location.lat());
+    $("#yKordinata").val(location.lng());
+    //$("#pomoccc").val(1);
+    //var infowindow = new google.maps.InfoWindow({
+    //    content: 'Latitude: ' + location.lat() + '<br>Longitude: ' + location.lng() + '<br>Ulica i broj: ' + ulicaIbroj + '<br>Grad: ' + grad + '<br>Drzava: ' + drzava + '<br>=' + displayLocation(location.lat(), location.lng())
+    //});
+    infowindow.open(map, marker);
+}
+
+function myMap() {
+    var mapCanvas = document.getElementById("map");
+    var myCenter = new google.maps.LatLng(45.242630873254775, 19.842914435055945);
+    var mapOptions = { center: myCenter, zoom: 15 };
+    var map = new google.maps.Map(mapCanvas, mapOptions);
+    google.maps.event.addListener(map, 'click', function (event) {
+        placeMarker(map, event.latLng);
+    });
 }
 
 idVoznje = 0;
@@ -275,7 +336,7 @@ $(document).ready(function () {
                     izgled += '</br><label>Pretrazi po:</label>OD<input id="datumOD" type="date"/>DO<input id="datumDO" type="date"/>';
                     izgled += '<label>Oceni</label>OD<input type="number" min="0" max ="5" id="ocenaOD"/><input type="number" min="0" max ="5" id="ocenaDO"/>';
                     izgled += '<label>Ceni</label>OD<input id="cenaOD" type = "number" min="0" max ="100000"/>DO<input id="cenaDO" type = "number" min="0" max ="100000"/><button id="pretraga">Pretrazi</button>';
-                    izgled += '<table border="1" id="tabelaVoznji"></table>';
+                    izgled += '<table class="table-style-three" border="1" id="tabelaVoznji"></table>';
                     $("#prikazVoznji").show();
                     $("#prikazVoznji").html(izgled);
                     document.getElementById("ocenaOD").defaultValue = 0;
@@ -371,7 +432,7 @@ $(document).on("click", "#sort", function () {
         complete: function (data) {
             if (data.status == 200) {
                 var i;
-                var izgled = '<h3>Vase voznje sortirane </h3><table border="1" id="tabelaVoznji"></table>';
+                var izgled = '<h3>Vase voznje sortirane </h3><table class="table-style-three" border="1" id="tabelaVoznji"></table>';
                 $("#prikazVoznji").show();
                 $("#prikazVoznji").html(izgled);
                 var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");
@@ -468,7 +529,7 @@ $(document).on("click", "#pretraga", function () {
         complete: function (data) {
             if (data.status == 200) {
                 var i;
-                var izgled = '<h3>Vase voznje pretrazene </h3><table border="1" id="tabelaVoznji"></table>';
+                var izgled = '<h3>Vase voznje pretrazene </h3><table class="table-style-three" border="1" id="tabelaVoznji"></table>';
                 $("#prikazVoznji").show();
                 $("#prikazVoznji").html(izgled);
                 var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");
@@ -588,35 +649,21 @@ $(document).on("click",".izmeni_buttonClass",function () {
     });
 });
 
-$(document).on("click","#zahtevVoznjeButton", function () {
-    var userinput = $('#ulica').val();
-    var pattern = /^[a-zA-Z]+( [a-zA-Z]+)*$/i;
-    if (userinput != "") {
-        if (!pattern.test(userinput)) {
-            $('#greskaUlica').show();
-            retVal = false;
-        } else {
-            $('#greskaUlica').hide();
-            retVal = true;
-        }
-    } else {
-        $('#greskaUlica').show();
-        retVal = false;
-    }
-    userinput = $('#naseljenoMesto').val();
-    pattern = /^[a-zA-Z]+( [a-zA-Z]+)*$/i;
-    if (userinput != "") {
-        if (!pattern.test(userinput)) {
-            $('#greskaMesto').show();
-            retVal = false;
-        } else {
-            $('#greskaMesto').hide();
-            retVal = true;
-        }
-    } else {
-        $('#greskaMesto').show();
-        retVal = false;
-    }
+$(document).on("click", "#zahtevForma", function () {
+    var izgled = '<table><tr><th>Ulica: </th><td><input type="text" id="ulica" readonly /><label id="greskaUlica" class="labeleGresaka" hidden>Niste uneli dobru vrednost za ulicu!</label></td></tr>';
+    izgled += '<tr><th> Broj: </th><td><input type="number" id="broj" min="1" max="1000" readonly></td></tr>';
+    izgled += '<tr><th> Mesto: </th><td><input type="text" id="naseljenoMesto" readonly><label id="greskaMesto" class="labeleGresaka" hidden>Niste uneli dobru vrednost za mesto!</label></td></tr>';
+    izgled += '<tr><th>Pozivni broj mesta:</th><td><input type="number" id="pozivniBroj" readonly min="10000" max="39000"></td></tr>';
+    izgled += '<tr><th>X koordinata:</th><td><input type="text" id="xKordinata" readonly/></td></tr><tr><th>Y koordinata:</th><td><input type="text" id="yKordinata" readonly /></td></tr >';
+    izgled += '<tr><th>Izaberite tip vozila:</th><td><select id="tipAutomobila" name="Automobil.tipAutomobila"><option id="putnickiAutomobil">PutnickiAutomobil</option><option id="kombiVozilo">KombiVozilo</option><option id="svj" selected>Svejedno</option></select></td></tr>';
+    izgled += ' </table><button id = "zahtevVoznjeButton"> Posalji</button><br/><div hidden id="map"></div>';
+    $('#zahtevVoznje').html(izgled);
+    myMap();
+    $("#map").show();
+});
+
+$(document).on("click", "#zahtevVoznjeButton", function () {
+    retVal = true;
 
     if (retVal) {
         $('#greskaUlica').hide();
@@ -744,7 +791,7 @@ $(document).on("click", "#filterButton", function () {
                 var i;
                 var izgled = '<h3>Vase voznje filtrirane po statusu </h3><label>Filtriraj:</label><select id="filterM"><option id="nista" display:none></option >';
                 izgled += '<option>Kreirana</option><option>Formirana</option><option>Obradjena</option><option>Prihvacena</option><option>Otkazana</option>';
-                izgled += '<option>Neuspesna</option><option>Uspesna</option></select><button id="filterButton">Filtriraj</button><table border="1" id="tabelaVoznji"></table>';
+                izgled += '<option>Neuspesna</option><option>Uspesna</option></select><button id="filterButton">Filtriraj</button><table class="table-style-three" border="1" id="tabelaVoznji"></table>';
                 $("#prikazVoznji").show();
                 $("#prikazVoznji").html(izgled);
                 var izgled1 = $("<th></th>").text("Datum i vreme narudzbe");
@@ -799,7 +846,7 @@ $(document).on("click", "#filterButton", function () {
                         }
                     } else {
                         t8 = $('<td></td>').text("");
-                        t9 = $('<td></td>').text("");
+                        t9 = $('<td></td>').text("0");
                         t10 = $('<td></td>').text("");
                         $("#tabelaVoznji").append('<tr>', t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, '</tr>');
                     }

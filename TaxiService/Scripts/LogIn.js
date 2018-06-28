@@ -35,7 +35,7 @@ $(document).ready(function () {
             contentType: 'application/json; charset=utf-8',
             dataType: 'json'
         }).complete(function (data,status) {
-            if (data != null) {
+            if (status == "success") {
                 $('#greskaLogovanja').hide();
                 sessionStorage.setItem('korisnik', data.responseJSON);
                 ulogovan = JSON.parse(data.responseJSON);
@@ -49,10 +49,11 @@ $(document).ready(function () {
                     loadVozace();
                 }
             } else {
+                $('#greskaLogovanja').show();
                 if (status == 409) {
-                    $('#greskaLogovanja').html(data.textResponse);
+                    $('#greskaLogovanja').html("<label>Desila se greska prilikom logovanja!</label>");
                 }
-                $('#greskaLogovanja').html(data.textResponse);
+                $('#greskaLogovanja').html("<label>Desila se greska prilikom logovanja!</label>");
             }
         });
     });

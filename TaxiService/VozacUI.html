@@ -2,9 +2,85 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="Content/index.css" />
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrjeABCsOwW1rhi7eW6_b_fWF8OK2HeiA&callback=myMap" async defer></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="Scripts/jquery-1.10.2.js" async="async"></script>
     <script src="Scripts/vozac.js"></script>
+    <script>
+        function displayLocation(latitude, longitude) {
+            var request = new XMLHttpRequest();
+            var method = 'GET';
+            var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='
+                + latitude + ',' + longitude + '&sensor=true';
+            var async = false;
+            var address;
+            request.open(method, url, async);
+            request.onreadystatechange = function () {
+                if (request.readyState == 4 && request.status == 200) {
+                    var data = JSON.parse(request.responseText);
+                    address = data.results[0];
+                    var value = address.formatted_address.split(",");
+                    count = value.length;
+                    country = value[count - 1];
+                    state = value[count - 2];
+                    city = value[count - 3];
+                }
+            };
+            request.send();
+            return address.formatted_address;
+        };
+
+        function placeMarker(map, location) {
+            var marker = new google.maps.Marker({
+                position: location,
+                map: map
+            });
+            var fullAdresa = displayLocation(location.lat(), location.lng());
+            var delovi = fullAdresa.split(",");
+
+            var ulicaDelovi = delovi[0].split(" ");
+            var countUlica = ulicaDelovi.length - 2;
+            var p = 0;
+            var ulica = "";
+            do {
+                ulica += ulicaDelovi[p++] + " ";
+            }
+            while (countUlica >= p);
+            var broj = ulicaDelovi[ulicaDelovi.length - 1];
+
+            var gradPozivni = delovi[1].split(" ");
+            var g = 0;
+            var gradCount = gradPozivni.length - 2;
+            var grad = "";
+            do {
+                grad += gradPozivni[g++] + " ";
+            } while (gradCount >= g);
+            var pozivni = gradPozivni[gradPozivni.length - 1];
+
+            var drzava = delovi[2];
+            var fulAdresa = location.lat() + "," + location.lng() + "," + delovi[0] + "," + grad + "," + drzava;
+            $("#ulica").val(ulica);
+            $("#broj").val(broj);
+            $("#naseljenoMesto").val(grad);
+            $("#pozivniBroj").val(pozivni);
+            $("#xKordinata").val(location.lat());
+            $("#yKordinata").val(location.lng());
+            var infowindow = new google.maps.InfoWindow({
+                content: 'Ulica: ' + ulica + '</br>Broj: ' + broj + '</br>Mesto: ' + grad + '</br>Pozivni broj: ' + pozivni
+            });
+            infowindow.open(map, marker);
+        }
+
+        function myMap() {
+            var mapCanvas = document.getElementById("map");
+            var myCenter = new google.maps.LatLng(45.242630873254775, 19.842914435055945);
+            var mapOptions = { center: myCenter, zoom: 15 };
+            var map = new google.maps.Map(mapCanvas, mapOptions);
+            google.maps.event.addListener(map, 'click', function (event) {
+                placeMarker(map, event.latLng);
+            });
+        }
+    </script>
 </head>
 <body>
     <h1>VOZAC</h1>
@@ -129,22 +205,24 @@
         <table>
             <tr>
                 <th>Ulica:</th>
-                <td><input type="text" id="novaUlica" /></td>
+                <td><input type="text" id="ulica" readonly/></td>
             </tr>
             <tr>
                 <th>Broj:</th>
-                <td><input type="number" min="1" max="1000" id="noviBroj" /></td>
+                <td><input type="number" min="1" max="1000" id="broj" readonly/></td>
             </tr>
             <tr>
                 <th>Mesto:</th>
-                <td><input type="text" id="novoMesto" /></td>
+                <td><input type="text" id="naseljenoMesto" /></td>
             </tr>
             <tr>
                 <th>Pozivni broj:</th>
-                <td><input type="number" min="10000" max="39000" id="noviPozivniBroj" /></td>
+                <td><input type="number" min="10000" max="39000" id="noviPozivniBroj" readonly/></td>
             </tr>
+            <tr><th>X Koordinata:</th><td><input id="xKordinata" type="number" /></td></tr>
+            <tr><th>Y Koordinata:</th><td><input id="yKordinata" type="number" /></td></tr>
         </table>
-        <button id="novaLokacijaButton">Postavi</button>
+        <button id="novaLokacijaButton">Postavi</button><div id="map"></div>
     </div>
     <div id="LokacijaPromenaDiv" hidden></div>
     <div id="promenaStatusa" class="tabcontent">

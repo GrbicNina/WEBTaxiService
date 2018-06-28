@@ -1,4 +1,9 @@
-27.6.2018. 22.07.55;Milesevska;13;Novi Sad;21000;KombiVozilo;n;;brzy;;0;;0;0;Neuspesna;Wed, 27 Jun 2018 22:08:18 GMT;Izgubila Srbija..;1;brzy
-21.6.2018. 22.24.24;Fruskogorska;25;Novi Zeland;10001;Svejedno;n;;brzy;Maksima Gorkog;157;Novi Zeland;10000;15700;Uspesna;Wed, 27 Jun 2018 22:25:48 GMT;blah blah;5;n
-27.6.2018. 22.40.25;Dzungla;54;Banglades;22222;Svejedno;n;;brzy;Prasuma;56;Banglades;22222;7570;Uspesna;Wed, 27 Jun 2018 22:41:29 GMT;superiska;3;n
-23.6.2018. 22.40.25;Dzun;54;Banges;22222;Svejedno;n;;brzy;Praa;56;Bandes;22222;7570;Uspesna;Wed, 27 Jun 2018 22:41:29 GMT;ekstra;3;n
+28.6.2018. 06.00.56;Bulevar cara Lazara ;25; Novi Sad ;21000;Svejedno;n;;brzi;Marsala Tita ;13;Novi Sad;21000;750;Uspesna;Thu, 28 Jun 2018 06:01:48 GMT;Super voznja!;5;n
+28.6.2018. 06.07.10;Alekse Šantića ;17; Novi Sad ;21000;Svejedno;maja;;;;0;;0;0;Otkazana;Thu, 28 Jun 2018 06:07:24 GMT;Predomislih se..;3;maja
+28.6.2018. 06.17.24;Miše Dimitrijevića ;33; Novi Sad ;403540;Svejedno;maja;;vozac;Bulevar Oslobodjenja;147;Novi Sad;21000;485;Uspesna;;;0;
+28.6.2018. 06.17.32;Bulevar cara Lazara ;82; Novi Sad ;21000;Svejedno;maja;;vozac;;0;;0;0;Neuspesna;Thu, 28 Jun 2018 06:18:40 GMT;Kvar na automobilu..;4;vozac
+28.6.2018. 06.21.35;Puskinova;17;Novi Sad;21000;PutnickiAutomobil;;admin;mile;;0;;0;0;Formirana;;;0;
+28.6.2018. 06.23.14;Jirečekova ;11; Novi Sad ;21102;Svejedno;pera;;mile;Lasla Gala;54;Novi Sad;21000;590;Uspesna;Thu, 28 Jun 2018 06:26:04 GMT;ekstra;5;pera
+28.6.2018. 06.24.28;Jermenska ;5; Novi Sad ;406321;Svejedno;pera;;neca;Grobarska;137;Novi Sad;21000;2450;Uspesna;Thu, 28 Jun 2018 06:26:24 GMT;Preskupo!;2;pera
+28.6.2018. 06.24.39;Ruđera Boškovića ;36; Novi Sad ;403861;Svejedno;pera;;neca;;0;;0;0;Neuspesna;Thu, 28 Jun 2018 06:25:33 GMT;Guzva u saobracaju..;1;neca
+28.6.2018. 06.27.13;Šekspirova ;6; Novi Sad ;21000;Svejedno;mika;;brzi;;0;;0;0;Neuspesna;Thu, 28 Jun 2018 06:27:38 GMT;Problemi..;4;brzi
